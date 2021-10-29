@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 20 22">
+  <g id="ic_cal" transform="translate(-2 -1)">
+    <path id="패스_15389" data-name="패스 15389" d="M5,4H19a2,2,0,0,1,2,2V20a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4Z" fill="none" stroke="#2699fb" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line id="선_30" data-name="선 30" y2="4" transform="translate(16 2)" fill="none" stroke="#2699fb" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line id="선_31" data-name="선 31" y2="4" transform="translate(8 2)" fill="none" stroke="#2699fb" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line id="선_32" data-name="선 32" x2="18" transform="translate(3 10)" fill="none" stroke="#2699fb" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  </g>
+</svg>

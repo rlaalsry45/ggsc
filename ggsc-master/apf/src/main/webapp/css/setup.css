@@ -1,0 +1,568 @@
+/* Login Page */
+.login-box {
+    width: 460px;
+    height: 360px;
+    position: absolute;
+    left: 50%;
+    margin-left: -230px;
+    top: 50%;
+    margin-top: -180px;
+}
+
+.log_title {
+    font-size: 26px;
+    color: #999999;
+    margin-top: 22px;
+}
+
+.log_id {
+    width: 358px;
+    height: 50px;
+    background-color: #f6f6f6 !important;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    position: absolute;
+    left: 50%;
+    margin-left: -179px;
+    text-indent: 16px;
+    font-size: 16px;
+    color: #bdbdbd;
+    font-weight: 400;
+}
+
+.log_pass {
+    width: 358px;
+    height: 50px;
+    background-color: #f6f6f6 !important;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    position: absolute;
+    top: 230px;
+    left: 50%;
+    margin-left: -179px;
+    text-indent: 16px;
+    font-size: 16px;
+    color: #bdbdbd;
+    font-weight: 400;
+}
+
+input.log_id::placeholder {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #bdbdbd;
+}
+
+input.log_pass::placeholder {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #bdbdbd;
+}
+
+input.log_id {
+    background: url("../img/username.png") no-repeat;
+    background-position: 323px center;
+}
+
+input.log_pass {
+    background: url("../img/pass.png") no-repeat;
+    background-position: 323px center;
+}
+
+.send-box {
+    width: 360px;
+    height: 50px;
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    margin-left: -180px;
+}
+
+.btn_log {
+    width: 210px;
+    height: 50px;
+    border-radius: 50px;
+    background-color: #6f6f6f;
+    display: inline-block;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.btn_join {
+    width: 140px;
+    height: 50px;
+    border-radius: 50px;
+    background-color: #f39938;
+    display: inline-block;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+/* page-title */
+.page-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 25px;
+}
+
+.page-sub {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #666666;
+    display: inline-block;
+    position: relative;
+    top: -2px;
+}
+
+.dash-box {
+    width: 100%;
+    display: inline-block;
+}
+
+.dash-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.dash_img {
+    width: 50%;
+}
+
+.dash_img img {
+    width: 80%;
+}
+
+
+/* search-box */
+.search-box {
+    background-color: #fbfbfb;
+    border-top: 1px solid #c4c4c4;
+    border-bottom: 1px solid #c4c4c4;
+}
+
+.sell {
+    width: 100%;
+    height: 30px;
+    line-height: 25px;
+}
+
+.box-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.inp-box {
+    width: 19.875%;
+    height: 30px;
+    font-size: 14px;
+    text-indent: 14px;
+    border-radius: 4px;
+    border: solid 1px #e0e0e0;
+    background-color: #ffffff;
+    color: #333333;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+}
+
+.sel-box {
+    width: 20%;
+    height: 30px;
+    font-size: 14px;
+    padding-left: 14px;
+    border-radius: 4px;
+    border: solid 1px #e0e0e0;
+    background-color: #ffffff;
+    color: #333333;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+}
+
+.btn_search {
+    width: 86px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: #09658e;
+    color: #ffffff;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    position: relative;
+    top: 2px;
+    margin-left: 80px;
+}
+
+/* tbl-box */
+.tbl-top {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.btn_excel {
+    width: 130px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: #577726;
+    color: #ffffff;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.btn_excel img {
+    position: relative;
+    top: 8px;
+    margin-right: 5px;
+}
+
+.iconNoCheck {
+    color: #cc0000 !important;
+    font-weight: 700 !important;
+}
+
+.iconNoCheck img {
+    vertical-align: baseline;
+    margin-right: 5px;
+}
+
+.iconCheck {
+    color: #09658e !important;
+    font-weight: 700 !important;
+}
+
+.iconCheck img {
+    vertical-align: baseline;
+    margin-right: 5px;
+}
+
+/* tab-menu */
+.tab-menu {
+    width: 100%;
+    height: 50px;
+    background-color: #fbfbfb;
+    border-top: 1px solid #c4c4c4;
+    border-bottom: 1px solid #c4c4c4;
+    position: relative;
+}
+
+.tab-list {
+    width: 100%;
+    height: 35px;
+    position: absolute;
+    bottom: 0px;
+}
+
+.tab-list li {
+    float: left;
+    text-align: center;
+    font-size: 16px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    color: #555555;
+    line-height: 35px;
+    margin-right: 10px;
+}
+
+.tab-list li:nth-child(1),
+.tab-list li:nth-child(2) {
+    width: 10.5%;
+}
+
+.tab-list li:nth-child(3) {
+    width: 12.5%;
+}
+
+.tab-list li:nth-child(4),
+.tab-list li:nth-child(5) {
+    width: 17%;
+}
+
+.tab-list li:last-child {
+    margin: 0px;
+}
+
+.tabOn {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    color: #ffffff;
+    background-color: #707683;
+    display: block;
+}
+
+/* PopUp */
+.dim-layer {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.7;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+}
+
+.cons-popup {
+    /* 상담사팝업 */
+    width: 750px;
+    height: 650px;
+    position: absolute;
+    left: 50%;
+    margin-left: -375px;
+    top: 50%;
+    margin-top: -325px;
+    z-index: 101;
+    background-color: #ffffff;
+}
+
+.adds-popup {
+    /* 시·군 상세정보 & 등록 팝업 */
+    width: 750px;
+    height: 558px;
+    position: absolute;
+    left: 50%;
+    margin-left: -375px;
+    top: 50%;
+    margin-top: -279px;
+    z-index: 101;
+    background-color: #ffffff;
+}
+
+.cent-popup {
+    /* 센터 상세정보 팝업 */
+    width: 750px;
+    height: 610px;
+    position: absolute;
+    left: 50%;
+    margin-left: -375px;
+    top: 50%;
+    margin-top: -305px;
+    z-index: 101;
+    background-color: #ffffff;
+}
+
+.doc-popup {
+    /*  보안서약서 팝업 */
+    width: 750px;
+    height: 850px;
+    position: absolute;
+    left: 50%;
+    margin-left: -375px;
+    top: 50%;
+    margin-top: -425px;
+    z-index: 101;
+    background-color: #ffffff;
+}
+
+.join-popup {
+    /* 상담사 가입 팝업 */
+    width: 920px;
+    height: 895px;
+    position: absolute;
+    left: 50%;
+    margin-left: -460px;
+    top: 50%;
+    margin-top: -447.5px;
+    z-index: 101;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.pCheck-popup {
+    /* 본인 외 체크 팝업 */
+    width: 750px;
+    height: 460px;
+    position: absolute;
+    left: 50%;
+    margin-left: -375px;
+    top: 50%;
+    margin-top: -230px;
+    z-index: 101;
+    background-color: #ffffff;
+}
+
+.pop-header {
+    width: 100%;
+    height: 65px;
+    background-color: #09658e;
+}
+
+.pop-title {
+    font-size: 20px;
+    color: #ffffff;
+    line-height: 65px;
+    padding-left: 30px;
+}
+
+.pop-title img {
+    float: right;
+    position: relative;
+    right: 30px;
+    top: 17px;
+}
+
+.pop-contens {
+    width: 690px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.join-contens {
+    width: 95%;
+    height: 800px;
+    margin: 0 auto;
+    margin-top: 20px;
+    overflow-y: scroll;
+    padding: 0px 20px 0px 20px;
+}
+
+.underLine {
+    width: 100%;
+    height: 1px;
+    background-color: #c4c4c4;
+}
+
+.notice-box {
+    width: 100%;
+
+}
+
+.contents-title {
+    width: 100%;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+}
+
+.notice-box {
+    width: 100%;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+}
+
+.notice-box img {
+    position: relative;
+    top: 3px;
+    margin-right: 5px;
+}
+
+.sel-long {
+    width: 30.613%;
+}
+
+.inp-w11 {
+    width: 11.112%;
+}
+
+.inp-w18 {
+    width: 18.101%;
+}
+
+.inp-w26 {
+    width: 26.16%;
+}
+
+.inp-w29 {
+    width: 29.61%;
+}
+
+.inp-w38 {
+    width: 38.647%;
+}
+
+.inp-w52 {
+    width: 52.26%;
+}
+
+.inp-w56 {
+    width: 56.556%;
+}
+
+.inp-w73 {
+    width: 73.723%;
+}
+
+.color-gray {
+    color: #cccccc;
+}
+
+.table-title {
+    width: 100%;
+    height: 30px;
+    background-color: rgba(9, 101, 142, 0.06);
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    color: #333333;
+    text-align: center;
+    line-height: 30px;
+}
+
+.btn-box {
+    height: 30px;
+}
+
+.popInput {
+    height: 30px;
+    border-radius: 4px;
+    background-color: #f6f6f6 !important;
+    border: none;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    text-indent: 10px;
+    color: #333;
+}
+
+.ui-datepicker-trigger {
+    position: relative;
+    top: 0px;
+    left: 10px;
+}
+
+.small {
+    width: 200px;
+}
+
+.normal {
+    width: 390px;
+}
+
+.long {
+    width: 100%;
+}
+
+.pass {
+    color: #999999;
+}
+
+.btn_dbCheck {
+    width: 95px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: #09658e;
+    color: #ffffff;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    float: right;
+    line-height: 30px;
+}

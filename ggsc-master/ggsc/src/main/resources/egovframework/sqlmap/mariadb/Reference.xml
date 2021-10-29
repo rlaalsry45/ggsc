@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Reference">
+
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="referenceVO" type="ams.adm.reference.ReferenceVO"/>
+
+
+
+
+	<select id="referenceDAO.referenceList" parameterClass="referenceVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY REFERENCE_NO DESC) AS RNUM,
+					REFERENCE_NO, 
+					SUBJECT,
+					CNTN,
+					ORI_FILE_NM,
+					FILE_PATH,
+					REG_ID,
+					DATE_FORMAT( DB_INS_DT , '%Y%m%d') AS DB_INS_DT
+        	 FROM GS_REFERENCE
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+             <isNotEmpty property="schFrom">
+		     		AND DB_INS_DT BETWEEN #schFrom# AND #schTo#
+		     </isNotEmpty>
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="referenceDAO.referenceListCnt" parameterClass="referenceVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_REFERENCE
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+             <isNotEmpty property="schFrom">
+		     		AND DB_INS_DT BETWEEN #schFrom# AND #schTo#
+		     </isNotEmpty>
+	</select>
+	
+
+	<select id="referenceDAO.referenceDtl" parameterClass="referenceVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY REFERENCE_NO DESC) AS RNUM, 
+					REFERENCE_NO, 
+					SUBJECT,
+					CNTN,
+					ORI_FILE_NM,
+					FILE_PATH,
+					REG_ID,
+					DB_UPD_DT,
+					DB_INS_DT
+        	 FROM GS_REFERENCE
+        	 WHERE REFERENCE_NO = #referenceNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="referenceDAO.delReference" parameterClass="referenceVO">
+		DELETE FROM GS_REFERENCE
+		WHERE REFERENCE_NO = #referenceNo#
+	</delete>
+	
+	<update id="referenceDAO.updReference" parameterClass="referenceVO">
+		UPDATE GS_REFERENCE
+		   SET
+			SUBJECT = #subject# ,
+			CNTN = #cntn# ,
+			DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+		WHERE REFERENCE_NO = #referenceNo#
+	</update>
+
+	<update id="referenceDAO.updReferenceFile" parameterClass="referenceVO">
+		UPDATE GS_REFERENCE
+		   SET
+			ORI_FILE_NM = #oriFileNm# ,
+			FILE_PATH = #filePath#
+		WHERE REFERENCE_NO = #referenceNo#
+	</update>
+
+	<insert id="referenceDAO.insReference" parameterClass="referenceVO">
+		INSERT INTO GS_REFERENCE(
+			SUBJECT ,
+			CNTN ,
+			ORI_FILE_NM ,
+			FILE_PATH ,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#subject# ,
+			#cntn# ,
+			#oriFileNm#,
+			#filePath#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d'),
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+</sqlMap>

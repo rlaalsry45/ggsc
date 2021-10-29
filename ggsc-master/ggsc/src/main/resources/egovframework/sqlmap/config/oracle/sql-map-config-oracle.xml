@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<sqlMap resource="egovframework/sqlmap/common/Common_SQL_Oracle.xml"></sqlMap>
+
+	<!-- 배치 
+	<sqlMap resource="egovframework/sqlmap/batch/Batch_SQL_Oracle.xml"></sqlMap>
+
+    <sqlMap resource="egovframework/sqlmap/main/Login_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/main/Main_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/main/Menu_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/batch/AdmBatchMng_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/code/Code_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/user/User_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/menu/Menu_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/auth/AuthMenuMapping_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/auth/AuthMng_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/auth/AuthUserMng_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/auth/AuthUserDeptMng_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/auth/AuthGrpMng_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/dept/Dept_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/holiday/HolidayMng_SQL_Oracle.xml"></sqlMap>
+    <sqlMap resource="egovframework/sqlmap/adm/code/ComCode_SQL_Oracle.xml"></sqlMap>
+
+	<sqlMap resource="egovframework/sqlmap/ext/Ext_SQL_Oracle.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/ov/Ov_SQL_Oracle.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/trip/Trip_SQL_Oracle.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/hdw/Hdw_SQL_Oracle.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/wrs/Wrs_SQL_Oracle.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/stat/Stat_SQL_Oracle.xml"></sqlMap>
+
+	<sqlMap resource="egovframework/sqlmap/rest/Rest_SQL_Oracle.xml"></sqlMap>
+-->
+	<!-- <sqlMap resource="egovframework/sqlmap/bbs/Bbs_SQL_Oracle.xml"></sqlMap> -->
+</sqlMapConfig>

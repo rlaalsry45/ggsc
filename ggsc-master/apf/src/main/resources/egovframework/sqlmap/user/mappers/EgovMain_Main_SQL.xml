@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.user.main.service.impl.MainMapper">
+
+<!-- 	<resultMap id="main" type="egovframework.usr.main.service.mainVO"> -->
+<!-- 		<result property="id" column="id"/> -->
+<!-- 		<result property="name" column="name"/> -->
+<!-- 		<result property="description" column="description"/> -->
+<!-- 		<result property="useYn" column="use_yn"/> -->
+<!-- 		<result property="regUser" column="reg_user"/> -->
+<!-- 	</resultMap> -->
+	
+<!-- 	<resultMap id="login" type="egovframework.usr.main.service.LoginVO"> -->
+<!-- 		<result property="id" column="id"/> -->
+<!-- 		<result property="password" column="password"/> -->
+<!-- 		<result property="name" column="name"/> -->
+<!-- 		<result property="useYn" column="use_yn"/> -->
+<!-- 	</resultMap> -->
+
+
+	<!-- 메인페이지에 노출될 공지사항 리스트 조회 -->
+	<select id="selectMainList" parameterType="searchVO" resultType="egovMap">
+
+			SELECT
+					BD_TITLE, REG_TM
+			FROM BOARD
+			WHERE 1=1
+			AND BD_GB = '1'
+			ORDER BY BD_ID DESC
+			LIMIT 5 OFFSET 0
+			
+	</select>
+	
+	<select id="selectLoginInfo" parameterType="loginVO" resultType="loginVO">
+
+			SELECT
+				ID, NAME
+			FROM USR_INFO
+			WHERE ID='admin'
+			<!-- AND PWD = #{password} -->
+
+	</select>
+	
+	<insert id="" parameterType="map">
+	      INSERT INTO USR_INFO(ID,PWD,NAME)
+	      VALUES(#{id},#{pwd},#{name}) 
+	      
+	</insert>
+	
+	
+	<insert id="insertUsrInfoData" parameterType="mypageVO">
+	      INSERT INTO USR_INFO(   
+							ID,
+							PWD,
+							NAME,
+							TEL,
+							BIRTH_DT,
+							BASIC_ADDR,
+							DTL_ADDR,
+							EMAIL,
+							USE_YN,
+							ADMIN_GB,
+							REG_TM 
+							  ) 
+			VALUES(
+				   #{id},
+				   #{pwd},
+				   #{name},
+				   #{tel},
+				   #{birth_dt},
+				   #{basic_addr},
+				   #{dtl_addr},
+				   #{email},
+				   'Y	',
+				   'N',
+				   now() 
+				  )
+	      
+	</insert>
+
+</mapper>

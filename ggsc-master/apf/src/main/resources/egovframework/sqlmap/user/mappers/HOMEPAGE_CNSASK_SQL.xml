@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.cnsAsk.service.impl.HomepageCnsAskMapper">
+
+	<!-- 상담문의하기 -->
+	<select id="getCnsAskList" parameterType="cnsAskVO" resultType="egovMap">
+			SELECT
+				A.NUM ,
+				A.TITLE ,
+				A.WRITER ,
+				A.CNTN ,
+				A.ANSWER_YN ,
+				DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+				B.ANS_TITLE ,
+				B.ANS_CNTN ,
+				B.CNSR_ID ,
+				B.CNSR_NM ,
+				DATE_FORMAT(B.ANS_DB_INS_TM , '%Y-%m-%d') AS ansDbInsTm
+			FROM
+				GS_CNS_ASK AS A
+			LEFT JOIN GS_CNS_ASK_ANS AS B
+				ON A.NUM = B.NUM
+			WHERE
+				A.CNSLE_ID = #{cnsleId}
+	</select>
+
+	<!-- 상담문의 등록 -->
+	<insert id="getCnsAskReg" parameterType="cnsAskVO">
+		INSERT INTO GS_CNS_ASK
+			(
+				PW ,
+				TITLE ,
+				CNTN ,
+				WRITER ,
+				CNSLE_ID ,
+				VIEW_CNT ,
+				ANSWER_YN ,
+				DB_INS_TM
+			) VALUES (
+				#{pw} ,
+				#{title} ,
+				#{cntn} ,
+				#{writer} ,
+				#{cnsleId} ,
+				'0' ,
+				'N' ,
+				NOW()
+			)
+	</insert>
+
+</mapper>

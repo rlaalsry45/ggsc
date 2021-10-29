@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+	function convert(){
+		var txtBox = document.getElementById("bef");
+		var lines = txtBox.value.split("\n");
+		var cnt = 0;
+
+		var resultString  = "";
+		for (var i = 0; i < lines.length; i++) {
+			if(lines[i].indexOf("fvQuery.append(") > -1){
+				resultString += lines[i].replace("fvQuery.append(", "").replace('");',"").replace('"',"").replace(/\//g,"-")  + "\n";
+			}else if(lines[i].indexOf("wQuery.append(") > -1){
+				resultString += lines[i].replace("wQuery.append(", "").replace('");',"").replace('"',"").replace(/\//g,"-")  + "\n";
+			}else{
+				resultString += lines[i] + "\n";
+			}
+		}
+
+		var   blk   = document.getElementById("aft");
+		blk.innerHTML  =  resultString;
+	}
+</script>
+</head>
+<body>
+<div style="height: 500px;">
+<textarea name="bef" id="bef" rows="30" cols="50"></textarea>
+<button type="button" style="height:100px; width:100px; vertical-align: top;" onclick="convert();" >123123</button>
+<textarea name="aft" id="aft" rows="30" cols="50"></textarea>
+</div>
+</body>
+
+</html>

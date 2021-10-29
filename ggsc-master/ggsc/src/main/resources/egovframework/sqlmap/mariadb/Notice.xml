@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Notice">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="admNoticeVO" type="ams.adm.notice.NoticeVO"/>
+
+
+
+
+	<select id="noticeDAO.noticeList" parameterClass="admNoticeVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY NOTICE_NO DESC) AS RNUM,
+					NOTICE_NO, 
+					SUBJECT,
+					CNTN,
+					ORI_FILE_NM,
+					FILE_PATH,
+					REG_ID,
+					DATE_FORMAT( DB_INS_DT , '%Y%m%d') AS DB_INS_DT
+        	 FROM GS_NOTICE
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+             <isNotEmpty property="schFrom">
+		     		AND DB_INS_DT BETWEEN #schFrom# AND #schTo#
+		     </isNotEmpty>
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="noticeDAO.noticeListCnt" parameterClass="admNoticeVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_NOTICE
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+             <isNotEmpty property="schFrom">
+		     		AND DB_INS_DT BETWEEN #schFrom# AND #schTo#
+		     </isNotEmpty>
+	</select>
+	
+
+	<select id="noticeDAO.noticeDtl" parameterClass="admNoticeVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY NOTICE_NO DESC) AS RNUM, 
+					NOTICE_NO, 
+					SUBJECT,
+					CNTN,
+					ORI_FILE_NM,
+					FILE_PATH,
+					REG_ID,
+					DB_UPD_DT,
+					DB_INS_DT
+        	 FROM GS_NOTICE
+        	 WHERE NOTICE_NO = #noticeNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="noticeDAO.delNotice" parameterClass="admNoticeVO">
+		DELETE FROM GS_NOTICE
+		WHERE NOTICE_NO = #noticeNo#
+	</delete>
+	
+	<update id="noticeDAO.updNotice" parameterClass="admNoticeVO">
+		UPDATE GS_NOTICE
+		   SET
+			SUBJECT = #subject# ,
+			CNTN = #cntn# ,
+			DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+		WHERE NOTICE_NO = #noticeNo#
+	</update>
+
+	<update id="noticeDAO.updNoticeFile" parameterClass="admNoticeVO">
+		UPDATE GS_NOTICE
+		   SET
+			ORI_FILE_NM = #oriFileNm# ,
+			FILE_PATH = #filePath#
+		WHERE NOTICE_NO = #noticeNo#
+	</update>
+
+	<insert id="noticeDAO.insNotice" parameterClass="admNoticeVO">
+		INSERT INTO GS_NOTICE(
+			SUBJECT ,
+			CNTN ,
+			ORI_FILE_NM ,
+			FILE_PATH ,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#subject# ,
+			#cntn# ,
+			#oriFileNm#,
+			#filePath#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d'),
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+</sqlMap>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Monitoring">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="MonitoringVO" type="ggsc.monitoring.service.MonitoringVO"/>	
+		
+		
+	<!-- 월별 모니터링 (개인) -->
+	<select id="MonitoringDAO.getMonitoringPerson" parameterClass="MonitoringVO" resultClass="egovMap">
+		SELECT 
+			M, 
+			SUM(CNT) CNT, 
+			SUM(GENDER_M) GENDER_M, 
+			SUM(GENDER_F) GENDER_F 
+			
+		FROM ( 
+			SELECT 
+				MONTH(DB_INS_TM) M, 
+				1 AS CNT, 
+				CASE WHEN GENDER = 'M' THEN 1 ELSE 0 END GENDER_M, 
+				CASE WHEN GENDER = 'F' THEN 1 ELSE 0 END GENDER_F
+			FROM
+				gs_per_cns 
+				
+			WHERE YEAR(DB_INS_TM) = #schYearGb#
+			
+			<isNotEmpty property="schZoneGb" prepend="AND"> 
+				ZONE_GB = #schZoneGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			
+		 
+		) AS X 
+		GROUP BY M
+		
+
+	</select>
+	
+	<!-- 월별 모니터링 (집단)-->
+	<select id="MonitoringDAO.getMonitoringGroup" parameterClass="MonitoringVO" resultClass="egovMap">
+		SELECT M, SUM(CNT) CNT FROM ( SELECT MONTH(DB_INS_TM) M, 1 AS CNT from gs_gcns_dtl WHERE YEAR(DB_INS_TM) = #schYearGb# 
+		
+		<isNotEmpty property="schZoneGb" prepend="AND"> 
+				ZONE_GB = #schZoneGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		
+		) AS X GROUP BY M
+	</select>
+	
+	<!-- 월별 모니터링 (접수현황) -->
+	<select id="MonitoringDAO.getMonitoringG14" parameterClass="MonitoringVO" resultClass="egovMap">
+		SELECT M, SUM(CNT) CNT FROM ( SELECT MONTH(DB_INS_TM) M, 1 AS CNT from gs_cns_acpt WHERE YEAR(DB_INS_TM) = #schYearGb# 
+		
+		<isNotEmpty property="schZoneGb" prepend="AND"> 
+				ZONE_GB = #schZoneGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		
+		) AS X GROUP BY M
+	</select>
+	
+	<!-- 월별 모니터링 (주호소별) -->
+	<select id="MonitoringDAO.getMonitoringMajorGb" parameterClass="MonitoringVO" resultClass="egovMap">
+		SELECT ODR, MCLASS_NM, SUM(CNT) CNT FROM ( 
+			SELECT B.ODR, B.MCLASS_NM, 1 CNT FROM gs_per_cns_dtl AS A 
+			INNER JOIN gs_m_class AS B ON A.MAJOR_APPL_CD = B.ODR AND B.HCLASS_CD = 'G58'
+			INNER JOIN gs_per_cns AS C ON A.CASE_NO = C.CASE_NO
+			WHERE YEAR(C.DB_INS_TM) = #schYearGb#
+			
+		<isNotEmpty property="schZoneGb" prepend="AND"> 
+			A.ZONE_GB = #schZoneGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			A.CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		
+		) AS X
+		GROUP BY ODR, MCLASS_NM
+		ORDER BY ODR ASC 
+
+	</select>
+	
+	
+</sqlMap>

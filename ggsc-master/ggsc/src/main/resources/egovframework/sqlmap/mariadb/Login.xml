@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdmLogin">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="loginVO" type="ggsc.adm.login.service.LoginVO"/>
+
+	<!-- 일반 로그인 -->
+	<select id="loginDAO.actionLogin" parameterClass="loginVO" resultClass="egovMap">
+		<!-- 일반회원 -->
+
+			SELECT 
+			 	A.USER_ID ,
+			 	A.USER_NM ,
+			 	A.AUTH_CD ,
+			 	A.SIGUN_CD ,
+			 	A.MOBILE ,
+			 	(SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G089' AND odr = A.SIGUN_CD) AS sigunCdNm ,
+			 	B.CNS_GB ,
+			 	B.CENTER_GB ,
+			 	B.CNSR_GB ,
+			 	B.LOCAL_GB ,
+			 	B.ZONE_GB ,
+			 	B.APPRV_YN ,
+			 	(SELECT CENTER_GB FROM GS_CENTER_M WHERE NUM = B.CENTER_GB) AS centerNm
+			FROM 
+			 	GS_USER_M AS A
+			INNER JOIN GS_CNSR_M AS B 
+			 	ON A.USER_ID = B.USER_ID
+			WHERE
+			 	A.USER_ID = #userId#
+			 	AND A.PW = #pw#
+			    <!-- AND A.PW = SCP.ENC_B64('KEY1',#pw#) -->
+			
+	</select>
+
+	
+
+</sqlMap>

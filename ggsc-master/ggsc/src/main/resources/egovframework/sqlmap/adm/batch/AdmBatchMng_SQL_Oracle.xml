@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="AdmBatchMng">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    <typeAlias  alias="authMngVO" type="ams.adm.auth.service.AuthVO"/>
+
+
+
+	<select id="admBatchDAO.selectAuthGrpSelList" parameterClass="authMngVO" resultClass="egovMap">
+			<!-- admBatchDAO.selectAuthGrpSelList -->
+			SELECT
+				 	AUTH_GRP_CD
+				 ,	AUTH_GRP_NM
+			FROM 	AT_AUTH_GRP
+			WHERE	USE_YN=#useYn#
+	</select>
+
+	<select id="admBatchDAO.selectAuthList" parameterClass="authMngVO" resultClass="egovMap">
+		  SELECT /**  권한 목록 조회  admBatchDAO.selectAuthList */ *
+		    FROM (SELECT ROWNUM AS RNUM
+		               , A.*
+		            FROM (SELECT A.AUTH_SER
+		                       , A.AUTH_CD
+		                       , A.AUTH_GRP_CD
+		                       , A.AUTH_NM
+		                       , A.CNTN
+		                       , A.ODR
+		                       , A.USE_YN
+		                       , A.REG_ID
+		                       , TO_CHAR(A.DB_INS_TM, 'YYYY-MM-DD') AS DB_INS_TM
+		                       , TO_CHAR(A.DB_UPD_TM, 'YYYY-MM-DD') AS DB_UPD_TM
+		                       , B.AUTH_GRP_NM
+		                    FROM AT_AUTH A, AT_AUTH_GRP B
+		                   WHERE 1 = 1
+					    <isNotEmpty property="schAuthNm">
+						    AND A.AUTH_NM LIKE '%' || #schAuthNm# || '%'
+						</isNotEmpty>
+						<isNotEmpty property="schAuthGrpNm">
+							AND A.AUTH_GRP_CD LIKE '%' || #schAuthGrpNm# || '%'
+						</isNotEmpty>
+						AND A.AUTH_GRP_CD = B.AUTH_GRP_CD
+						ORDER BY A.AUTH_SER DESC) A)
+		<![CDATA[
+		   WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+			ORDER BY RNUM
+		]]>
+	</select>
+
+	<select id="admBatchDAO.selectAuthListTotalCnt" parameterClass="authMngVO" resultClass="java.lang.Integer">
+		SELECT /** 권한 목록 조회 총 건수 admBatchDAO.selectAuthListTotalCnt */ COUNT(*) NUM_CNT
+		  FROM (SELECT A.*
+				  FROM AT_AUTH A, AT_AUTH_GRP B
+		 		 WHERE 1 = 1
+					    <isNotEmpty property="schAuthNm">
+						    AND A.AUTH_NM LIKE '%' || #schAuthNm# || '%'
+						</isNotEmpty>
+						<isNotEmpty property="schAuthGrpNm">
+							AND A.AUTH_GRP_CD LIKE '%' || #schAuthGrpNm# || '%'
+						</isNotEmpty>
+				AND A.AUTH_GRP_CD = B.AUTH_GRP_CD
+		)
+	</select>
+
+		<select id="admBatchDAO.selectAuthGrpList" parameterClass="authMngVO" resultClass="egovMap">
+		  SELECT /**  권한그룹 목록 조회  admBatchDAO.selectAuthGrpList */ *
+		    FROM (SELECT ROWNUM AS RNUM
+		               , A.*
+		            FROM (SELECT A.AUTH_GRP_CD
+		                       , A.AUTH_GRP_NM
+		                       , A.CNTN
+		                       , A.ODR
+		                       , A.USE_YN
+		                       , A.REG_ID
+		                       , TO_CHAR(A.DB_INS_TM, 'YYYY-MM-DD') AS DB_INS_TM
+		                       , TO_CHAR(A.DB_UPD_TM, 'YYYY-MM-DD') AS DB_UPD_TM
+		                    FROM AT_AUTH_GRP A
+		                   WHERE 1 = 1
+						) A)
+	</select>
+
+	<select id="admBatchDAO.selectAuthInfo" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT /**  권한 상세 조회  admBatchDAO.admBatchDAO.selectAuthInfo */
+			   A.AUTH_SER
+			 , A.AUTH_CD
+		     , A.AUTH_NM
+		     , A.CNTN
+		     , TO_CHAR(A.DB_INS_TM, 'YYYY-MM-DD') AS DB_INS_TM
+		     , A.REG_ID
+		     , A.USE_YN
+       		 , B.AUTH_GRP_CD
+        	 , B.AUTH_GRP_NM
+		  		FROM AT_AUTH A, AT_AUTH_GRP B
+	     			WHERE AUTH_SER = #authSer#
+      					 AND A.AUTH_GRP_CD = B.AUTH_GRP_CD
+	</select>
+
+	<insert id="admBatchDAO.insertAuthInfo" parameterClass="authMngVO">
+		INSERT INTO AT_AUTH (
+			AUTH_SER,
+			AUTH_CD,
+			AUTH_GRP_CD,
+			AUTH_NM,
+			CNTN,
+			ODR,
+			USE_YN,
+			REG_ID,
+			DB_INS_TM
+		) VALUES (
+			(SELECT NVL(MAX(AUTH_SER), 0) + 1 FROM AT_AUTH),
+			(SELECT 'A' || TO_CHAR(SYSDATE, 'YYYYMMDD') || LPAD((SELECT NVL(MAX(AUTH_SER), 0) + 1 FROM AT_AUTH), 2, '0') FROM DUAL),
+			#authGrpCd#,
+			#authNm#,
+			#cntn#,
+			#odr#,
+			#useYn#,
+			#regId#,
+			SYSDATE
+		)
+	</insert>
+
+	<update id="admBatchDAO.updateAuthInfo" parameterClass="authMngVO">
+		UPDATE AT_AUTH
+		   SET AUTH_NM = #authNm#
+		     , CNTN = #cntn#
+		     , AUTH_GRP_CD = #authGrpCd#
+		     , USE_YN = #useYn#
+		     , DB_UPD_TM = SYSDATE
+		 WHERE AUTH_SER = #authSer#
+	</update>
+
+	<delete id="admBatchDAO.deleteAuth" parameterClass="authMngVO">
+		DELETE FROM AT_AUTH WHERE AUTH_SER = #authSer#
+	</delete>
+
+	<select id="admBatchDAO.selectAuthListByGrp" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT AUTH_CD
+			 , AUTH_NM
+		  FROM AT_AUTH
+		 WHERE 1 = 1
+		   AND AUTH_GRP_CD = #authGrpCd#
+	</select>
+</sqlMap>

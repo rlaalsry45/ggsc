@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="Batch">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<delete id="batchDAO.deleteDept">
+		DELETE FROM AT_DEPT		/**  부서정보 삭제 batchDAO.deleteDept [배치] */
+	</delete>
+
+	<delete id="batchDAO.deleteJicwi">
+		DELETE FROM AT_JICWI	/**  직위정보 삭제 batchDAO.deleteJicwi [배치] */
+	</delete>
+
+	<delete id="batchDAO.deleteUser">
+		DELETE FROM AT_USER		/**  사원정보 삭제 batchDAO.deleteUser [배치] */
+		 WHERE SANCFLAG = 'Y'
+	</delete>
+
+	<insert id="batchDAO.insertDept" parameterClass="egovMap">
+	INSERT INTO AT_DEPT 		/**  부서정보 저장 batchDAO.insertDept [배치] */
+	(
+		DEPT_ID,
+		DEPT_NAME,
+		DEPT_CODE,
+		PAR_ID,
+		PAR_NAME,
+		STATUS,
+		SEQ
+	)
+	VALUES
+	(
+		#deptId#,
+        #deptName#,
+        #deptCode#,
+        #parId#,
+        #parName#,
+        #status#,
+        #seq#
+	)
+	</insert>
+
+	<insert id="batchDAO.insertJicwi" parameterClass="egovMap">
+	INSERT INTO AT_JICWI 		/**  직위정보 저장 batchDAO.insertJicwi [배치] */
+	(
+		JICWI_ID,
+		JICWI_NAME,
+		JICWI_CODE,
+		SEQ
+	)
+	VALUES
+	(
+		#jicwiId#,
+        #jicwiName#,
+        #jicwiCode#,
+        #seq#
+	)
+	</insert>
+
+	<insert id="batchDAO.insertUser" parameterClass="egovMap">
+	 INSERT INTO AT_USER (        /**  사원정보 저장 batchDAO.insertUser [배치] */
+           USER_ID,
+           USER_NAME,
+           EMP_CODE,
+           DEPT_ID,
+           DEPT_NAME,
+           DEPT_CODE,
+           JICWI_ID,
+           JICWI_NAME,
+           STATUS,
+           SEQ
+       )
+       SELECT
+           A.USER_ID,
+           A.USER_NM,
+           A.EMP_CD,
+           A.DEPT_ID,
+           B.DEPT_NAME,
+           B.DEPT_CODE,
+           A.JICWI_ID,
+           C.JICWI_NAME,
+           A.STATUS,
+           A.SEQ
+       FROM
+           QDBUSER.AT_USER A,
+           AT_DEPT B,
+           AT_JICWI C
+       WHERE
+           A.DEPT_ID = B.DEPT_ID(+)
+       AND A.JICWI_ID = C.JICWI_ID(+)
+       AND A.USER_ID NOT IN
+           (
+               SELECT USER_ID
+               FROM
+                   AT_USER SA
+               WHERE
+                   SA.SANCFLAG = 'N'
+           )
+       AND A.DEPT_ID NOT IN('000011103', '000012500', '000011300', '000010007')
+	</insert>
+
+	<!-- 지문정보 삭제 -->
+	<delete id="batchDAO.deleteHanseEvent" parameterClass="java.lang.String">
+		DELETE FROM HANSE_EVENT		/**  지문정보 삭제 batchDAO.deleteHanseEvent [배치] */
+		 WHERE EVENT_DATE <![CDATA[ >= ]]> #fvDate# || ' 00:00:00'
+		   AND EVENT_DATE <![CDATA[ <= ]]> #fvDate# || ' 99:99:99'
+	</delete>
+
+	<!-- 지문정보 리스트 -->
+	<select id="batchDAO.getHansEventList" parameterClass="java.lang.String" resultClass="egovMap">
+		SELECT						/**  지문정보 리스트 batchDAO.getHansEventList [배치] */
+			    A.EMP_CODE,
+			    A.JM_GB,
+			    A.USER_NAME,
+			    TO_CHAR(A.JM_EVENT_DATE, 'YYYY.MM.DD HH24:MI:SS') AS JM_EVENT_DATE,
+			    B.USER_ID
+		  FROM
+			    (
+			        SELECT
+			            SA.EMP_CODE,
+			            MIN(SA.JM_GB) AS JM_GB,
+			            MIN(SA.USER_NAME) AS USER_NAME,
+			            MIN(SA.JM_EVENT_DATE) AS JM_EVENT_DATE
+			        FROM
+			            TB_SECOM_LOG SA
+			        WHERE
+			            SA.JM_EVENT_DATE <![CDATA[ >= ]]> TO_DATE(#fvDate# || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			        AND SA.JM_EVENT_DATE <![CDATA[ <= ]]> TO_DATE(#fvDate# || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+			        AND SA.JM_GB = '0'
+			        GROUP BY
+			            SA.EMP_CODE
+			        UNION ALL
+			        SELECT
+			            SA.EMP_CODE,
+			            MAX(SA.JM_GB) AS JM_GB,
+			            MAX(SA.USER_NAME) AS USER_NAME,
+			            MAX(SA.JM_EVENT_DATE) AS JM_EVENT_DATE
+			        FROM
+			            TB_SECOM_LOG SA
+			        WHERE
+			            SA.JM_EVENT_DATE <![CDATA[ >= ]]> TO_DATE(#fvDate# || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			        AND SA.JM_EVENT_DATE <![CDATA[ <= ]]> TO_DATE(#fvDate# || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+			        AND SA.JM_GB = '1'
+			        GROUP BY
+			            SA.EMP_CODE
+			    ) A,
+			    AT_USER B
+		  WHERE
+			    A.EMP_CODE = B.EMP_CODE (+)
+		  ORDER BY A.EMP_CODE, A.JM_GB
+	</select>
+
+	<!-- 지문정보 저장 -->
+	<insert id="batchDAO.insertHanseEvent" parameterClass="egovMap">
+	INSERT INTO HANSE_EVENT 		/**  지문정보 저장 batchDAO.insertHanseEvent [배치] */
+	(
+		REQ_ID,
+		USER_ID,
+		TYPE,
+		EVENT_DATE,
+		EMP_CODE,
+		ITEM01,
+		ITEM03
+	)
+	VALUES
+	(
+		#reqId#,
+        #userId#,
+        #type#,
+        #eventDate#,
+        #empCode#,
+        #item01#,
+        #item03#
+	)
+	</insert>
+
+	<!-- 휴일근무 신청내역 정보 -->
+	<select id="batchDAO.getHwList" parameterClass="egovMap" resultClass="egovMap">
+		SELECT A.HWORK_ID,			/**  휴일근무 신청내역 batchDAO.getHwList [배치] */
+		       A.HW_DATE,
+		       A.HW_TYPE,
+		       A.HW_GUBUN,
+		       B.USER_ID,
+		       B.SDATE, B.STIME, B.SMIN,
+		       B.EDATE, B.ETIME, B.EMIN,
+		       B.TOT_TIME, B.TOT_MIN,
+		       C.DAY_FLAG
+		       , FN_GET_CODE_NM('HW_TYPE', C.DAY_FLAG) AS DAY_FLAG_NM
+		FROM HW_WORK A, HW_USER B, HW_USER_JM C
+		WHERE A.HWORK_ID = B.HWORK_ID
+		AND A.HWORK_ID = C.HWORK_ID
+		AND B.USER_ID = C.USER_ID
+		AND A.HW_DATE <![CDATA[<=]]> #fvDate#
+		AND A.SANC_STATUS = '090'
+		AND C.RETURN_FLAG = 'N'
+		AND C.COM_FLAG = 'N'
+		<isNotEmpty property="schUserId">
+			AND B.USER_ID = #schUserId#
+		</isNotEmpty>
+	</select>
+
+	<!-- 1년미만 연차 처리 -->
+	<update id="batchDAO.mergeGtHoliday">
+		 MERGE INTO GT_HOLIDAYS A			/**  1년미만 연차 처리 batchDAO.mergeGtHoliday [배치] */
+		 USING
+		     (
+		         SELECT
+		             BB.USER_ID,
+		             BB.DEPT_NAME,
+		             BB.USER_NAME,
+		             BB.JICWI_NAME,
+		             BB.JDATE,
+		             NVL(BB.TOTAL_YC, 0) AS TOTAL_YC,  <!-- 2014.04.22 SR2014040192, 유진아 선생님 확인 득. -->
+		             BB.TOTAL_MONTH
+		         FROM
+		             (
+		                 SELECT
+		                     U.DEPT_NAME,
+		                     U.JICWI_NAME,
+		                     U.USER_NAME,
+		                     U.USER_ID,
+		                     G.JDATE,
+		                     TRUNC(MONTHS_BETWEEN( SYSDATE, TO_DATE( G.JDATE, 'YYYY.MM.DD' ) ) ) TOTAL_YC,
+		                     MONTHS_BETWEEN( SYSDATE, TO_DATE( G.JDATE, 'YYYY.MM.DD' ) ) TOTAL_MONTH
+		                 FROM
+		                     AT_USER U,
+		                     JOINDAY G,
+		                     AT_JICWI P
+		                 WHERE
+		                     U.STATUS = '1'
+		                 AND U.USER_ID = G.USER_ID(+)
+		                 AND U.JICWI_ID = P.JICWI_ID(+)
+		                 AND G.JDATE IS NOT NULL
+		                 AND MONTHS_BETWEEN(SYSDATE, TO_DATE (G.JDATE, 'YYYY.MM.DD') ) <![CDATA[ <= ]]> 11
+		                 AND U.USER_ID != '001011749' <!-- SR2018090007 이혁수만 자동부여 제외 -->
+		             ) BB
+		     ) B
+		 ON (
+		         A.USER_ID = B.USER_ID
+		     AND A.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+		     )
+		 WHEN MATCHED THEN
+		     UPDATE
+		     SET A.YEAR_LEAVE = B.TOTAL_YC, A.DAYCOUNT=B.TOTAL_YC+NVL(A.YEAR_LEAVE_ETC, 0)
+		 WHEN NOT MATCHED THEN
+		     INSERT ( USER_ID, YEAR, YEAR_LEAVE)
+		     VALUES ( B.USER_ID, TO_CHAR(SYSDATE, 'YYYY'), B.TOTAL_YC )
+	</update>
+
+	<!-- 초과근무 신청내역 정보 -->
+	<select id="batchDAO.getOvList" parameterClass="egovMap" resultClass="egovMap">
+	    SELECT A.REQ_ID,				/** 초과근무 신청내역 batchDAO.getOvList [배치] */
+	           A.OV_DATE,
+	           B.USER_ID,
+	           B.SDATE, B.STIME, B.SMIN,
+	           B.EDATE, B.ETIME, B.EMIN,
+	           B.TOT_TIME, B.TOT_MIN,
+	           C.COM_TOTAL
+	    FROM OVER_WORK A, OVER_USER B, OVER_USER_JM C
+	    WHERE A.REQ_ID = B.REQ_ID
+	    AND A.REQ_ID = C.REQ_ID
+	    AND B.USER_ID = C.USER_ID
+	    AND A.OV_DATE = #fvDate#
+	    AND C.RETURN_FLAG = 'N'
+		<isNotEmpty property="schUserId">
+			AND B.USER_ID = #schUserId#
+		</isNotEmpty>
+		<isNotEmpty property="schGubun">
+			AND B.STIME <![CDATA[ < ]]> '12'
+		</isNotEmpty>
+	</select>
+
+	<!-- 권한 저장 -->
+	<insert id="batchDAO.insertAuthUser">
+	INSERT INTO AT_AUTH_USER	/**  사용자별 권한 저장  batchDAO.insertAuthUser [배치] */
+	(
+		USER_ID
+	  , AUTH_CD
+	  , AUTH_GRP_CD
+	  , REG_ID
+	  , DB_INS_TM
+	)
+	SELECT USER_ID
+		 , 'U0001'
+		 , 'USER'
+		 , 'admin'
+		 , SYSDATE
+	  FROM AT_USER
+	  WHERE STATUS = '1'
+	   AND USER_ID NOT IN
+		(
+		  SELECT USER_ID
+		    FROM AT_AUTH_USER
+		   GROUP BY USER_ID
+		)
+
+	</insert>
+</sqlMap>

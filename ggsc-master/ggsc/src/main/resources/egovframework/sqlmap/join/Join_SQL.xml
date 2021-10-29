@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CnsrJoinDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="CnsrVO" type="ggsc.join.service.CnsrVO"/>
+	<typeAlias alias="UsermVO" type="ggsc.join.service.UsermVO"/>
+	
+	<!-- 상담사 table에 저장  -->
+	<insert id="CnsrJoinDAO.insertCnsrMng" parameterClass="CnsrVO">
+		INSERT INTO GS_CNSR_M (
+				 CNSR_CD ,
+				 AUTH_CD ,
+				 CNS_GB , 
+				 CENTER_GB ,
+				 CNSR_GB ,
+				 CNSR_NM ,
+				 ZONE_GB,
+				 LOCAL_GB,
+				 POSI ,
+				 MAJOR ,
+				 EDU ,
+				 SOCIAL_WORK_PROV ,
+				 CNS_PROV ,
+				 APPRV_YN ,
+				 USE_YN ,
+				 USER_ID ,
+				 BIRTH_DT ,
+				 AGE ,
+				 SIGUN_CD ,
+				 DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(CAST(CNSR_CD AS SIGNED)),0)+1 FROM GS_CNSR_M AS A) ,
+				#authCd# ,
+				#cnsGb# ,
+				#centerGb# ,
+				#authCd# ,
+				#cnsrNm# ,
+				#zoneGb#,
+				'9',
+				#posi# ,
+				#major# ,
+				#edu# ,
+				#socialWorkProv# ,
+				#cnsProv# ,
+				'N' ,
+				'Y' ,
+				#userId# ,
+				#birthDt# ,
+				#age# ,
+				#sigunCd# ,
+				now()
+			)
+		
+	</insert>
+	
+	<!-- 사용자 table에 저장  -->
+	<insert id="CnsrJoinDAO.insertUserM" parameterClass="UsermVO">
+		INSERT INTO GS_USER_M (
+				AUTH_CD ,
+				USER_ID ,
+				PW ,
+				USER_NM ,
+				GENDER ,
+				BIRTH_DT ,
+				MOBILE ,
+				EMAIL ,
+				ACPT_DT ,
+				SIGUN_CD ,
+				USE_YN		
+			) values (
+				#authCd# ,
+				#userId# ,
+				SCP.ENC_B64('KEY1',#pw#) , 
+				#cnsrNm# ,
+				#gender# ,
+				#birthDt# ,
+				#mobile# ,
+				#email# ,
+				DATE_FORMAT(NOW(), '%Y-%m-%d') ,
+				#sigunCd# ,
+				'Y'
+			)
+		
+	</insert>
+	
+</sqlMap>

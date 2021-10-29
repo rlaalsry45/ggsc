@@ -1,0 +1,409 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>스트레스 척도</title>
+<style>
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000; }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+</style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="doc-box mt20">
+            <div class="headName noto500">
+                Case No. (##caseNo##)
+            </div>
+            <div class="title">스트레스 척도</div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 12%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <td>##내담자명##</td>
+                        <th scope="col">연락처</th>
+                        <td>##설문1Y##</td>
+                        <th scope="col">검사일</th>
+                        <td>##날짜##</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                ※ 다음은 어르신이 평상시 일상생활에서 경험할 수 있는 것들입니다. <span class="txt-Under">“지난 1년 동안”</span>을 돌이켜 보면서 어르신께서 경험을 통해서 마음이 얼마나 상하였는지 어르신의 느낌이나 생각과 잘 맞는 곳에 ‘√’표 해주십시오.
+            </div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 5%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">내용</th>
+                        <th scope="col">전혀<br/>그렇지<br/>않다</th>
+                        <th scope="col">대체로<br/>그렇지<br/>않다</th>
+                        <th scope="col">보통<br/>이다</th>
+                        <th scope="col">대체로<br/>그렇다</th>
+                        <th scope="col" class="bRight-none">매우<br/>그렇다</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bRight-none">1.</td>
+                        <td class="txt-left">가족(자녀, 손자녀)들이 나와 함께 대화하는 시간이 줄어들거나 대화를 회피했다.</td>
+                        <td><span class='icon circle ##설문2Y##'>●</span></td>
+                        <td><span class='icon circle ##설문2N##'>●</span></td>
+                        <td><span class='icon circle ##설문3Y##'>●</span></td>
+                        <td><span class='icon circle ##설문3N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문4Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">2.</td>
+                        <td class="txt-left">나는 가족(아들, 딸, 며느리)들과 갈등을 일으키는 일이 있었다.(예: 제사문제, 집안 살림, 경제 등)</td>
+                        <td><span class='icon circle ##설문4N##'>●</span></td>
+                        <td><span class='icon circle ##설문5Y##'>●</span></td>
+                        <td><span class='icon circle ##설문5N##'>●</span></td>
+                        <td><span class='icon circle ##설문6Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문6N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">3.</td>
+                        <td class="txt-left">가족 중에 지나치게 술, 담배를 하는 사람이 있었다.</td>
+                        <td><span class='icon circle ##설문7Y##'>●</span></td>
+                        <td><span class='icon circle ##설문7N##'>●</span></td>
+                        <td><span class='icon circle ##설문8Y##'>●</span></td>
+                        <td><span class='icon circle ##설문8N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문9Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">4.</td>
+                        <td class="txt-left">나는 집안에서의 실권이 많이 줄어들었다(예: 집안의 중요한 일 결정, 자녀관계 등).</td>
+                        <td><span class='icon circle ##설문9N##'>●</span></td>
+                        <td><span class='icon circle ##설문10Y##'>●</span></td>
+                        <td><span class='icon circle ##설문10N##'>●</span></td>
+                        <td><span class='icon circle ##설문11Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문11N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">5.</td>
+                        <td class="txt-left">나는 집안에 해결되지 못한 문제들이 있었다.</td>
+                        <td><span class='icon circle ##설문12Y##'>●</span></td>
+                        <td><span class='icon circle ##설문12N##'>●</span></td>
+                        <td><span class='icon circle ##설문13Y##'>●</span></td>
+                        <td><span class='icon circle ##설문13N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문14Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">6.</td>
+                        <td class="txt-left">자녀들과 의견이 맞지 않는 경우가 여러 번 있었다.</td>
+                        <td><span class='icon circle ##설문14N##'>●</span></td>
+                        <td><span class='icon circle ##설문15Y##'>●</span></td>
+                        <td><span class='icon circle ##설문15N##'>●</span></td>
+                        <td><span class='icon circle ##설문16Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문16N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">7.</td>
+                        <td class="txt-left">죽기 전에 병들어 자식에게 고통이나 부담을 줄까봐 걱정이 되었다.</td>
+                        <td><span class='icon circle ##설문17Y##'>●</span></td>
+                        <td><span class='icon circle ##설문17N##'>●</span></td>
+                        <td><span class='icon circle ##설문18Y##'>●</span></td>
+                        <td><span class='icon circle ##설문18N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문19Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">8.</td>
+                        <td class="txt-left">집안의 중요한 일을 결정할 때 내 의견을 묻지 않았다.</td>
+                        <td><span class='icon circle ##설문19N##'>●</span></td>
+                        <td><span class='icon circle ##설문20Y##'>●</span></td>
+                        <td><span class='icon circle ##설문20N##'>●</span></td>
+                        <td><span class='icon circle ##설문21Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문21N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">9.</td>
+                        <td class="txt-left">자녀와 말다툼으로 사이가 불편한 적이 있었다.</td>
+                        <td><span class='icon circle ##설문22Y##'>●</span></td>
+                        <td><span class='icon circle ##설문22N##'>●</span></td>
+                        <td><span class='icon circle ##설문23Y##'>●</span></td>
+                        <td><span class='icon circle ##설문23N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문24Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">10.</td>
+                        <td class="txt-left">자녀들의 이혼이나 별거로 인해 마음이 상했다.</td>
+                        <td><span class='icon circle ##설문24N##'>●</span></td>
+                        <td><span class='icon circle ##설문25Y##'>●</span></td>
+                        <td><span class='icon circle ##설문25N##'>●</span></td>
+                        <td><span class='icon circle ##설문26Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문26N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">11.</td>
+                        <td class="txt-left">자녀들에게 소외감 혹은 무시를 당했다.</td>
+                        <td><span class='icon circle ##설문27Y##'>●</span></td>
+                        <td><span class='icon circle ##설문27N##'>●</span></td>
+                        <td><span class='icon circle ##설문28Y##'>●</span></td>
+                        <td><span class='icon circle ##설문28N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문29Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">12.</td>
+                        <td class="txt-left">병원비나 약값으로 돈이 필요했었다.</td>
+                        <td><span class='icon circle ##설문29N##'>●</span></td>
+                        <td><span class='icon circle ##설문30Y##'>●</span></td>
+                        <td><span class='icon circle ##설문30N##'>●</span></td>
+                        <td><span class='icon circle ##설문31Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문31N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">13.</td>
+                        <td class="txt-left">노후에 경제적인 생활대책이 없었다.</td>
+                        <td><span class='icon circle ##설문32Y##'>●</span></td>
+                        <td><span class='icon circle ##설문32N##'>●</span></td>
+                        <td><span class='icon circle ##설문33Y##'>●</span></td>
+                        <td><span class='icon circle ##설문33N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문34Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">14.</td>
+                        <td class="txt-left">용돈이 부족해서 불편했었다.</td>
+                        <td><span class='icon circle ##설문34N##'>●</span></td>
+                        <td><span class='icon circle ##설문35Y##'>●</span></td>
+                        <td><span class='icon circle ##설문35N##'>●</span></td>
+                        <td><span class='icon circle ##설문36Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문36N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">15.</td>
+                        <td class="txt-left">생활비가 적어서 힘이 들었다.</td>
+                        <td><span class='icon circle ##설문37Y##'>●</span></td>
+                        <td><span class='icon circle ##설문37N##'>●</span></td>
+                        <td><span class='icon circle ##설문38Y##'>●</span></td>
+                        <td><span class='icon circle ##설문38N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문39Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">16.</td>
+                        <td class="txt-left">주위의 다른 노인과 비교해 볼 때 나는 경제적인 여유가 없는 편이었다.</td>
+                        <td><span class='icon circle ##설문39N##'>●</span></td>
+                        <td><span class='icon circle ##설문40Y##'>●</span></td>
+                        <td><span class='icon circle ##설문40Y##'>●</span></td>
+                        <td><span class='icon circle ##설문41Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문41N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">17.</td>
+                        <td class="txt-left">수입이 이전에 비해 줄어들었다.</td>
+                        <td><span class='icon circle ##설문42Y##'>●</span></td>
+                        <td><span class='icon circle ##설문42N##'>●</span></td>
+                        <td><span class='icon circle ##설문43Y##'>●</span></td>
+                        <td><span class='icon circle ##설문43N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문44Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">18.</td>
+                        <td class="txt-left">투자실패 혹은 보증으로 금전적으로 손해를 보았다.</td>
+                        <td><span class='icon circle ##설문44N##'>●</span></td>
+                        <td><span class='icon circle ##설문45Y##'>●</span></td>
+                        <td><span class='icon circle ##설문45N##'>●</span></td>
+                        <td><span class='icon circle ##설문46Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문46N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">19.</td>
+                        <td class="txt-left">금전적으로 어려워서 필요한 물품을 구입을 구입할 수 없었다.</td>
+                        <td><span class='icon circle ##설문47Y##'>●</span></td>
+                        <td><span class='icon circle ##설문47N##'>●</span></td>
+                        <td><span class='icon circle ##설문48Y##'>●</span></td>
+                        <td><span class='icon circle ##설문48N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문49Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">20.</td>
+                        <td class="txt-left">가까운 친구가 사망해서 마음이 상했다.</td>
+                        <td><span class='icon circle ##설문49N##'>●</span></td>
+                        <td><span class='icon circle ##설문50Y##'>●</span></td>
+                        <td><span class='icon circle ##설문50N##'>●</span></td>
+                        <td><span class='icon circle ##설문51Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문51N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">21.</td>
+                        <td class="txt-left">배우자가 사망해서 마음이 상했다.</td>
+                        <td><span class='icon circle ##설문52Y##'>●</span></td>
+                        <td><span class='icon circle ##설문52N##'>●</span></td>
+                        <td><span class='icon circle ##설문53Y##'>●</span></td>
+                        <td><span class='icon circle ##설문53N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문54Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">22.</td>
+                        <td class="txt-left">가족 중 누군가가 사망해서 마음이 상했다.</td>
+                        <td><span class='icon circle ##설문54N##'>●</span></td>
+                        <td><span class='icon circle ##설문55Y##'>●</span></td>
+                        <td><span class='icon circle ##설문55N##'>●</span></td>
+                        <td><span class='icon circle ##설문56Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문56N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">23.</td>
+                        <td class="txt-left">가까운 친구가 사망해서 마음이 상했다.</td>
+                        <td><span class='icon circle ##설문57Y##'>●</span></td>
+                        <td><span class='icon circle ##설문57N##'>●</span></td>
+                        <td><span class='icon circle ##설문58Y##'>●</span></td>
+                        <td><span class='icon circle ##설문58N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문59Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">24.</td>
+                        <td class="txt-left">다치거나 매우 아픈 적이 있었다.</td>
+                        <td><span class='icon circle ##설문59N##'>●</span></td>
+                        <td><span class='icon circle ##설문60Y##'>●</span></td>
+                        <td><span class='icon circle ##설문60N##'>●</span></td>
+                        <td><span class='icon circle ##설문61Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문61N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">25.</td>
+                        <td class="txt-left">시력, 청력, 치아상태가 나빠져서 불편을 느꼈다.</td>
+                        <td><span class='icon circle ##설문62Y##'>●</span></td>
+                        <td><span class='icon circle ##설문62N##'>●</span></td>
+                        <td><span class='icon circle ##설문63Y##'>●</span></td>
+                        <td><span class='icon circle ##설문63N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문64Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">26.</td>
+                        <td class="txt-left">만성적 질병이 있었다(예: 고혈압, 당뇨, 관절염 등).</td>
+                        <td><span class='icon circle ##설문64N##'>●</span></td>
+                        <td><span class='icon circle ##설문65Y##'>●</span></td>
+                        <td><span class='icon circle ##설문65N##'>●</span></td>
+                        <td><span class='icon circle ##설문66Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문66N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">27.</td>
+                        <td class="txt-left">건강이 악화되었다.</td>
+                        <td><span class='icon circle ##설문67Y##'>●</span></td>
+                        <td><span class='icon circle ##설문67N##'>●</span></td>
+                        <td><span class='icon circle ##설문68Y##'>●</span></td>
+                        <td><span class='icon circle ##설문68N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문69Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">28.</td>
+                        <td class="txt-left">피로 때문에 할 일을 제대로 못했다.</td>
+                        <td><span class='icon circle ##설문69N##'>●</span></td>
+                        <td><span class='icon circle ##설문70Y##'>●</span></td>
+                        <td><span class='icon circle ##설문70N##'>●</span></td>
+                        <td><span class='icon circle ##설문71Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문71N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">29.</td>
+                        <td class="txt-left">체중이 과도하게 줄거나 증가했다.</td>
+                        <td><span class='icon circle ##설문72Y##'>●</span></td>
+                        <td><span class='icon circle ##설문72N##'>●</span></td>
+                        <td><span class='icon circle ##설문73Y##'>●</span></td>
+                        <td><span class='icon circle ##설문73N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문74Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">30.</td>
+                        <td class="txt-left">기력이 많이 약해졌다.</td>
+                        <td><span class='icon circle ##설문74N##'>●</span></td>
+                        <td><span class='icon circle ##설문75Y##'>●</span></td>
+                        <td><span class='icon circle ##설문75N##'>●</span></td>
+                        <td><span class='icon circle ##설문76Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문76N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">31.</td>
+                        <td class="txt-left">나쁜 집으로 이사를 갔다.</td>
+                        <td><span class='icon circle ##설문77Y##'>●</span></td>
+                        <td><span class='icon circle ##설문77N##'>●</span></td>
+                        <td><span class='icon circle ##설문78Y##'>●</span></td>
+                        <td><span class='icon circle ##설문78N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문79Y##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">32.</td>
+                        <td class="txt-left">현재 살고 있는 집의 구조가 사용함에 불편을 느꼈다(예: 너무 높다, 난방시설, 아파트라 답답하다 등).</td>
+                        <td><span class='icon circle ##설문79N##'>●</span></td>
+                        <td><span class='icon circle ##설문80Y##'>●</span></td>
+                        <td><span class='icon circle ##설문80N##'>●</span></td>
+                        <td><span class='icon circle ##설문81Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문81N##'>●</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">33.</td>
+                        <td class="txt-left">현재 내가 사용하고 있는 방에 대해 불편을 느꼈다(예: 너무 좁다, 환기가 안된다 등).</td>
+                        <td><span class='icon circle ##설문82Y##'>●</span></td>
+                        <td><span class='icon circle ##설문82N##'>●</span></td>
+                        <td><span class='icon circle ##설문83Y##'>●</span></td>
+                        <td><span class='icon circle ##설문83N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문84Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">34.</td>
+                        <td class="txt-left">주거 및 이웃 환경이 신경에 거슬렸다.(예: 시끄럽다, 잡소리가 심하다, 이사)</td>
+                        <td><span class='icon circle ##설문84N##'>●</span></td>
+                        <td><span class='icon circle ##설문85Y##'>●</span></td>
+                        <td><span class='icon circle ##설문85N##'>●</span></td>
+                        <td><span class='icon circle ##설문86Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문86N##'>●</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

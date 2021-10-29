@@ -1,0 +1,2607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Support">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="noticeVO" type="ggsc.support.service.NoticeVO"/>
+	<typeAlias alias="faqVO" type="ggsc.support.service.FaqVO"/>
+	<typeAlias alias="rescRoomVO" type="ggsc.support.service.RescRoomVO"/>
+	<typeAlias alias="userManualVO" type="ggsc.support.service.UserManualVO"/>
+	<typeAlias alias="surveyMngVO" type="ggsc.support.service.SurveyMngVO"/>
+	<typeAlias alias="signVO" type="ggsc.support.service.SignVO"/>
+	<typeAlias alias="mmsVO" type="com.daou.ppurio.mmsVO"/>
+	<typeAlias alias="PdfVO" type="ggsc.support.service.PdfVO"/>
+	
+	<!-- 개인상담일지 PDF -->
+	<select id="supportDao.PDFperCnsDtl" parameterClass="PdfVO" resultClass="egovMap" >
+		<!-- SELECT	
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담구분' )  AND CNS_GB = B.ODR ) CNS_GB ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담자구분' )  AND CNS_DTL_GB_CD = B.ODR ) CNS_DTL_GB_CD ,
+			CNS_EFFT_PLACE ,
+			CNS_RSVT_PLACE ,
+			CNS_CNT ,
+			CASE EMGCY_URGT WHEN 'Y' THEN '예' WHEN 'N' THEN '아니오' ELSE EMGCY_URGT END AS EMGCY_URGT ,
+			CNS_DT ,
+			CASE CNS_DT_WEEK_CD WHEN '1' THEN '월' WHEN '2' THEN '화'WHEN '3' THEN '수' WHEN '4' THEN '목' WHEN '5' THEN '금' WHEN '6' THEN '토' WHEN '7' THEN '일' ELSE CNS_DT_WEEK_CD END AS CNS_DT_WEEK_CD ,
+			CONCAT(RIGHT(CONCAT('00',CNS_DT_STD_HOUR),2),':',RIGHT(CONCAT('00',CNS_DT_STD_MIN),2)) STIME ,
+			CONCAT(RIGHT(CONCAT('00',CNS_DT_END_HOUR),2),':',RIGHT(CONCAT('00',CNS_DT_END_MIN),2)) ETIME ,
+			CNS_TIME_TOT_MIN TTIME ,
+			CNS_RSVT_DT ,
+			CASE CNS_RSVT_WEEK_CD WHEN '1' THEN '월' WHEN '2' THEN '화'WHEN '3' THEN '수' WHEN '4' THEN '목' WHEN '5' THEN '금' WHEN '6' THEN '토' WHEN '7' THEN '일' ELSE CNS_RSVT_WEEK_CD END AS CNS_RSVT_WEEK_CD ,
+			CONCAT(RIGHT(CONCAT('00',CNS_RSVT_STRT_HOUR),2),':',RIGHT(CONCAT('00',CNS_RSVT_STRT_MIN),2)) SRTIME ,
+			CONCAT(RIGHT(CONCAT('00',CNS_RSVT_END_HOUR),2),':',RIGHT(CONCAT('00',CNS_RSVT_END_MIN),2)) ERTIME ,
+			CNS_RSVT_TOT_MIN TRTIME ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담사구분' )  AND CNSLE_REL = B.ODR ) CNSLE_REL ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담신청방법' )  AND CNS_METHD = B.ODR ) CNS_METHD ,
+			CASE KILLS_OPTN WHEN 'Y' THEN '예' WHEN 'N' THEN '아니오' ELSE KILLS_OPTN END AS KILLS_OPTN ,
+			CASE AHYD_SUPT_YN WHEN 'Y' THEN '예' WHEN 'N' THEN '아니오' ELSE AHYD_SUPT_YN END AS AHYD_SUPT_YN ,
+			AHYD_ACPT_DT ,
+			AHYD_END_DT ,
+			CASE ABUS_OPTN WHEN 'Y' THEN '예' WHEN 'N' THEN '아니오' ELSE ABUS_OPTN END AS ABUS_OPTN ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '주거형태' )  AND LIVG_FORM = B.ODR ) LIVG_FORM ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '주택형태' )  AND HOUSE_FORM = B.ODR ) HOUSE_FORM ,
+			CASE HOUSE_CHNG WHEN '1' THEN '최근 5년 이내' WHEN '2' THEN '55세 이후 거주지역 변경하여 이사' ELSE HOUSE_CHNG END AS HOUSE_CHNG ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '동거형태' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.LIVE_FORM, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.LIVE_FORM)-CHAR_LENGTH(REPLACE(B.LIVE_FORM, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS LIVE_FORM ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '결혼상태' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.MERR_STAT, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.MERR_STAT)-CHAR_LENGTH(REPLACE(B.MERR_STAT, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS MERR_STAT ,
+			CASE SUJT_HELCY_STAT WHEN '1' THEN '매우 건강함' WHEN '2' THEN '건강한편' WHEN '3' THEN '보통' WHEN '4' THEN '건강하지 않은 편' WHEN '5' THEN '매우 건강하지 않음' ELSE SUJT_HELCY_STAT END AS SUJT_HELCY_STAT ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '진단병력' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.DIGN_MHIST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.DIGN_MHIST)-CHAR_LENGTH(REPLACE(B.DIGN_MHIST, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS DIGN_MHIST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '복용약' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.MNDS, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.MNDS)-CHAR_LENGTH(REPLACE(B.MNDS, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS MNDS ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '경제상태' )  AND ECONO_STAT = B.ODR ) ECONO_STAT ,
+			CASE RECNT_FMLY_DETH WHEN 'Y' THEN '예' WHEN 'N' THEN '아니오' ELSE RECNT_FMLY_DETH END AS RECNT_FMLY_DETH ,
+			CASE RECNT_MMAN_DETH WHEN 'Y' THEN '예' WHEN 'N' THEN '아니오' ELSE RECNT_MMAN_DETH END AS RECNT_MMAN_DETH ,
+			CASE OLDER_WORK_PTPT_YN WHEN '1' THEN '참여' WHEN '2' THEN '중단' WHEN '3' THEN '참여실적 없음' ELSE OLDER_WORK_PTPT_YN END AS OLDER_WORK_PTPT_YN ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '자살' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.KILLS_RSKN, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.KILLS_RSKN)-CHAR_LENGTH(REPLACE(B.KILLS_RSKN, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS KILLS_RSKN ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '심리·정서' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PSYC_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.PSYC_QUST)-CHAR_LENGTH(REPLACE(B.PSYC_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS PSYC_QUST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '대인관계' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PER_REL_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.PER_REL_QUST)-CHAR_LENGTH(REPLACE(B.PER_REL_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS PER_REL_QUST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '중독' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PSNG, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.PSNG)-CHAR_LENGTH(REPLACE(B.PSNG, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS PSNG ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '치매' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.DMTA, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.DMTA)-CHAR_LENGTH(REPLACE(B.DMTA, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS DMTA ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '정신' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.DSM, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.DSM)-CHAR_LENGTH(REPLACE(B.DSM, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS DSM ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '건강' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.HELTH_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.HELTH_QUST)-CHAR_LENGTH(REPLACE(B.HELTH_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS HELTH_QUST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '경제' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.ECONO_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.ECONO_QUST)-CHAR_LENGTH(REPLACE(B.ECONO_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS ECONO_QUST ,
+			LIFE_QUST ,
+			CNS_ITVT_LINK ,
+			CNS_CNT_EVAT_CNTN ,
+			DAFT_MNG ,
+			CNS_CNTN ,
+			EMOT_CPTV_DEGR ,
+			HELP_DEGR ,
+			CNS_CHNG_DEGR ,
+			EMGCY_EVAT ,
+			EMGCY_EVAT_POINT ,
+			EMGCY_EXAM_DT ,
+			NSSY_PSYC_EXAM ,
+			NSSY_GDSKR_POINT ,
+			NSSY_GDSKR_DT ,
+			NSSY_SSI_POINT ,
+			NSSY_SSI_DT ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '주호소문제' )  AND MAJOR_APPL_CD = B.ODR ) MAJOR_APPL_CD ,
+			CNSLE_NM ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담사구분' )  AND CNSR_GB = B.ODR ) CNSR_GB ,
+			CNSR_NM ,
+			( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담진행상태' )  AND CNS_STAT = B.ODR ) CNS_STAT ,
+			CNS_END_CD ,
+			CNS_END_DT ,
+			DEFR_CD ,
+			DEFR_DT ,
+			RE_REQ_DT ,
+			CMBK_DT ,
+			BIRTH_DT ,
+			CASE GENDER WHEN 'M' THEN '남자' WHEN 'F' THEN '여자' ELSE GENDER END AS GENDER ,
+			MOBILE ,
+			EMGCY_TEL ,
+			ADDR ,
+			ADDR_DTL ,
+			CNS_END_YN ,
+			DB_INS_TM ,
+			DB_UPD_TM
+		FROM
+			gs_per_cns_dtl AS A
+		WHERE 
+			A.NUM = #num# -->	 
+			
+		SELECT	
+			gpcd.NUM ,
+			row_number() over(ORDER BY gpcd.num DESC) AS rnum ,
+			(SELECT CENTER_NM FROM gs_center_m WHERE NUM = gpcd.CENTER_GB ) AS centerGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = gpcd.CNS_GB) AS cnsGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G71' AND ODR = gpcd.ZONE_GB) AS zoneGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = gpcd.LOCAL_GB) AS localGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G58' AND ODR = gpcd.major_appl_cd) AS majorApplCd ,
+			case gpcd.CNS_DTL_GB_CD when '1' then '개인상담' when '2' then '집단상담' ELSE '알수없음' END AS cnsDtlGbCd ,
+			gpcd.CASE_NO ,
+			gpcd.CNSLE_ID , 
+			gpcd.CNS_EFFT_PLACE ,
+			gpcd.CNS_RSVT_PLACE ,
+			gpcd.CNS_CNT ,
+			case gpcd.EMGCY_URGT when 'Y' then '예' when 'N' then '아니오' ELSE '알수없음' END AS emgcyUrgt ,
+			DATE_FORMAT(STR_TO_DATE(gpcd.CNS_DT, '%Y.%m.%d'),'%Y년 %m월 %d일') cnsDt ,
+			case gpcd.CNS_DT_WEEK_CD when '1' then '월요일' when '2' then '화요일' when '3' then '수요일' when '4' then '목요일' when '5' then '금요일' when '6' then '토요일' when '7' then '일요일' ELSE '' END AS cnsDtWeekCd ,
+			
+			gpcd.CNS_DT_STD_HOUR ,
+			gpcd.CNS_DT_STD_MIN ,
+			gpcd.CNS_DT_END_HOUR ,
+			gpcd.CNS_DT_END_MIN ,
+			gpcd.CNS_TIME_TOT_MIN ,
+			DATE_FORMAT(STR_TO_DATE(gpcd.CNS_RSVT_DT,'%Y.%m.%d'), '%Y 년 %m월 %d일') AS cnsRsvtDt ,
+			case gpcd.CNS_RSVT_WEEK_CD when '1' then '월요일' when '2' then '화요일' when '3' then '수요일' when '4' then '목요일' when '5' then '금요일' when '6' then '토요일' when '7' then '일요일' ELSE '' END AS cnsRsvtWeekCd ,
+			gpcd.CNS_RSVT_STRT_HOUR ,
+			gpcd.CNS_RSVT_STRT_MIN ,
+			gpcd.CNS_RSVT_END_HOUR , 
+			gpcd.CNS_RSVT_END_MIN ,
+			gpcd.CNS_RSVT_TOT_MIN ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G44' AND ODR = gpcd.cnsle_rel) AS CNSLE_REL ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G14' AND ODR = gpcd.cns_methd) AS cnsMethd ,
+			case gpcd.KILLS_OPTN when 'Y' then '예' when 'N' then '아니오' ELSE '' END AS killsOptn ,
+			case gpcd.AHYD_SUPT_YN when 'Y' then '예' when 'N' then '아니오' ELSE '' END AS ahydSuptYn ,
+			DATE_FORMAT(STR_TO_DATE(gpcd.AHYD_ACPT_DT,'%Y.%m.%d'), '%Y 년 %m월 %d일') AS ahydAcptDt ,
+			DATE_FORMAT(STR_TO_DATE(gpcd.AHYD_END_DT,'%Y.%m.%d'), '%Y 년 %m월 %d일') AS ahydEndDt ,
+			case gpcd.ABUS_OPTN when 'Y' then '예' when 'N' then '아니오' ELSE '' END AS abusOptn ,
+			
+			
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G48' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.KILLS_RSKN, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.KILLS_RSKN)-CHAR_LENGTH(REPLACE(B.KILLS_RSKN, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS KILLS_RSKN ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G45' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PSYC_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.PSYC_QUST)-CHAR_LENGTH(REPLACE(B.PSYC_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS PSYC_QUST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G43' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PER_REL_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.PER_REL_QUST)-CHAR_LENGTH(REPLACE(B.PER_REL_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS PER_REL_QUST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G47' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PSNG, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.PSNG)-CHAR_LENGTH(REPLACE(B.PSNG, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS PSNG ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G46' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.DMTA, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.DMTA)-CHAR_LENGTH(REPLACE(B.DMTA, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS DMTA ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G84' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.DSM, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.DSM)-CHAR_LENGTH(REPLACE(B.DSM, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS DSM ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G49' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.HELTH_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.HELTH_QUST)-CHAR_LENGTH(REPLACE(B.HELTH_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS HELTH_QUST ,
+			( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G50' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.ECONO_QUST, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  gs_per_cns_dtl AS B ON CHAR_LENGTH(B.ECONO_QUST)-CHAR_LENGTH(REPLACE(B.ECONO_QUST, ',', ''))>=numbers.n-1 WHERE B.NUM = gpcd.NUM ) ) AS ECONO_QUST ,
+			gpcd.CNS_ITVT_LINK ,
+			gpcd.CNS_CNT_EVAT_CNTN ,
+			gpcd.DAFT_MNG ,
+			gpcd.CNS_CNTN ,
+			
+			case gpcd.EMOT_CPTV_DEGR when '1' then '1' when '2' then '2' when '3' then '3' when '4' then '4' when '5' then '5' when '6' then '6' when '7' then '7' when '8' then '8' when '9' then '9' when '10' then '10' when '11' then '11' when '12' then '12' ELSE '' END  AS EMOT_CPTV_DEGR ,
+			case gpcd.HELP_DEGR when '1' then '1' when '2' then '2' when '3' then '3' when '4' then '4' when '5' then '5' when '6' then '6' when '7' then '7' when '8' then '8' when '9' then '9' when '10' then '10' when '11' then '11' when '12' then '12' ELSE '' END  AS HELP_DEGR ,
+			case gpcd.CNS_CHNG_DEGR when '1' then '1' when '2' then '2' when '3' then '3' when '4' then '4' when '5' then '5' when '6' then '6' when '7' then '7' when '8' then '8' when '9' then '9' when '10' then '10' when '11' then '11' when '12' then '12' ELSE '' END  AS CNS_CHNG_DEGR ,
+			date_format(str_to_date(gpcd.BIRTH_DT,'%Y%m%d'),'%Y년 %m월 %d일') birthDt ,
+			case gpcd.GENDER when 'M' then '남자' when 'F' then '여자' else '알수없음' END AS gender,
+			gpcd.MOBILE ,
+			gpcd.EMGCY_TEL ,
+			gpcd.ADDR ,
+			gpcd.CMBK_DT ,
+			date_format(gpcd.DB_INS_TM,'%Y년 %m월 %d일') AS dbInsTm ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G19' AND ODR = gpcd.CNSR_GB) AS CNSR_GB ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G18' AND ODR = gpcd.CNS_STAT) AS CNS_STAT ,
+			
+			
+			
+			gpcd.EMGCY_EVAT ,
+			gpcd.EMGCY_EVAT_POINT ,
+			gpcd.EMGCY_EXAM_DT ,
+			gpcd.NSSY_PSYC_EXAM ,
+			gpcd.NSSY_GDSKR_POINT ,
+			gpcd.NSSY_GDSKR_DT  ,
+			gpcd.NSSY_SSI_POINT ,
+			gpcd.NSSY_SSI_DT ,
+			gpcd.CNSLE_NM ,
+			gpcd.CNSR_NM ,
+			gpcd.CNSR_ID ,
+			gpcd.CNS_END_CD ,
+			gpcd.CNS_END_DT ,
+			gpcd.DEFR_CD ,
+			gpcd.DEFR_DT ,
+			gpcd.RE_REQ_DT ,
+			gpcd.ADDR_DTL ,
+			gpcd.CNS_END_YN ,
+			gpcd.LIFE_QUST ,
+			gpcd.DB_UPD_TM
+		FROM
+			gs_per_cns_dtl as gpcd
+		WHERE 
+			gpcd.NUM = #num#
+	</select>
+	
+	<!-- 초기상담신청서 PDF -->
+	<select id="supportDao.PDFealyCnsDocDtl"
+		parameterClass="PdfVO" resultClass="egovMap">
+			SELECT 
+				CNSR_ID
+				,CNSR_NM
+				,CNSLE_NM NAME
+				, DATE_FORMAT(STR_TO_DATE(CNS_DT, '%Y.%m.%d'),'%Y년 %m월 %d일') WRITE_DT
+				, CONCAT(RIGHT(CONCAT('00',CNS_TIME_HOUR_S),2),':',RIGHT(CONCAT('00',CNS_TIME_MIN_S),2)) STIME
+				, CONCAT(RIGHT(CONCAT('00',CNS_TIME_HOUR_E),2),':',RIGHT(CONCAT('00',CNS_TIME_MIN_E),2)) ETIME
+				, CNS_TIME_TOT_MIN TTIME
+				, ( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담신청방법' )  AND A.CNS_METHD = B.ODR ) CNS_METHD
+				, ( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '상담경위' )  AND A.CNS_DTL = B.ODR ) CNS_DTL
+				, ( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '노인과의관계' )  AND A.OLDER_REL = B.ODR ) OLDER_REL
+				, CASE GENDER WHEN 'M' THEN '남성' WHEN 'F' THEN '여성' ELSE '알 수 없음' END GENDER
+				, DATE_FORMAT(STR_TO_DATE(REPLACE(BIRTH_DT,'.',''), '%Y%m%d'),'%Y년 %m월 %d일') BIRTH_DT
+				, REPLACE(REPLACE(MOBILE,'-',''),' ','') MOBILE
+				, REPLACE(REPLACE(EMGCY_TEL,'-',''),' ','') TEL
+				, ADDR
+				, ( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '학력' )  AND A.EDU = B.ODR ) EDU
+				, CASE DECODE_LVL WHEN '1' THEN '문맹' WHEN '2' THEN '읽기만 가능' WHEN '3' THEN '불완전 읽고 쓰기 가능' WHEN '4' THEN '완전 읽고 쓰기 가능' ELSE DECODE_LVL END DECODE_LVL
+				, CASE RELG WHEN  '1' THEN '무교' WHEN '2' THEN '기독교' WHEN '3' THEN '천주교' WHEN '4' THEN '불교' WHEN '5' THEN '원불교' WHEN '6' THEN '기타' ELSE RELG END RELG
+				, ( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '주거형태' )  AND A.LIVG_FORM = B.ODR ) HOUSING_TYPE
+				, ( SELECT MCLASS_NM FROM gs_m_class AS B WHERE HCLASS_CD =  ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '주택형태' )  AND A.HOUSE_FORM = B.ODR ) HOUSE_TYPE
+				, ( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '결혼상태' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.MERR_STAT, ',', numbers.n), ',', -1) CD  FROM numbers  INNER JOIN  gs_ealy_cns_doc AS B ON CHAR_LENGTH(B.MERR_STAT)-CHAR_LENGTH(REPLACE(B.MERR_STAT, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS MERR_STAT
+				, ( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '동거형태' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.LIVE_FORM, ',', numbers.n), ',', -1) CD  FROM numbers  INNER JOIN  gs_ealy_cns_doc AS B ON CHAR_LENGTH(B.LIVE_FORM)-CHAR_LENGTH(REPLACE(B.LIVE_FORM, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS LIVE_FORM
+				, ( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '주호소문제' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.MAJOR_APPL_CD, ',', numbers.n), ',', -1) CD  FROM numbers  INNER JOIN  gs_ealy_cns_doc AS B ON CHAR_LENGTH(B.MAJOR_APPL_CD)-CHAR_LENGTH(REPLACE(B.MAJOR_APPL_CD, ',', ''))>=numbers.n-1 WHERE B.NUM = A.NUM ) ) AS MAJOR_APPL_CD
+				, CNS_CNTN
+				, PSYC_EXAM_CNTN
+				, INTR_LINK_CNTN
+			 FROM gs_ealy_cns_doc AS A 
+			 WHERE A.NUM = #num#
+	</select>
+	
+	<!-- 상담동의서 PDF -->
+	<select id="supportDao.PDFcnsAgreement"
+		parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			DATE_FORMAT(STR_TO_DATE(WRITE_DT, '%Y%m%d'),'%Y년 %m월 %d일') WRITE_DT
+			,CNSLE_NM NAME
+			,CNS_CSNT_SIGN SIGN1
+			, YEAR
+			, DAY
+			, MONTH
+			
+		FROM gs_cns_agre_doc AS A
+		WHERE A.NUM = #num#
+	</select>
+	
+	
+	<!-- 개인정보수집동의서 PDF -->
+	<select id="supportDao.PDFprivacyAgreement"
+		parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			DATE_FORMAT(STR_TO_DATE(WRITE_DT, '%Y%m%d'),'%Y년 %m월 %d일') WRITE_DT
+			,PER_INFO_CFRM_SIGN AS SIGN1
+			,PER_INFO_SAFER_SIGN AS SIGN2
+			, B.CENTER_NM
+			, GUARDIAN
+			, MYSELF_AGRE
+			, A.HOMEPAGE
+			, A.CNSR_NM
+		FROM gs_per_info_agre  AS A
+		INNER JOIN gs_center_m AS B ON A.CENTER_GB = B.NUM
+		WHERE A.NUM = #num#
+	</select>
+	
+	<!-- 노인상담선별척도지 PDF -->
+	<select id="supportDao.PDFscScreeningScale"
+		parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			INPUT_NM NAME
+			,REWD_NO
+			, CONCAT(RIGHT(CONCAT('00',STRT_TIME),2),':',RIGHT(CONCAT('00',STRT_MIN),2)) STIME
+			, CONCAT(RIGHT(CONCAT('00',END_TIME_HOUR),2),':',RIGHT(CONCAT('00',END_TIME_MIN),2)) ETIME
+			, DATE_FORMAT(STR_TO_DATE(BIRTH_DT, '%Y%m%d'),'%Y년 %m월 %d일') BIRTH_DT
+			, DATE_FORMAT(STR_TO_DATE(WRITE_DT, '%Y%m%d'),'%Y년 %m월 %d일') WRITE_DT
+			, CASE GENDER WHEN 'M' THEN '남성' WHEN 'F' THEN '여성' ELSE '알 수 없음' END GENDER
+			, TOT_TIME TTIME
+			, CASE WHEN ANSR1 = 'Y' THEN 'active' ELSE '' END SURVEY1Y
+			, CASE WHEN ANSR1 = 'N' THEN 'active' ELSE '' END SURVEY1N
+			, ANSR1_CNTN SURVEY1STR
+			, CASE WHEN ANSR2 = 'Y' THEN 'active' ELSE '' END SURVEY2Y
+			, CASE WHEN ANSR2 = 'N' THEN 'active' ELSE '' END SURVEY2N
+			, ANSR2_CNTN SURVEY2STR
+			, CASE WHEN ANSR3 = 'Y' THEN 'active' ELSE '' END SURVEY3Y
+			, CASE WHEN ANSR3 = 'N' THEN 'active' ELSE '' END SURVEY3N
+			, ANSR1_CNTN SURVEY3STR
+			, CASE WHEN QUST1_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY4Y
+			, CASE WHEN QUST1_ANSR = 'N' THEN 'active' ELSE '' END SURVEY4N
+			, CASE WHEN QUST2_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY5Y
+			, CASE WHEN QUST2_ANSR = 'N' THEN 'active' ELSE '' END SURVEY5N
+			, CASE WHEN QUST3_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY6Y
+			, CASE WHEN QUST3_ANSR = 'N' THEN 'active' ELSE '' END SURVEY6N
+			, CASE WHEN QUST4_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY7Y
+			, CASE WHEN QUST4_ANSR = 'N' THEN 'active' ELSE '' END SURVEY7N
+			, CASE WHEN QUST5_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY8Y
+			, CASE WHEN QUST5_ANSR = 'N' THEN 'active' ELSE '' END SURVEY8N
+			, CASE WHEN QUST6_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY9Y
+			, CASE WHEN QUST6_ANSR = 'N' THEN 'active' ELSE '' END SURVEY9N
+			, CASE WHEN QUST7_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY10Y
+			, CASE WHEN QUST7_ANSR = 'N' THEN 'active' ELSE '' END SURVEY10N
+			, CASE WHEN QUST8_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY11Y
+			, CASE WHEN QUST8_ANSR = 'N' THEN 'active' ELSE '' END SURVEY11N
+			, CASE WHEN QUST9_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY12Y
+			, CASE WHEN QUST9_ANSR = 'N' THEN 'active' ELSE '' END SURVEY12N
+			, CASE WHEN QUST10_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY13Y
+			, CASE WHEN QUST10_ANSR = 'N' THEN 'active' ELSE '' END SURVEY13N
+			, CASE WHEN QUST11_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY14Y
+			, CASE WHEN QUST11_ANSR = 'N' THEN 'active' ELSE '' END SURVEY14N
+			, CASE WHEN QUST12_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY15Y
+			, CASE WHEN QUST12_ANSR = 'N' THEN 'active' ELSE '' END SURVEY15N
+			, CASE WHEN QUST13_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY16Y
+			, CASE WHEN QUST13_ANSR = 'N' THEN 'active' ELSE '' END SURVEY16N
+			, CASE WHEN QUST14_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY17Y
+			, CASE WHEN QUST14_ANSR = 'N' THEN 'active' ELSE '' END SURVEY17N
+			, CASE WHEN QUST15_ANSR = 'Y' THEN 'active' ELSE '' END SURVEY18Y
+			, CASE WHEN QUST15_ANSR = 'N' THEN 'active' ELSE '' END SURVEY18N
+			,YES_TOT_SCORE TOTY
+			,NO_TOT_SCORE TOTN
+			,CNSR_OPTN_SCORE CTOTY
+			,CNSR_OPTN_TOT COT
+		FROM gs_doc_cntn_comm  WHERE NUM = #num#
+	</select>
+	
+	<!-- 집단상담일지 PDF -->
+	<select id="supportDao.PDFgCnsDtl"
+		parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			(SELECT CENTER_NM FROM gs_center_m WHERE NUM = ggd.CENTER_GB ) AS centerGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = ggd.CNS_GB) AS cnsGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G71' AND ODR = ggd.ZONE_GB) AS zoneGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = ggd.LOCAL_GB) AS localGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G089' AND ODR = ggd.SIGUN_CD) AS sigunGb ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G58' AND ODR = ggd.major_appl_cd) AS majorApplCd ,
+			ggd.pgrm_nm ,
+			ggd.cns_cnt ,
+			ggd.atvy_strt_hour ,
+			ggd.atvy_strt_min ,
+			ggd.atvy_end_hour ,
+			ggd.atvy_end_min ,
+			ggd.atvy_tot_min ,
+			date_format(str_to_date(ggd.atvy_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS atvyDt ,
+			ggd.atvy_place ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G44' AND ODR = ggd.older_rel) AS olderRel ,
+			ggd.leader ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G90' AND ODR = ggd.leader_gb) AS leaderGb ,
+			ggd.anchor ,
+			ggd.input_nm ,
+			ggd.atde_cnt ,
+			ggd.atde_nm ,
+			ggd.atvy_title ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G17' AND ODR = ggd.CNS_TYPE) AS cnsType ,
+			ggd.atvy_goal ,
+			ggd.pgrm_cntn ,
+			ggd.evat ,
+			ggd.after_plan ,
+			ggd.etc ,
+			date_format(ggd.db_ins_tm,'%Y년 %m월 %d일') AS dbInsTm
+		FROM
+			gs_gcns_dtl ggd
+		WHERE 
+			ggd.NUM = #num#
+	</select>
+	
+	<!-- 상담사례 종결서 PDF -->
+	<select id="supportDao.PDFcnsEndDtl" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT  
+			gce.CNSR_ID AS survey1y,
+			gce.CNSR_NM AS survey2y,
+			gce.CNSLE_NM AS survey3y,
+			date_format(str_to_date(gce.BIRTH_DT,'%Y%m%d'),'%Y년 %m월 %d일') AS survey4y ,
+			gce.TEL AS survey5y,
+			gce.MOBILE AS survey6y,
+			gce.ADDR AS survey7y,
+			date_format(str_to_date(gce.CNS_DT_S,'%Y.%m.%d'),'%Y년 %m월 %d일') AS survey8y ,
+			date_format(str_to_date(gce.CNS_DT_E,'%Y.%m.%d'),'%Y년 %m월 %d일') AS survey9y ,
+			case gce.CNS_END_METHD when '1' then '면접' when '2' then '전화' when '3' then '기타' ELSE '' END AS survey10y ,
+			gce.CNS_STFT AS survey11y,
+			gce.HELP_CNTN AS survey12y ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G23' AND ODR = gce.CNS_END_RESN) AS survey13y ,
+			gce.CNTN AS survey14y,
+			gce.VLTR_CNTN AS survey15y,
+			DATE_FORMAT(gce.db_ins_tm,'%Y년 %m월 %d일') AS survey16y
+		FROM  
+			gs_cns_end AS gce
+		WHERE 
+			num = #num#
+	</select>
+	
+	<!-- 내부연계의뢰서 PDF -->
+	<select id="supportDao.PDFlinkageReqDtl" parameterClass="PdfVO" resultClass="egovMap">
+		
+		SELECT
+			A.case_no ,
+			A.req_dept AS survey1y,
+			A.req_dept_per as survey2y,
+			DATE_FORMAT(A.REQ_DT,'%Y년 %m월 %d일') as survey3y ,
+			A.help_dept as survey4y ,
+			A.help_dept_per as survey5y ,
+			DATE_FORMAT(A.RELY_TERM, '%Y년 %m월 %d일') as survey6y ,
+			A.cnsle_nm as survey7y ,
+			CASE A.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE A.GENDER END as survey8y ,
+			A.birth_dt as survey9y ,
+			A.addr as survey10y,
+			A.tel_no as survey11y ,
+			A.rcpt_sgct as survey12y ,
+			A.req_resn_cntn as survey13y ,
+			A.pgrs_rslt as survey14y ,
+			A.etc as survey15y
+			
+		FROM
+			GS_LINK_REQ_M AS A
+		WHERE 
+			A.NUM = #num#
+	</select>
+	
+	<!-- 외부연계의뢰서 PDF -->
+	<select id="supportDao.PDFlinkageReqDtl2" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT
+			case_no ,
+			YEAR AS survey1y ,
+			MONTH AS survey2y ,
+			DAY AS survey3y ,
+			link_req_name AS survey4y ,
+			link_req_nm_tel AS survey5y ,
+			cnsle_nm AS survey6y, 
+			age AS survey7y ,
+		 	addr AS survey8y ,
+			tel_no AS survey9y , 
+			cnsle_helth AS survey10y ,
+			cnsle_gong_gb AS survey11y ,
+			psyc_rst_mmseds AS survey12y ,
+			psyc_rst_etc AS survey13y ,
+			cnsle_psyc_rst AS survey14y ,
+			cnsr_op AS survey15y ,
+			link_req_desc AS survey16y ,
+			link_req_org_nm AS survey17y ,
+			link_req_org_tel AS survey18y ,
+			link_req_recv_name AS survey19y ,
+			link_req_recv_year AS survey20y ,
+			link_req_recv_month AS survey21y ,
+			link_req_recv_day AS survey22y ,
+			link_req_recv_rst AS survey23y ,
+			org_name AS survey24y ,
+			req_name AS survey25y ,
+			case gender when 'M' then '남자' when 'F' then '여자' ELSE '' END AS survey26y
+		FROM
+			GS_LINK_REQ_M
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 네트워크구축회의 보고서 PDF -->
+	<select id="supportDao.PDFntwkMeetRptDtl" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT
+			gnmr.INPUT_NM AS survey1y,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G39' AND ODR = gnmr.JOIN_ORG_CD) AS survey2y ,
+			date_format(str_to_date(gnmr.MEET_DT,'%Y.%m.%d'),'%Y년 %m월 %d일') AS survey3y ,
+			gnmr.JOIN_MAN AS survey4y ,
+			gnmr.JOIN_PLACE AS survey5y ,
+			gnmr.JOIN_CNTN AS survey6y
+		FROM
+			gs_ntwk_meet_rpt as gnmr
+		WHERE 
+			NTWK_MEET_NO = #num#
+	</select>
+	
+	<!-- 교육활동보고서 PDF -->
+	<select id="supportDao.PDFeduAtvyRptDtl" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT
+			gear.INPUT_NM AS survey1y,
+			(SELECT CENTER_NM FROM gs_center_m WHERE NUM = gear.CENTER_GB ) AS survey2y ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G91' AND ODR = gear.HOST_GB) AS survey3y ,
+			gear.EDU_PEOPLE AS survey4y ,
+			date_format(str_to_date(gear.EDU_DT,'%Y.%m.%d'),'%Y년 %m월 %d일') AS survey5y ,
+			CONCAT(RIGHT(CONCAT('00',gear.EDU_STT_HOUR),2),':',RIGHT(CONCAT('00',gear.EDU_STT_MIN),2)) survey6y ,
+			CONCAT(RIGHT(CONCAT('00',gear.EDU_END_HOUR),2),':',RIGHT(CONCAT('00',gear.EDU_END_MIN),2)) survey7y ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G76' AND ODR = gear.EDU_TITLE) AS survey8y ,
+			(SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '교육방법' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.EDU_WAY, ',', numbers.n), ',', -1) CD  FROM numbers  INNER JOIN  gs_edu_atvy_rpt AS B ON CHAR_LENGTH(B.EDU_WAY)-CHAR_LENGTH(REPLACE(B.EDU_WAY, ',', ''))>=numbers.n-1 WHERE B.EDU_ATVY_NO = gear.EDU_ATVY_NO ) ) AS survey9y ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G78' AND ODR = gear.EDU_MAN) AS survey10y ,
+			gear.PSYC_EXAM_CNTN AS survey11y ,
+			gear.MAJOR_CNTN AS survey12y
+			
+		FROM
+			GS_EDU_ATVY_RPT as gear
+		WHERE 
+			EDU_ATVY_NO = #num#
+	</select>
+	
+	<!-- 홍보활동보고서  PDF -->
+	<select id="supportDao.PDFprAtvyRptDtl" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT
+			gpar.INPUT_NM AS survey1y,
+			(SELECT CENTER_NM FROM gs_center_m WHERE NUM = gpar.CENTER_GB ) AS survey2y ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G42' AND ODR = gpar.PROMOTION) AS survey3y ,
+			date_format(str_to_date(gpar.PR_ATVY_DT,'%Y.%m.%d'),'%Y년 %m월 %d일') AS survey4y ,
+			CONCAT(RIGHT(CONCAT('00',gpar.PR_STT_HOUR),2),':',RIGHT(CONCAT('00',gpar.PR_STT_MIN),2)) survey5y ,
+			CONCAT(RIGHT(CONCAT('00',gpar.PR_END_HOUR),2),':',RIGHT(CONCAT('00',gpar.PR_END_MIN),2)) survey6y ,
+			(SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '홍보활동' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PR_ATVY_AREA, ',', numbers.n), ',', -1) CD  FROM numbers  INNER JOIN  gs_pr_atvy_rpt AS B ON CHAR_LENGTH(B.PR_ATVY_AREA)-CHAR_LENGTH(REPLACE(B.PR_ATVY_AREA, ',', ''))>=numbers.n-1 WHERE B.PR_ATVY_NO = gpar.PR_ATVY_NO ) ) AS survey7y , 
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G92' AND ODR = gpar.PR_ATVY_PTCT_GB) AS survey8y ,
+			gpar.PR_ATVY_PTCT AS survey9y ,
+			(SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD in ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_NM = '교육대상' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PR_ATVY_RCPT, ',', numbers.n), ',', -1) CD  FROM numbers  INNER JOIN  gs_pr_atvy_rpt AS B ON CHAR_LENGTH(B.PR_ATVY_RCPT)-CHAR_LENGTH(REPLACE(B.PR_ATVY_RCPT, ',', ''))>=numbers.n-1 WHERE B.PR_ATVY_NO = gpar.PR_ATVY_NO ) ) AS survey10y , 
+			gpar.PR_ATVY_MAN survey11y ,
+			gpar.PR_ATVY_PLACE survey12y ,
+			gpar.PSYC_EXAM survey13y ,
+			gpar.PR_ATVY_CNTN survey14y
+		FROM
+			gs_pr_atvy_rpt as gpar
+		WHERE 
+			PR_ATVY_NO = #num#
+	</select>
+	
+	<!-- 심리검사1 - 상담사전사후기록지 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc1" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			date_format(str_to_date(end_dt,'%Y.%m.%d'), '%Y년 %m월 %d일') AS endDt ,
+			no7 AS survey1y ,
+			no8 AS survey1n ,
+			no9 AS survey2y ,
+			no10 AS survey2n ,
+			no11 AS survey3y ,
+			no12 AS survey3n ,
+			no13 AS survey4y ,
+			no14 AS survey4n ,
+			no15 AS survey5y ,
+			no16 AS survey5n ,
+			no17 AS survey6y ,
+			no18 AS survey6n ,
+			no19 AS survey7y ,
+			no20 AS survey7n ,
+			no21 AS survey8y
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사2 - DUKE-AD PDF -->
+	<select id="supportDao.PDFpsyCnsDoc2" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			case NO5 when 'M' then '남자' when 'F' then '여자' ELSE '알수없음' END AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			NO6 AS survey1n ,
+			tel_no AS survey2y ,
+			NO7 AS survey2n ,
+			CASE WHEN NO7 = '1' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO7 = '2' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO7 = '3' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO8 = '1' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO8 = '2' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO8 = '3' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO9 = '1' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO9 = '2' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO9 = '3' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO10 = '1' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO10 = '2' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO10 = '3' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO11 = '1' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO11 = '2' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO11 = '3' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO12 = '1' THEN 'active' ELSE '' END SURVEY10N ,
+			CASE WHEN NO12 = '2' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO12 = '3' THEN 'active' ELSE '' END SURVEY11N ,
+			CASE WHEN NO13 = '1' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO13 = '2' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO13 = '3' THEN 'active' ELSE '' END SURVEY13Y ,
+			NO14 AS SURVEY13N
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사3 - 죽음학대 질문지 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc3" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			case NO9 when 'M' then '남자' when 'F' then '여자' ELSE '알수없음' END AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			NO10 AS survey1n ,
+			tel_no AS survey2y ,
+			NO7 AS survey2n ,
+			CASE WHEN NO1 = 'Y' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO1 = 'N' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO2 = 'Y' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO2 = 'N' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO3 = 'Y' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO3 = 'N' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO4 = 'Y' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO4 = 'N' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO5 = 'Y' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO5 = 'N' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO6 = 'Y' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO6 = 'N' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO7 = 'Y' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO7 = 'N' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO8 = 'Y' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO8 = 'N' THEN 'active' ELSE '' END SURVEY10N ,
+			CASE WHEN NO11 = 'Y' THEN 'O' WHEN NO11 = 'N' THEN 'X' ELSE '' END SURVEY11Y ,
+			date_format(STR_TO_DATE(NO12,'%Y.%m.%d'),'%Y년 %m월 %d일') AS SURVEY11N 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사4 - 노인우울척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc4" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			tel_no AS survey1n ,
+			CASE WHEN NO1 = 'Y' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = 'N' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO2 = 'Y' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO2 = 'N' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO3 = 'Y' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO3 = 'N' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO4 = 'Y' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO4 = 'N' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO5 = 'Y' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO5 = 'N' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO6 = 'Y' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO6 = 'N' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO7 = 'Y' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO7 = 'N' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO8 = 'Y' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO8 = 'N' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO9 = 'Y' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO9 = 'N' THEN 'active' ELSE '' END SURVEY10N ,
+			CASE WHEN NO10 = 'Y' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO10 = 'N' THEN 'active' ELSE '' END SURVEY11N ,
+			CASE WHEN NO11 = 'Y' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO11 = 'N' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO12 = 'Y' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO12 = 'N' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO13 = 'Y' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO13 = 'N' THEN 'active' ELSE '' END SURVEY14N ,
+			CASE WHEN NO14 = 'Y' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO14 = 'N' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO15 = 'Y' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO15 = 'N' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO16 = 'Y' THEN 'active' ELSE '' END SURVEY17Y ,
+			CASE WHEN NO16 = 'N' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO17 = 'Y' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO17 = 'N' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO18 = 'Y' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO18 = 'N' THEN 'active' ELSE '' END SURVEY19N ,
+			CASE WHEN NO19 = 'Y' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO19 = 'N' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO20 = 'Y' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO20 = 'N' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO21 = 'Y' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO21 = 'N' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO22 = 'Y' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO22 = 'N' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO23 = 'Y' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO23 = 'N' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO24 = 'Y' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO24 = 'N' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO25 = 'Y' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO25 = 'N' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO26 = 'Y' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO26 = 'N' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO27 = 'Y' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO27 = 'N' THEN 'active' ELSE '' END SURVEY28N ,
+			CASE WHEN NO28 = 'Y' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO28 = 'N' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO29 = 'Y' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO29 = 'N' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO30 = 'Y' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO30 = 'N' THEN 'active' ELSE '' END SURVEY31N 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사5 - 노인우울 및 자살사고 척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc5" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			case NO20 when 'M' then '남자' when 'F' then '여자' ELSE '알수없음' END AS survey1y ,
+			NO21 AS survey1n ,
+			tel_no AS survey24y ,
+			NO22 AS survey23n ,
+			CASE WHEN NO1 = 'Y' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = 'N' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO2 = 'Y' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO2 = 'N' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO3 = 'Y' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO3 = 'N' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO4 = 'Y' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO4 = 'N' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO5 = 'Y' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO5 = 'N' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO6 = 'Y' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO6 = 'N' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO7 = 'Y' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO7 = 'N' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO8 = 'Y' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO8 = 'N' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO9 = 'Y' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO9 = 'N' THEN 'active' ELSE '' END SURVEY10N ,
+			CASE WHEN NO10 = 'Y' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO10 = 'N' THEN 'active' ELSE '' END SURVEY11N ,
+			CASE WHEN NO11 = 'Y' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO11 = 'N' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO12 = 'Y' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO12 = 'N' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO13 = 'Y' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO13 = 'N' THEN 'active' ELSE '' END SURVEY14N ,
+			CASE WHEN NO14 = 'Y' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO14 = 'N' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO15 = 'Y' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO15 = 'N' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO16 = '1' THEN 'active' ELSE '' END SURVEY17Y ,
+			CASE WHEN NO16 = '2' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO16 = '3' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO16 = '4' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY19N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO19 = '1' THEN '예'when NO19 = '2' then '아니오' ELSE '' END SURVEY23Y 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사8 - 대인관계변화척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc8" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			CASE WHEN NO1 = '1' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = '2' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO1 = '3' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO1 = '4' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO1 = '5' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO2 = '1' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO2 = '2' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO2 = '3' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO2 = '4' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO2 = '5' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO3 = '1' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO3 = '2' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO3 = '3' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO3 = '4' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO3 = '5' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO4 = '1' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO4 = '2' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO4 = '3' THEN 'active' ELSE '' END SURVEY10N ,
+			
+			CASE WHEN NO4 = '4' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO4 = '5' THEN 'active' ELSE '' END SURVEY11N ,
+			
+			CASE WHEN NO5 = '1' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO5 = '2' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO5 = '3' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO5 = '4' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO5 = '5' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO6 = '1' THEN 'active' ELSE '' END SURVEY14N ,
+			
+			CASE WHEN NO6 = '2' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO6 = '3' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO6 = '4' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO6 = '5' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO7 = '1' THEN 'active' ELSE '' END SURVEY17Y ,
+			
+			CASE WHEN NO7 = '2' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO7 = '3' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO7 = '4' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO7 = '5' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO8 = '1' THEN 'active' ELSE '' END SURVEY19N ,
+			           
+			CASE WHEN NO8 = '2' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO8 = '3' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO8 = '4' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO8 = '5' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO9 = '1' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO9 = '2' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO9 = '3' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO9 = '4' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO9 = '5' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO10 = '1' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO10 = '2' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO10 = '3' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO10 = '4' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO10 = '5' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO11 = '1' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO11 = '2' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO11 = '3' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO11 = '4' THEN 'active' ELSE '' END SURVEY28N ,
+			           
+			CASE WHEN NO11 = '5' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO12 = '1' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO12 = '2' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO12 = '3' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO12 = '4' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO12 = '5' THEN 'active' ELSE '' END SURVEY31N ,
+			
+			CASE WHEN NO13 = '1' THEN 'active' ELSE '' END SURVEY32Y ,
+			CASE WHEN NO13 = '2' THEN 'active' ELSE '' END SURVEY32N ,
+			CASE WHEN NO13 = '3' THEN 'active' ELSE '' END SURVEY33Y ,
+			CASE WHEN NO13 = '4' THEN 'active' ELSE '' END SURVEY33N ,
+			CASE WHEN NO13 = '5' THEN 'active' ELSE '' END SURVEY34Y ,
+			CASE WHEN NO14 = '1' THEN 'active' ELSE '' END SURVEY34N ,
+			CASE WHEN NO14 = '2' THEN 'active' ELSE '' END SURVEY35Y ,
+			CASE WHEN NO14 = '3' THEN 'active' ELSE '' END SURVEY35N ,
+			CASE WHEN NO14 = '4' THEN 'active' ELSE '' END SURVEY36Y ,
+			CASE WHEN NO14 = '5' THEN 'active' ELSE '' END SURVEY36N ,
+			CASE WHEN NO15 = '1' THEN 'active' ELSE '' END SURVEY37Y ,
+			CASE WHEN NO15 = '2' THEN 'active' ELSE '' END SURVEY37N ,
+			CASE WHEN NO15 = '3' THEN 'active' ELSE '' END SURVEY38Y ,
+			CASE WHEN NO15 = '4' THEN 'active' ELSE '' END SURVEY38N ,
+			CASE WHEN NO15 = '5' THEN 'active' ELSE '' END SURVEY39Y ,
+			CASE WHEN NO16 = '1' THEN 'active' ELSE '' END SURVEY39N ,
+			CASE WHEN NO16 = '2' THEN 'active' ELSE '' END SURVEY40Y ,
+			CASE WHEN NO16 = '3' THEN 'active' ELSE '' END SURVEY40N ,
+			CASE WHEN NO16 = '4' THEN 'active' ELSE '' END SURVEY41Y ,
+			CASE WHEN NO16 = '5' THEN 'active' ELSE '' END SURVEY41N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY42Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY42N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY43Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY43N ,
+			CASE WHEN NO17 = '5' THEN 'active' ELSE '' END SURVEY44Y ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY44N ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY45Y ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY45N ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY46Y ,
+			CASE WHEN NO18 = '5' THEN 'active' ELSE '' END SURVEY46N ,
+		
+			CASE WHEN NO19 = '1' THEN 'active' ELSE '' END SURVEY47Y ,
+			CASE WHEN NO19 = '2' THEN 'active' ELSE '' END SURVEY47N ,
+			CASE WHEN NO19 = '3' THEN 'active' ELSE '' END SURVEY48Y ,
+			CASE WHEN NO19 = '4' THEN 'active' ELSE '' END SURVEY48N ,
+			CASE WHEN NO19 = '5' THEN 'active' ELSE '' END SURVEY49Y ,
+			CASE WHEN NO20 = '1' THEN 'active' ELSE '' END SURVEY49N ,
+			CASE WHEN NO20 = '2' THEN 'active' ELSE '' END SURVEY50Y ,
+			CASE WHEN NO20 = '3' THEN 'active' ELSE '' END SURVEY50N ,
+			CASE WHEN NO20 = '4' THEN 'active' ELSE '' END SURVEY51Y ,
+			CASE WHEN NO20 = '5' THEN 'active' ELSE '' END SURVEY51N ,
+		
+			CASE WHEN NO21 = '1' THEN 'active' ELSE '' END SURVEY52Y ,
+			CASE WHEN NO21 = '2' THEN 'active' ELSE '' END SURVEY52N ,
+			CASE WHEN NO21 = '3' THEN 'active' ELSE '' END SURVEY53Y ,
+			CASE WHEN NO21 = '4' THEN 'active' ELSE '' END SURVEY53N ,
+			CASE WHEN NO21 = '5' THEN 'active' ELSE '' END SURVEY54Y ,
+			CASE WHEN NO22 = '1' THEN 'active' ELSE '' END SURVEY54N ,
+			CASE WHEN NO22 = '2' THEN 'active' ELSE '' END SURVEY55Y ,
+			CASE WHEN NO22 = '3' THEN 'active' ELSE '' END SURVEY55N ,
+			CASE WHEN NO22 = '4' THEN 'active' ELSE '' END SURVEY56Y ,
+			CASE WHEN NO22 = '5' THEN 'active' ELSE '' END SURVEY56N ,
+			CASE WHEN NO23 = '1' THEN 'active' ELSE '' END SURVEY57Y ,
+			CASE WHEN NO23 = '2' THEN 'active' ELSE '' END SURVEY57N ,
+			CASE WHEN NO23 = '3' THEN 'active' ELSE '' END SURVEY58Y ,
+			CASE WHEN NO23 = '4' THEN 'active' ELSE '' END SURVEY58N ,
+			CASE WHEN NO23 = '5' THEN 'active' ELSE '' END SURVEY59Y ,
+			CASE WHEN NO24 = '1' THEN 'active' ELSE '' END SURVEY59N ,
+			CASE WHEN NO24 = '2' THEN 'active' ELSE '' END SURVEY60Y ,
+			CASE WHEN NO24 = '3' THEN 'active' ELSE '' END SURVEY60N ,
+			CASE WHEN NO24 = '4' THEN 'active' ELSE '' END SURVEY61Y ,
+			CASE WHEN NO24 = '5' THEN 'active' ELSE '' END SURVEY61N ,
+			CASE WHEN NO25 = '1' THEN 'active' ELSE '' END SURVEY62Y ,
+			CASE WHEN NO25 = '2' THEN 'active' ELSE '' END SURVEY62N ,
+			CASE WHEN NO25 = '3' THEN 'active' ELSE '' END SURVEY63Y ,
+			CASE WHEN NO25 = '4' THEN 'active' ELSE '' END SURVEY63N ,
+			CASE WHEN NO25 = '5' THEN 'active' ELSE '' END SURVEY64Y 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사9 - 한국형 알코올 중독 선별검사 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc9" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			tel_no AS survey1y ,
+			CASE WHEN NO1 = 'Y' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO2 = 'Y' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO3 = 'Y' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO4 = 'Y' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO5 = 'Y' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO6 = 'Y' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO7 = 'Y' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO8 = 'Y' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO9 = 'Y' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO10 = 'Y' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO11 = 'Y' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO12 = 'Y' THEN 'active' ELSE '' END SURVEY13Y
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사10 - 불안척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc10" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			CASE WHEN NO1 = '1' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = '2' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO1 = '3' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO1 = '4' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO2 = '1' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO2 = '2' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO2 = '3' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO2 = '4' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO3 = '1' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO3 = '2' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO3 = '3' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO3 = '4' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO4 = '1' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO4 = '2' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO4 = '3' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO4 = '4' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO5 = '1' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO5 = '2' THEN 'active' ELSE '' END SURVEY10N ,
+			
+			CASE WHEN NO5 = '3' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO5 = '4' THEN 'active' ELSE '' END SURVEY11N ,
+			
+			CASE WHEN NO6 = '1' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO6 = '2' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO6 = '3' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO6 = '4' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO7 = '1' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO7 = '2' THEN 'active' ELSE '' END SURVEY14N ,
+			
+			CASE WHEN NO7 = '3' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO7 = '4' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO8 = '1' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO8 = '2' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO8 = '3' THEN 'active' ELSE '' END SURVEY17Y ,
+			
+			CASE WHEN NO8 = '4' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO9 = '1' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO9 = '2' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO9 = '3' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO9 = '4' THEN 'active' ELSE '' END SURVEY19N ,
+			           
+			CASE WHEN NO10 = '1' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO10 = '2' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO10 = '3' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO10 = '4' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO11 = '1' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO11 = '2' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO11 = '3' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO11 = '4' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO12 = '1' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO12 = '2' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO12 = '3' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO12 = '4' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO13 = '1' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO13 = '2' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO13 = '3' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO13 = '4' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO14 = '1' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO14 = '2' THEN 'active' ELSE '' END SURVEY28N ,
+			           
+			CASE WHEN NO14 = '3' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO14 = '4' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO15 = '1' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO15 = '2' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO15 = '3' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO15 = '4' THEN 'active' ELSE '' END SURVEY31N ,
+			
+			CASE WHEN NO16 = '1' THEN 'active' ELSE '' END SURVEY32Y ,
+			CASE WHEN NO16 = '2' THEN 'active' ELSE '' END SURVEY32N ,
+			CASE WHEN NO16 = '3' THEN 'active' ELSE '' END SURVEY33Y ,
+			CASE WHEN NO16 = '4' THEN 'active' ELSE '' END SURVEY33N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY34Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY34N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY35Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY35N ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY36Y ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY36N ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY37Y ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY37N ,
+			CASE WHEN NO19 = '1' THEN 'active' ELSE '' END SURVEY38Y ,
+			CASE WHEN NO19 = '2' THEN 'active' ELSE '' END SURVEY38N ,
+			CASE WHEN NO19 = '3' THEN 'active' ELSE '' END SURVEY39Y ,
+			CASE WHEN NO19 = '4' THEN 'active' ELSE '' END SURVEY39N ,
+			CASE WHEN NO20 = '1' THEN 'active' ELSE '' END SURVEY40Y ,
+			CASE WHEN NO20 = '2' THEN 'active' ELSE '' END SURVEY40N ,
+			CASE WHEN NO20 = '3' THEN 'active' ELSE '' END SURVEY41Y ,
+			CASE WHEN NO20 = '4' THEN 'active' ELSE '' END SURVEY41N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY42Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY42N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY43Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY43N ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY44Y ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY44N ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY45Y ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY45N ,
+			CASE WHEN NO19 = '1' THEN 'active' ELSE '' END SURVEY46Y ,
+			CASE WHEN NO19 = '2' THEN 'active' ELSE '' END SURVEY46N ,
+		
+			CASE WHEN NO19 = '3' THEN 'active' ELSE '' END SURVEY47Y ,
+			CASE WHEN NO19 = '4' THEN 'active' ELSE '' END SURVEY47N ,
+			CASE WHEN NO20 = '1' THEN 'active' ELSE '' END SURVEY48Y ,
+			CASE WHEN NO20 = '2' THEN 'active' ELSE '' END SURVEY48N ,
+			CASE WHEN NO20 = '3' THEN 'active' ELSE '' END SURVEY49Y ,
+			CASE WHEN NO20 = '4' THEN 'active' ELSE '' END SURVEY49N 
+			
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사11 - 스트레스 척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc11" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt ,
+			CASE WHEN NO1 = '1' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = '2' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO1 = '3' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO1 = '4' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO1 = '5' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO2 = '1' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO2 = '2' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO2 = '3' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO2 = '4' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO2 = '5' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO3 = '1' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO3 = '2' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO3 = '3' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO3 = '4' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO3 = '5' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO4 = '1' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO4 = '2' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO4 = '3' THEN 'active' ELSE '' END SURVEY10N ,
+			
+			CASE WHEN NO4 = '4' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO4 = '5' THEN 'active' ELSE '' END SURVEY11N ,
+			
+			CASE WHEN NO5 = '1' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO5 = '2' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO5 = '3' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO5 = '4' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO5 = '5' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO6 = '1' THEN 'active' ELSE '' END SURVEY14N ,
+			
+			CASE WHEN NO6 = '2' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO6 = '3' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO6 = '4' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO6 = '5' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO7 = '1' THEN 'active' ELSE '' END SURVEY17Y ,
+			
+			CASE WHEN NO7 = '2' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO7 = '3' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO7 = '4' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO7 = '5' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO8 = '1' THEN 'active' ELSE '' END SURVEY19N ,
+			           
+			CASE WHEN NO8 = '2' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO8 = '3' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO8 = '4' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO8 = '5' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO9 = '1' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO9 = '2' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO9 = '3' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO9 = '4' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO9 = '5' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO10 = '1' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO10 = '2' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO10 = '3' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO10 = '4' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO10 = '5' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO11 = '1' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO11 = '2' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO11 = '3' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO11 = '4' THEN 'active' ELSE '' END SURVEY28N ,
+			           
+			CASE WHEN NO11 = '5' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO12 = '1' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO12 = '2' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO12 = '3' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO12 = '4' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO12 = '5' THEN 'active' ELSE '' END SURVEY31N ,
+			
+			CASE WHEN NO13 = '1' THEN 'active' ELSE '' END SURVEY32Y ,
+			CASE WHEN NO13 = '2' THEN 'active' ELSE '' END SURVEY32N ,
+			CASE WHEN NO13 = '3' THEN 'active' ELSE '' END SURVEY33Y ,
+			CASE WHEN NO13 = '4' THEN 'active' ELSE '' END SURVEY33N ,
+			CASE WHEN NO13 = '5' THEN 'active' ELSE '' END SURVEY34Y ,
+			CASE WHEN NO14 = '1' THEN 'active' ELSE '' END SURVEY34N ,
+			CASE WHEN NO14 = '2' THEN 'active' ELSE '' END SURVEY35Y ,
+			CASE WHEN NO14 = '3' THEN 'active' ELSE '' END SURVEY35N ,
+			CASE WHEN NO14 = '4' THEN 'active' ELSE '' END SURVEY36Y ,
+			CASE WHEN NO14 = '5' THEN 'active' ELSE '' END SURVEY36N ,
+			CASE WHEN NO15 = '1' THEN 'active' ELSE '' END SURVEY37Y ,
+			CASE WHEN NO15 = '2' THEN 'active' ELSE '' END SURVEY37N ,
+			CASE WHEN NO15 = '3' THEN 'active' ELSE '' END SURVEY38Y ,
+			CASE WHEN NO15 = '4' THEN 'active' ELSE '' END SURVEY38N ,
+			CASE WHEN NO15 = '5' THEN 'active' ELSE '' END SURVEY39Y ,
+			CASE WHEN NO16 = '1' THEN 'active' ELSE '' END SURVEY39N ,
+			CASE WHEN NO16 = '2' THEN 'active' ELSE '' END SURVEY40Y ,
+			CASE WHEN NO16 = '3' THEN 'active' ELSE '' END SURVEY40N ,
+			CASE WHEN NO16 = '4' THEN 'active' ELSE '' END SURVEY41Y ,
+			CASE WHEN NO16 = '5' THEN 'active' ELSE '' END SURVEY41N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY42Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY42N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY43Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY43N ,
+			CASE WHEN NO17 = '5' THEN 'active' ELSE '' END SURVEY44Y ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY44N ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY45Y ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY45N ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY46Y ,
+			CASE WHEN NO18 = '5' THEN 'active' ELSE '' END SURVEY46N ,
+		
+			CASE WHEN NO19 = '1' THEN 'active' ELSE '' END SURVEY47Y ,
+			CASE WHEN NO19 = '2' THEN 'active' ELSE '' END SURVEY47N ,
+			CASE WHEN NO19 = '3' THEN 'active' ELSE '' END SURVEY48Y ,
+			CASE WHEN NO19 = '4' THEN 'active' ELSE '' END SURVEY48N ,
+			CASE WHEN NO19 = '5' THEN 'active' ELSE '' END SURVEY49Y ,
+			CASE WHEN NO20 = '1' THEN 'active' ELSE '' END SURVEY49N ,
+			CASE WHEN NO20 = '2' THEN 'active' ELSE '' END SURVEY50Y ,
+			CASE WHEN NO20 = '3' THEN 'active' ELSE '' END SURVEY50N ,
+			CASE WHEN NO20 = '4' THEN 'active' ELSE '' END SURVEY51Y ,
+			CASE WHEN NO20 = '5' THEN 'active' ELSE '' END SURVEY51N ,
+		
+			CASE WHEN NO21 = '1' THEN 'active' ELSE '' END SURVEY52Y ,
+			CASE WHEN NO21 = '2' THEN 'active' ELSE '' END SURVEY52N ,
+			CASE WHEN NO21 = '3' THEN 'active' ELSE '' END SURVEY53Y ,
+			CASE WHEN NO21 = '4' THEN 'active' ELSE '' END SURVEY53N ,
+			CASE WHEN NO21 = '5' THEN 'active' ELSE '' END SURVEY54Y ,
+			CASE WHEN NO22 = '1' THEN 'active' ELSE '' END SURVEY54N ,
+			CASE WHEN NO22 = '2' THEN 'active' ELSE '' END SURVEY55Y ,
+			CASE WHEN NO22 = '3' THEN 'active' ELSE '' END SURVEY55N ,
+			CASE WHEN NO22 = '4' THEN 'active' ELSE '' END SURVEY56Y ,
+			CASE WHEN NO22 = '5' THEN 'active' ELSE '' END SURVEY56N ,
+			CASE WHEN NO23 = '1' THEN 'active' ELSE '' END SURVEY57Y ,
+			CASE WHEN NO23 = '2' THEN 'active' ELSE '' END SURVEY57N ,
+			CASE WHEN NO23 = '3' THEN 'active' ELSE '' END SURVEY58Y ,
+			CASE WHEN NO23 = '4' THEN 'active' ELSE '' END SURVEY58N ,
+			CASE WHEN NO23 = '5' THEN 'active' ELSE '' END SURVEY59Y ,
+			CASE WHEN NO24 = '1' THEN 'active' ELSE '' END SURVEY59N ,
+			CASE WHEN NO24 = '2' THEN 'active' ELSE '' END SURVEY60Y ,
+			CASE WHEN NO24 = '3' THEN 'active' ELSE '' END SURVEY60N ,
+			CASE WHEN NO24 = '4' THEN 'active' ELSE '' END SURVEY61Y ,
+			CASE WHEN NO24 = '5' THEN 'active' ELSE '' END SURVEY61N ,
+			CASE WHEN NO25 = '1' THEN 'active' ELSE '' END SURVEY62Y ,
+			CASE WHEN NO25 = '2' THEN 'active' ELSE '' END SURVEY62N ,
+			CASE WHEN NO25 = '3' THEN 'active' ELSE '' END SURVEY63Y ,
+			CASE WHEN NO25 = '4' THEN 'active' ELSE '' END SURVEY63N ,
+			CASE WHEN NO25 = '5' THEN 'active' ELSE '' END SURVEY64Y ,
+			
+			CASE WHEN NO26 = '1' THEN 'active' ELSE '' END SURVEY64N ,
+			CASE WHEN NO26 = '2' THEN 'active' ELSE '' END SURVEY65Y ,
+			CASE WHEN NO26 = '3' THEN 'active' ELSE '' END SURVEY65N ,
+			CASE WHEN NO26 = '4' THEN 'active' ELSE '' END SURVEY66Y ,
+			CASE WHEN NO26 = '5' THEN 'active' ELSE '' END SURVEY66N ,
+			CASE WHEN NO27 = '1' THEN 'active' ELSE '' END SURVEY67Y ,
+			CASE WHEN NO27 = '2' THEN 'active' ELSE '' END SURVEY67N ,
+			CASE WHEN NO27 = '3' THEN 'active' ELSE '' END SURVEY68Y ,
+			CASE WHEN NO27 = '4' THEN 'active' ELSE '' END SURVEY68N ,
+			CASE WHEN NO27 = '5' THEN 'active' ELSE '' END SURVEY69Y ,
+			CASE WHEN NO28 = '1' THEN 'active' ELSE '' END SURVEY69N ,
+			CASE WHEN NO28 = '2' THEN 'active' ELSE '' END SURVEY70Y ,
+			CASE WHEN NO28 = '3' THEN 'active' ELSE '' END SURVEY70N ,
+			CASE WHEN NO28 = '4' THEN 'active' ELSE '' END SURVEY71Y ,
+			CASE WHEN NO28 = '5' THEN 'active' ELSE '' END SURVEY71N ,
+			CASE WHEN NO29 = '1' THEN 'active' ELSE '' END SURVEY72Y ,
+			CASE WHEN NO29 = '2' THEN 'active' ELSE '' END SURVEY72N ,
+			CASE WHEN NO29 = '3' THEN 'active' ELSE '' END SURVEY73Y ,
+			CASE WHEN NO29 = '4' THEN 'active' ELSE '' END SURVEY73N ,
+			CASE WHEN NO29 = '5' THEN 'active' ELSE '' END SURVEY74Y ,
+			CASE WHEN NO30 = '1' THEN 'active' ELSE '' END SURVEY74N ,
+			CASE WHEN NO30 = '2' THEN 'active' ELSE '' END SURVEY75Y ,
+			CASE WHEN NO30 = '3' THEN 'active' ELSE '' END SURVEY75N ,
+			CASE WHEN NO30 = '4' THEN 'active' ELSE '' END SURVEY76Y ,
+			CASE WHEN NO30 = '5' THEN 'active' ELSE '' END SURVEY76N ,
+			
+			CASE WHEN NO31 = '1' THEN 'active' ELSE '' END SURVEY77Y ,
+			CASE WHEN NO31 = '2' THEN 'active' ELSE '' END SURVEY77N ,
+			CASE WHEN NO31 = '3' THEN 'active' ELSE '' END SURVEY78Y ,
+			CASE WHEN NO31 = '4' THEN 'active' ELSE '' END SURVEY78N ,
+			CASE WHEN NO31 = '5' THEN 'active' ELSE '' END SURVEY79Y ,
+			CASE WHEN NO32 = '1' THEN 'active' ELSE '' END SURVEY79N ,
+			CASE WHEN NO32 = '2' THEN 'active' ELSE '' END SURVEY80Y ,
+			CASE WHEN NO32 = '3' THEN 'active' ELSE '' END SURVEY80N ,
+			CASE WHEN NO32 = '4' THEN 'active' ELSE '' END SURVEY81Y ,
+			CASE WHEN NO32 = '5' THEN 'active' ELSE '' END SURVEY81N ,
+			CASE WHEN NO33 = '1' THEN 'active' ELSE '' END SURVEY82Y ,
+			CASE WHEN NO33 = '2' THEN 'active' ELSE '' END SURVEY82N ,
+			CASE WHEN NO33 = '3' THEN 'active' ELSE '' END SURVEY83Y ,
+			CASE WHEN NO33 = '4' THEN 'active' ELSE '' END SURVEY83N ,
+			CASE WHEN NO33 = '5' THEN 'active' ELSE '' END SURVEY84Y ,
+			CASE WHEN NO34 = '1' THEN 'active' ELSE '' END SURVEY84N ,
+			CASE WHEN NO34 = '2' THEN 'active' ELSE '' END SURVEY85Y ,
+			CASE WHEN NO34 = '3' THEN 'active' ELSE '' END SURVEY85N ,
+			CASE WHEN NO34 = '4' THEN 'active' ELSE '' END SURVEY86Y ,
+			CASE WHEN NO34 = '5' THEN 'active' ELSE '' END SURVEY86N 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사12 - 사별 스트레스 척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc12" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt  ,
+			CASE WHEN NO1 = '1' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = '2' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO1 = '3' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO1 = '4' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO1 = '5' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO2 = '1' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO2 = '2' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO2 = '3' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO2 = '4' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO2 = '5' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO3 = '1' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO3 = '2' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO3 = '3' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO3 = '4' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO3 = '5' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO4 = '1' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO4 = '2' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO4 = '3' THEN 'active' ELSE '' END SURVEY10N ,
+			
+			CASE WHEN NO4 = '4' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO4 = '5' THEN 'active' ELSE '' END SURVEY11N ,
+			
+			CASE WHEN NO5 = '1' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO5 = '2' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO5 = '3' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO5 = '4' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO5 = '5' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO6 = '1' THEN 'active' ELSE '' END SURVEY14N ,
+			
+			CASE WHEN NO6 = '2' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO6 = '3' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO6 = '4' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO6 = '5' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO7 = '1' THEN 'active' ELSE '' END SURVEY17Y ,
+			
+			CASE WHEN NO7 = '2' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO7 = '3' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO7 = '4' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO7 = '5' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO8 = '1' THEN 'active' ELSE '' END SURVEY19N ,
+			           
+			CASE WHEN NO8 = '2' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO8 = '3' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO8 = '4' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO8 = '5' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO9 = '1' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO9 = '2' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO9 = '3' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO9 = '4' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO9 = '5' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO10 = '1' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO10 = '2' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO10 = '3' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO10 = '4' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO10 = '5' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO11 = '1' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO11 = '2' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO11 = '3' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO11 = '4' THEN 'active' ELSE '' END SURVEY28N ,
+			           
+			CASE WHEN NO11 = '5' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO12 = '1' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO12 = '2' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO12 = '3' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO12 = '4' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO12 = '5' THEN 'active' ELSE '' END SURVEY31N ,
+			
+			CASE WHEN NO13 = '1' THEN 'active' ELSE '' END SURVEY32Y ,
+			CASE WHEN NO13 = '2' THEN 'active' ELSE '' END SURVEY32N ,
+			CASE WHEN NO13 = '3' THEN 'active' ELSE '' END SURVEY33Y ,
+			CASE WHEN NO13 = '4' THEN 'active' ELSE '' END SURVEY33N ,
+			CASE WHEN NO13 = '5' THEN 'active' ELSE '' END SURVEY34Y ,
+			CASE WHEN NO14 = '1' THEN 'active' ELSE '' END SURVEY34N ,
+			CASE WHEN NO14 = '2' THEN 'active' ELSE '' END SURVEY35Y ,
+			CASE WHEN NO14 = '3' THEN 'active' ELSE '' END SURVEY35N ,
+			CASE WHEN NO14 = '4' THEN 'active' ELSE '' END SURVEY36Y ,
+			CASE WHEN NO14 = '5' THEN 'active' ELSE '' END SURVEY36N ,
+			CASE WHEN NO15 = '1' THEN 'active' ELSE '' END SURVEY37Y ,
+			CASE WHEN NO15 = '2' THEN 'active' ELSE '' END SURVEY37N ,
+			CASE WHEN NO15 = '3' THEN 'active' ELSE '' END SURVEY38Y ,
+			CASE WHEN NO15 = '4' THEN 'active' ELSE '' END SURVEY38N ,
+			CASE WHEN NO15 = '5' THEN 'active' ELSE '' END SURVEY39Y ,
+			CASE WHEN NO16 = '1' THEN 'active' ELSE '' END SURVEY39N ,
+			CASE WHEN NO16 = '2' THEN 'active' ELSE '' END SURVEY40Y ,
+			CASE WHEN NO16 = '3' THEN 'active' ELSE '' END SURVEY40N ,
+			CASE WHEN NO16 = '4' THEN 'active' ELSE '' END SURVEY41Y ,
+			CASE WHEN NO16 = '5' THEN 'active' ELSE '' END SURVEY41N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY42Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY42N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY43Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY43N ,
+			CASE WHEN NO17 = '5' THEN 'active' ELSE '' END SURVEY44Y ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY44N ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY45Y ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY45N ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY46Y ,
+			CASE WHEN NO18 = '5' THEN 'active' ELSE '' END SURVEY46N ,
+		
+			CASE WHEN NO19 = '1' THEN 'active' ELSE '' END SURVEY47Y ,
+			CASE WHEN NO19 = '2' THEN 'active' ELSE '' END SURVEY47N ,
+			CASE WHEN NO19 = '3' THEN 'active' ELSE '' END SURVEY48Y ,
+			CASE WHEN NO19 = '4' THEN 'active' ELSE '' END SURVEY48N ,
+			CASE WHEN NO19 = '5' THEN 'active' ELSE '' END SURVEY49Y 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사14 - 부부의사소통 척도 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc14" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt ,
+			CASE WHEN NO1 = '1' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = '2' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO1 = '3' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO1 = '4' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO1 = '5' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO2 = '1' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO2 = '2' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO2 = '3' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO2 = '4' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO2 = '5' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO3 = '1' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO3 = '2' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO3 = '3' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO3 = '4' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO3 = '5' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO4 = '1' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO4 = '2' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO4 = '3' THEN 'active' ELSE '' END SURVEY10N ,
+			
+			CASE WHEN NO4 = '4' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO4 = '5' THEN 'active' ELSE '' END SURVEY11N ,
+			
+			CASE WHEN NO5 = '1' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO5 = '2' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO5 = '3' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO5 = '4' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO5 = '5' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO6 = '1' THEN 'active' ELSE '' END SURVEY14N ,
+			
+			CASE WHEN NO6 = '2' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO6 = '3' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO6 = '4' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO6 = '5' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO7 = '1' THEN 'active' ELSE '' END SURVEY17Y ,
+			
+			CASE WHEN NO7 = '2' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO7 = '3' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO7 = '4' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO7 = '5' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO8 = '1' THEN 'active' ELSE '' END SURVEY19N ,
+			           
+			CASE WHEN NO8 = '2' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO8 = '3' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO8 = '4' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO8 = '5' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO9 = '1' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO9 = '2' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO9 = '3' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO9 = '4' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO9 = '5' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO10 = '1' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO10 = '2' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO10 = '3' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO10 = '4' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO10 = '5' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO11 = '1' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO11 = '2' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO11 = '3' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO11 = '4' THEN 'active' ELSE '' END SURVEY28N ,
+			           
+			CASE WHEN NO11 = '5' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO12 = '1' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO12 = '2' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO12 = '3' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO12 = '4' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO12 = '5' THEN 'active' ELSE '' END SURVEY31N ,
+			
+			CASE WHEN NO13 = '1' THEN 'active' ELSE '' END SURVEY32Y ,
+			CASE WHEN NO13 = '2' THEN 'active' ELSE '' END SURVEY32N ,
+			CASE WHEN NO13 = '3' THEN 'active' ELSE '' END SURVEY33Y ,
+			CASE WHEN NO13 = '4' THEN 'active' ELSE '' END SURVEY33N ,
+			CASE WHEN NO13 = '5' THEN 'active' ELSE '' END SURVEY34Y ,
+			CASE WHEN NO14 = '1' THEN 'active' ELSE '' END SURVEY34N ,
+			CASE WHEN NO14 = '2' THEN 'active' ELSE '' END SURVEY35Y ,
+			CASE WHEN NO14 = '3' THEN 'active' ELSE '' END SURVEY35N ,
+			CASE WHEN NO14 = '4' THEN 'active' ELSE '' END SURVEY36Y ,
+			CASE WHEN NO14 = '5' THEN 'active' ELSE '' END SURVEY36N ,
+			CASE WHEN NO15 = '1' THEN 'active' ELSE '' END SURVEY37Y ,
+			CASE WHEN NO15 = '2' THEN 'active' ELSE '' END SURVEY37N ,
+			CASE WHEN NO15 = '3' THEN 'active' ELSE '' END SURVEY38Y ,
+			CASE WHEN NO15 = '4' THEN 'active' ELSE '' END SURVEY38N ,
+			CASE WHEN NO15 = '5' THEN 'active' ELSE '' END SURVEY39Y ,
+			CASE WHEN NO16 = '1' THEN 'active' ELSE '' END SURVEY39N ,
+			CASE WHEN NO16 = '2' THEN 'active' ELSE '' END SURVEY40Y ,
+			CASE WHEN NO16 = '3' THEN 'active' ELSE '' END SURVEY40N ,
+			CASE WHEN NO16 = '4' THEN 'active' ELSE '' END SURVEY41Y ,
+			CASE WHEN NO16 = '5' THEN 'active' ELSE '' END SURVEY41N ,
+			CASE WHEN NO17 = '1' THEN 'active' ELSE '' END SURVEY42Y ,
+			CASE WHEN NO17 = '2' THEN 'active' ELSE '' END SURVEY42N ,
+			CASE WHEN NO17 = '3' THEN 'active' ELSE '' END SURVEY43Y ,
+			CASE WHEN NO17 = '4' THEN 'active' ELSE '' END SURVEY43N ,
+			CASE WHEN NO17 = '5' THEN 'active' ELSE '' END SURVEY44Y ,
+			CASE WHEN NO18 = '1' THEN 'active' ELSE '' END SURVEY44N ,
+			CASE WHEN NO18 = '2' THEN 'active' ELSE '' END SURVEY45Y ,
+			CASE WHEN NO18 = '3' THEN 'active' ELSE '' END SURVEY45N ,
+			CASE WHEN NO18 = '4' THEN 'active' ELSE '' END SURVEY46Y ,
+			CASE WHEN NO18 = '5' THEN 'active' ELSE '' END SURVEY46N ,
+		
+			CASE WHEN NO19 = '1' THEN 'active' ELSE '' END SURVEY47Y ,
+			CASE WHEN NO19 = '2' THEN 'active' ELSE '' END SURVEY47N ,
+			CASE WHEN NO19 = '3' THEN 'active' ELSE '' END SURVEY48Y ,
+			CASE WHEN NO19 = '4' THEN 'active' ELSE '' END SURVEY48N ,
+			CASE WHEN NO19 = '5' THEN 'active' ELSE '' END SURVEY49Y ,
+			CASE WHEN NO20 = '1' THEN 'active' ELSE '' END SURVEY49N ,
+			CASE WHEN NO20 = '2' THEN 'active' ELSE '' END SURVEY50Y ,
+			CASE WHEN NO20 = '3' THEN 'active' ELSE '' END SURVEY50N ,
+			CASE WHEN NO20 = '4' THEN 'active' ELSE '' END SURVEY51Y ,
+			CASE WHEN NO20 = '5' THEN 'active' ELSE '' END SURVEY51N ,
+		
+			CASE WHEN NO21 = '1' THEN 'active' ELSE '' END SURVEY52Y ,
+			CASE WHEN NO21 = '2' THEN 'active' ELSE '' END SURVEY52N ,
+			CASE WHEN NO21 = '3' THEN 'active' ELSE '' END SURVEY53Y ,
+			CASE WHEN NO21 = '4' THEN 'active' ELSE '' END SURVEY53N ,
+			CASE WHEN NO21 = '5' THEN 'active' ELSE '' END SURVEY54Y ,
+			CASE WHEN NO22 = '1' THEN 'active' ELSE '' END SURVEY54N ,
+			CASE WHEN NO22 = '2' THEN 'active' ELSE '' END SURVEY55Y ,
+			CASE WHEN NO22 = '3' THEN 'active' ELSE '' END SURVEY55N ,
+			CASE WHEN NO22 = '4' THEN 'active' ELSE '' END SURVEY56Y ,
+			CASE WHEN NO22 = '5' THEN 'active' ELSE '' END SURVEY56N ,
+			CASE WHEN NO23 = '1' THEN 'active' ELSE '' END SURVEY57Y ,
+			CASE WHEN NO23 = '2' THEN 'active' ELSE '' END SURVEY57N ,
+			CASE WHEN NO23 = '3' THEN 'active' ELSE '' END SURVEY58Y ,
+			CASE WHEN NO23 = '4' THEN 'active' ELSE '' END SURVEY58N ,
+			CASE WHEN NO23 = '5' THEN 'active' ELSE '' END SURVEY59Y ,
+			CASE WHEN NO24 = '1' THEN 'active' ELSE '' END SURVEY59N ,
+			CASE WHEN NO24 = '2' THEN 'active' ELSE '' END SURVEY60Y ,
+			CASE WHEN NO24 = '3' THEN 'active' ELSE '' END SURVEY60N ,
+			CASE WHEN NO24 = '4' THEN 'active' ELSE '' END SURVEY61Y ,
+			CASE WHEN NO24 = '5' THEN 'active' ELSE '' END SURVEY61N ,
+			CASE WHEN NO25 = '1' THEN 'active' ELSE '' END SURVEY62Y ,
+			CASE WHEN NO25 = '2' THEN 'active' ELSE '' END SURVEY62N ,
+			CASE WHEN NO25 = '3' THEN 'active' ELSE '' END SURVEY63Y ,
+			CASE WHEN NO25 = '4' THEN 'active' ELSE '' END SURVEY63N ,
+			CASE WHEN NO25 = '5' THEN 'active' ELSE '' END SURVEY64Y ,
+			
+			CASE WHEN NO26 = '1' THEN 'active' ELSE '' END SURVEY64N ,
+			CASE WHEN NO26 = '2' THEN 'active' ELSE '' END SURVEY65Y ,
+			CASE WHEN NO26 = '3' THEN 'active' ELSE '' END SURVEY65N ,
+			CASE WHEN NO26 = '4' THEN 'active' ELSE '' END SURVEY66Y ,
+			CASE WHEN NO26 = '5' THEN 'active' ELSE '' END SURVEY66N ,
+			CASE WHEN NO27 = '1' THEN 'active' ELSE '' END SURVEY67Y ,
+			CASE WHEN NO27 = '2' THEN 'active' ELSE '' END SURVEY67N ,
+			CASE WHEN NO27 = '3' THEN 'active' ELSE '' END SURVEY68Y ,
+			CASE WHEN NO27 = '4' THEN 'active' ELSE '' END SURVEY68N ,
+			CASE WHEN NO27 = '5' THEN 'active' ELSE '' END SURVEY69Y ,
+			CASE WHEN NO28 = '1' THEN 'active' ELSE '' END SURVEY69N ,
+			CASE WHEN NO28 = '2' THEN 'active' ELSE '' END SURVEY70Y ,
+			CASE WHEN NO28 = '3' THEN 'active' ELSE '' END SURVEY70N ,
+			CASE WHEN NO28 = '4' THEN 'active' ELSE '' END SURVEY71Y ,
+			CASE WHEN NO28 = '5' THEN 'active' ELSE '' END SURVEY71N ,
+			CASE WHEN NO29 = '1' THEN 'active' ELSE '' END SURVEY72Y ,
+			CASE WHEN NO29 = '2' THEN 'active' ELSE '' END SURVEY72N ,
+			CASE WHEN NO29 = '3' THEN 'active' ELSE '' END SURVEY73Y ,
+			CASE WHEN NO29 = '4' THEN 'active' ELSE '' END SURVEY73N ,
+			CASE WHEN NO29 = '5' THEN 'active' ELSE '' END SURVEY74Y 
+			
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사15 - 문장완성검사 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc15" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1n ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt ,
+			NO1 AS survey1y ,
+			NO2 AS survey2y ,
+			NO3 AS survey3y ,
+			NO4 AS survey4y ,
+			NO5 AS survey5y ,
+			NO6 AS survey6y ,
+			NO7 AS survey7y ,
+			NO8 AS survey8y ,
+			NO9 AS survey9y ,
+			NO10 AS survey10y ,
+			NO11 AS survey11y ,
+			NO12 AS survey12y ,
+			NO13 AS survey13y ,
+			NO14 AS survey14y ,
+			NO15 AS survey15y ,
+			NO16 AS survey16y ,
+			NO17 AS survey17y ,
+			NO18 AS survey18y ,
+			NO19 AS survey19y ,
+			NO20 AS survey20y
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 심리검사16 - 치매 선별용 한국어판 간이정신상태검사 PDF -->
+	<select id="supportDao.PDFpsyCnsDoc16" parameterClass="PdfVO" resultClass="egovMap">
+		SELECT 
+			cnsle_nm ,
+			case_no ,
+			tel_no AS survey1y ,
+			date_format(STR_TO_DATE(write_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS writeDt ,
+			CASE WHEN NO1 = 'Y' THEN 'active' ELSE '' END SURVEY2Y ,
+			CASE WHEN NO1 = 'N' THEN 'active' ELSE '' END SURVEY2N ,
+			CASE WHEN NO2 = 'Y' THEN 'active' ELSE '' END SURVEY3Y ,
+			CASE WHEN NO2 = 'N' THEN 'active' ELSE '' END SURVEY3N ,
+			CASE WHEN NO3 = 'Y' THEN 'active' ELSE '' END SURVEY4Y ,
+			CASE WHEN NO3 = 'N' THEN 'active' ELSE '' END SURVEY4N ,
+			CASE WHEN NO4 = 'Y' THEN 'active' ELSE '' END SURVEY5Y ,
+			CASE WHEN NO4 = 'N' THEN 'active' ELSE '' END SURVEY5N ,
+			CASE WHEN NO5 = 'Y' THEN 'active' ELSE '' END SURVEY6Y ,
+			CASE WHEN NO5 = 'N' THEN 'active' ELSE '' END SURVEY6N ,
+			CASE WHEN NO6 = 'Y' THEN 'active' ELSE '' END SURVEY7Y ,
+			CASE WHEN NO6 = 'N' THEN 'active' ELSE '' END SURVEY7N ,
+			CASE WHEN NO7 = 'Y' THEN 'active' ELSE '' END SURVEY8Y ,
+			CASE WHEN NO7 = 'N' THEN 'active' ELSE '' END SURVEY8N ,
+			CASE WHEN NO8 = 'Y' THEN 'active' ELSE '' END SURVEY9Y ,
+			CASE WHEN NO8 = 'N' THEN 'active' ELSE '' END SURVEY9N ,
+			CASE WHEN NO9 = 'Y' THEN 'active' ELSE '' END SURVEY10Y ,
+			CASE WHEN NO9 = 'N' THEN 'active' ELSE '' END SURVEY10N ,
+			
+			CASE WHEN NO10 = 'Y' THEN 'active' ELSE '' END SURVEY11Y ,
+			CASE WHEN NO10 = 'N' THEN 'active' ELSE '' END SURVEY11N ,
+			CASE WHEN NO11 = 'Y' THEN 'active' ELSE '' END SURVEY12Y ,
+			CASE WHEN NO11 = 'N' THEN 'active' ELSE '' END SURVEY12N ,
+			CASE WHEN NO12 = 'Y' THEN 'active' ELSE '' END SURVEY13Y ,
+			CASE WHEN NO12 = 'N' THEN 'active' ELSE '' END SURVEY13N ,
+			CASE WHEN NO13 = 'Y' THEN 'active' ELSE '' END SURVEY14Y ,
+			CASE WHEN NO13 = 'N' THEN 'active' ELSE '' END SURVEY14N ,
+			CASE WHEN NO14 = 'Y' THEN 'active' ELSE '' END SURVEY15Y ,
+			CASE WHEN NO14 = 'N' THEN 'active' ELSE '' END SURVEY15N ,
+			CASE WHEN NO15 = 'Y' THEN 'active' ELSE '' END SURVEY16Y ,
+			CASE WHEN NO15 = 'N' THEN 'active' ELSE '' END SURVEY16N ,
+			CASE WHEN NO16 = 'Y' THEN 'active' ELSE '' END SURVEY17Y ,
+			CASE WHEN NO16 = 'N' THEN 'active' ELSE '' END SURVEY17N ,
+			CASE WHEN NO17 = 'Y' THEN 'active' ELSE '' END SURVEY18Y ,
+			CASE WHEN NO17 = 'N' THEN 'active' ELSE '' END SURVEY18N ,
+			CASE WHEN NO18 = 'Y' THEN 'active' ELSE '' END SURVEY19Y ,
+			CASE WHEN NO18 = 'N' THEN 'active' ELSE '' END SURVEY19N ,
+			           
+			CASE WHEN NO19 = 'Y' THEN 'active' ELSE '' END SURVEY20Y ,
+			CASE WHEN NO19 = 'N' THEN 'active' ELSE '' END SURVEY20N ,
+			CASE WHEN NO20 = 'Y' THEN 'active' ELSE '' END SURVEY21Y ,
+			CASE WHEN NO20 = 'N' THEN 'active' ELSE '' END SURVEY21N ,
+			CASE WHEN NO21 = 'Y' THEN 'active' ELSE '' END SURVEY22Y ,
+			CASE WHEN NO21 = 'N' THEN 'active' ELSE '' END SURVEY22N ,
+			CASE WHEN NO22 = 'Y' THEN 'active' ELSE '' END SURVEY23Y ,
+			CASE WHEN NO22 = 'N' THEN 'active' ELSE '' END SURVEY23N ,
+			CASE WHEN NO23 = 'Y' THEN 'active' ELSE '' END SURVEY24Y ,
+			CASE WHEN NO23 = 'N' THEN 'active' ELSE '' END SURVEY24N ,
+			CASE WHEN NO24 = 'Y' THEN 'active' ELSE '' END SURVEY25Y ,
+			CASE WHEN NO24 = 'N' THEN 'active' ELSE '' END SURVEY25N ,
+			CASE WHEN NO25 = 'Y' THEN 'active' ELSE '' END SURVEY26Y ,
+			CASE WHEN NO25 = 'N' THEN 'active' ELSE '' END SURVEY26N ,
+			CASE WHEN NO26 = 'Y' THEN 'active' ELSE '' END SURVEY27Y ,
+			CASE WHEN NO26 = 'N' THEN 'active' ELSE '' END SURVEY27N ,
+			CASE WHEN NO27 = 'Y' THEN 'active' ELSE '' END SURVEY28Y ,
+			CASE WHEN NO27 = 'N' THEN 'active' ELSE '' END SURVEY28N ,
+			           
+			CASE WHEN NO28 = 'Y' THEN 'active' ELSE '' END SURVEY29Y ,
+			CASE WHEN NO28 = 'N' THEN 'active' ELSE '' END SURVEY29N ,
+			CASE WHEN NO29 = 'Y' THEN 'active' ELSE '' END SURVEY30Y ,
+			CASE WHEN NO29 = 'N' THEN 'active' ELSE '' END SURVEY30N ,
+			CASE WHEN NO30 = 'Y' THEN 'active' ELSE '' END SURVEY31Y ,
+			CASE WHEN NO30 = 'N' THEN 'active' ELSE '' END SURVEY31N 
+		FROM 
+			gs_psy_cns_doc_dtl
+		WHERE 
+			NUM = #num#
+	</select>
+	
+	<!-- 공지사항 목록 -->
+	<select id="supportDao.getNoticeList" parameterClass="noticeVO" resultClass="egovMap">
+
+ 		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gna.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gna.NUM DESC) AS RNUM2 ,
+				gna.NUM ,
+				gna.TITLE ,
+				gna.CNTN ,
+				gna.WRITER ,
+				DATE_FORMAT(gna.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM ,
+				gnaf.FILE_NM ,
+				gnaf.SYS_FILE_NM ,
+				gnaf.FILE_PATH
+			FROM
+				GS_NOTICE_A AS gna
+			LEFT JOIN GS_NOTICE_A_FILE AS gnaf
+				ON gna.NUM = gnaf.FILE_NUM
+			WHERE 
+				1=1
+			<isNotEmpty property="schStartDate" prepend="AND">
+		       	<![CDATA[ gna.DB_INS_TM >= #schStartDate# ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schEndDate" prepend="AND">
+		        <![CDATA[ gna.DB_INS_TM <= #schEndDate#   ]]>
+		    </isNotEmpty>
+		    
+		     <isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gna.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gna.CNTN LIKE CONCAT('%', #schText#, '%')
+					OR
+					gna.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gna.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gna.CNTN LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+				
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY NUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 공지사항 갯수-->
+	<select id="supportDao.getNoticeListTotCnt" parameterClass="noticeVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_NOTICE_A AS gna
+		WHERE 
+		1=1
+		<isNotEmpty property="schStartDate" prepend="AND">
+	       	<![CDATA[ gna.DB_INS_TM >= #schStartDate# ]]>
+	    </isNotEmpty>
+	    
+	    <isNotEmpty property="schEndDate" prepend="AND">
+	        <![CDATA[ gna.DB_INS_TM <= #schEndDate#   ]]>
+	    </isNotEmpty>
+	    
+	     <isNotEmpty property="schText" > 
+	    	<isEqual prepend="AND" property="schType" compareValue="1">
+				gna.TITLE LIKE CONCAT('%', #schText#, '%')
+				OR
+				gna.CNTN LIKE CONCAT('%', #schText#, '%')
+				OR
+				gna.WRITER LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual prepend="AND" property="schType" compareValue="2">
+				gna.TITLE LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual prepend="AND" property="schType" compareValue="3">
+				gna.CNTN LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<!-- 공지사항 등록-->
+	<insert id="supportDao.insertNotice" parameterClass="noticeVO">
+		INSERT INTO GS_NOTICE_A(
+			<!-- NUM , -->
+			WRITER,
+			TITLE,
+			CNTN,
+			REG_ID,
+			DB_INS_TM
+		) VALUES(
+			<!-- (SELECT IFNULL(MAX(A.NUM), 0)+1 FROM GS_FREE_BOARD AS A) , -->
+			#writer#,
+			#title#,
+			#cntn#,
+			#regId#,
+			NOW()
+		)	
+	</insert>
+	
+	<!-- 공지사항 파일업로드 등록  -->
+	<insert id="supportDao.insertNoticeUpload" parameterClass="noticeVO">
+		INSERT INTO GS_NOTICE_A_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0) FROM GS_NOTICE_A AS A) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 공지사항 수정  -->
+	<update id="supportDao.updateNotice" parameterClass="noticeVO">
+		UPDATE GS_NOTICE_A
+			SET
+				TITLE = #title# ,
+				CNTN = #cntn# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 공지사항 파일업로드 수정  -->
+	<update id="supportDao.updateNoticeUpload" parameterClass="noticeVO">
+		UPDATE GS_NOTICE_A_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				FILE_NUM = #num#
+	</update>
+	
+	<!-- 공지사항 상세-->	
+	<select id="supportDao.getNoticeDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.REG_ID ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_NOTICE_A AS A
+		LEFT JOIN GS_NOTICE_A_FILE AS B
+			ON A.NUM = B.FILE_NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+	<!-- FAQ 목록  -->
+	<select id="supportDao.getFaqList" parameterClass="faqVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				TITLE ,
+				WRITER ,
+				RPLY_CNTN ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM
+			FROM
+				GS_FAQ_A
+			WHERE
+				1=1
+			<isNotEmpty property="schText"> 
+				<isEqual property="schType" compareValue="1"> 
+					AND TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual property="schType" compareValue="2"> 
+					AND RPLY_CNTN LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual property="schType" compareValue="3"> 
+					AND WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- FAQ 갯수  -->
+	<select id="supportDao.getFaqListTotCnt" parameterClass="faqVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_FAQ_A
+		WHERE 
+			1=1
+		<isNotEmpty property="schText"> 
+			<isEqual property="schType" compareValue="1"> 
+				AND TITLE LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual property="schType" compareValue="2"> 
+				AND RPLY_CNTN LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual property="schType" compareValue="3"> 
+				AND WRITER LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<!-- FAQ 등록  -->
+	<insert id="supportDao.insertFaq" parameterClass="faqVO">
+		INSERT INTO GS_FAQ_A
+			(
+				NUM ,
+				TITLE ,
+				WRITER ,
+				REG_ID ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_FAQ_A AS A) ,
+				#title# ,
+				#writer# ,
+				#regId# ,
+				now()
+			)
+	</insert>
+	
+	<!-- FAQ 상세  -->
+	<select id="supportDao.getFaqDetail" parameterClass="Integer" resultClass="egovMap">
+		SELECT
+			NUM ,
+			TITLE ,
+			WRITER ,
+			RPLY_CNTN
+		FROM
+			GS_FAQ_A
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<!-- FAQ 수정  -->
+	<update id="supportDao.updateFaq" parameterClass="faqVO">
+		UPDATE GS_FAQ_A
+			SET
+				TITLE = #title# ,
+				RPLY_CNTN = #rplyCntn# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 자료실 목록  -->
+	<select id="supportDao.getRescRoomList" parameterClass="rescRoomVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gm.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gm.NUM DESC) AS RNUM2 ,
+				gm.NUM ,
+				gm.TITLE ,
+				gm.CONTENT ,
+				gm.WRITER ,
+				DATE_FORMAT(gm.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM ,
+				gmf.FILE_NM ,
+				gmf.SYS_FILE_NM ,
+				gmf.FILE_PATH
+			FROM
+				GS_MORGUE AS gm
+			LEFT JOIN GS_MORGUE_FILE AS gmf
+				ON gm.NUM = gmf.NUM
+
+			WHERE 1=1
+			
+			<isNotEmpty property="schStartDate" prepend="AND">
+		       	<![CDATA[ gm.DB_INS_TM >= #schStartDate# ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schEndDate" prepend="AND">
+		        <![CDATA[ gm.DB_INS_TM <= #schEndDate#   ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gm.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gm.CONTENT LIKE CONCAT('%', #schText#, '%')
+					OR
+					gm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gm.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gm.CONTENT LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="4">
+					gm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 자료실 갯수  -->
+	<select id="supportDao.getRescRoomListTotCnt" parameterClass="rescRoomVO" resultClass="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			GS_MORGUE AS gm
+		WHERE
+		    1=1
+		<isNotEmpty property="schStartDate" prepend="AND">
+		       	<![CDATA[ gm.DB_INS_TM >= #schStartDate# ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schEndDate" prepend="AND">
+		        <![CDATA[ gm.DB_INS_TM <= #schEndDate#   ]]>
+		    </isNotEmpty>
+		    
+		     <isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gm.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gm.CONTENT LIKE CONCAT('%', #schText#, '%')
+					OR
+					gm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gm.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gm.CONTENT LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="4">
+					gm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<!-- 자료실 등록  -->
+	<insert id="supportDao.insertRescRoom" parameterClass="rescRoomVO">
+		INSERT INTO GS_MORGUE
+			(
+				NUM ,
+				TITLE ,
+				WRITER ,
+				REG_ID ,
+				CONTENT ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_MORGUE AS A) ,
+				#title# ,
+				#writer# ,
+				#regId# ,
+				#content# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 자료실 파일업로드 등록 -->
+	<insert id="supportDao.insertRescRoomUpload" parameterClass="rescRoomVO">
+		INSERT INTO GS_MORGUE_FILE
+			(
+				NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0) FROM GS_MORGUE AS A) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 자료실 상세  -->
+	<select id="supportDao.getRescRoomDetail" parameterClass="Integer" resultClass="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CONTENT ,
+			A.REG_ID ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_MORGUE AS A
+		LEFT JOIN GS_MORGUE_FILE AS B
+			ON A.NUM = B.NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+	<!-- 자료실 수정  -->
+	<update id="supportDao.updateRescRoom" parameterClass="rescRoomVO">
+		UPDATE GS_MORGUE
+			SET
+				TITLE = #title# ,
+				CONTENT = #content# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 자료실 파일업로드 수정 -->
+	<update id="supportDao.updateRescRoomUpload" parameterClass="rescRoomVO">
+		UPDATE GS_MORGUE_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 사용자메뉴얼 목록  -->
+	<select id="supportDao.getUserManualList" parameterClass="userManualVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gum.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gum.NUM DESC) AS RNUM2 ,
+				gum.NUM ,
+				gum.TITLE ,
+				gum.CONTENT ,
+				gum.WRITER ,
+				DATE_FORMAT(gum.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM ,
+				gumf.FILE_NM ,
+				gumf.SYS_FILE_NM ,
+				gumf.FILE_PATH
+			FROM
+				GS_USER_MANUAL AS gum
+			LEFT JOIN GS_USER_MANUAL_FILE as gumf
+				ON gum.NUM = gumf.NUM
+
+			WHERE 1=1
+			
+			<isNotEmpty property="schStartDate" prepend="AND">
+		       	<![CDATA[ gum.DB_INS_TM >= #schStartDate# ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schEndDate" prepend="AND">
+		        <![CDATA[ gum.DB_INS_TM <= #schEndDate#   ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gum.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gum.CONTENT LIKE CONCAT('%', #schText#, '%')
+					OR
+					gum.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gum.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gum.CONTENT LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="4">
+					gum.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 사용자메뉴얼 갯수  -->
+	<select id="supportDao.getUserManualListTotCnt" parameterClass="userManualVO" resultClass="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			GS_USER_MANUAL AS gum
+			WHERE
+		  		 1=1
+		    <isNotEmpty property="schStartDate" prepend="AND">
+		       	<![CDATA[ gum.DB_INS_TM >= #schStartDate# ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schEndDate" prepend="AND">
+		        <![CDATA[ gum.DB_INS_TM <= #schEndDate#   ]]>
+		    </isNotEmpty>
+		    
+		     <isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gum.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gum.CONTENT LIKE CONCAT('%', #schText#, '%')
+					OR
+					gum.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gum.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gum.CONTENT LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="4">
+					gum.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+	</select>
+	
+	<!-- 사용자메뉴얼 상세  -->
+	<select id="supportDao.getUserManualDetail" parameterClass="Integer" resultClass="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.REG_ID ,
+			A.CONTENT ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_USER_MANUAL AS A
+		LEFT JOIN GS_USER_MANUAL_FILE AS B
+			ON A.NUM = B.NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+	<!-- 사용자메뉴얼 등록  -->
+	<insert id="supportDao.insertUserManual" parameterClass="userManualVO">
+		INSERT INTO GS_USER_MANUAL
+			(
+				NUM ,
+				TITLE ,
+				WRITER ,
+				REG_ID ,
+				CONTENT ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_USER_MANUAL AS A) ,
+				#title# ,
+				#writer# ,
+				#regId# ,
+				#content# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 사용자메뉴얼 업로드  -->
+	<insert id="supportDao.insertUserManualUpload" parameterClass="userManualVO">
+		INSERT INTO GS_USER_MANUAL_FILE
+			(
+				NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0) FROM GS_USER_MANUAL AS A) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 사용자메뉴얼 업로드 수정  -->
+	<update id="supportDao.updateUserManualUpload" parameterClass="userManualVO">
+		UPDATE GS_USER_MANUAL_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 사용자메뉴얼 수정  -->
+	<update id="supportDao.updateUserManual" parameterClass="userManualVO">
+		UPDATE GS_USER_MANUAL
+			SET
+				TITLE = #title# ,
+				CONTENT = #content# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 설문조사 목록 -->
+	<select id="supportDao.getSurveyMngList" parameterClass="surveyMngVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				TITLE ,
+				SRV_PRI_STD ,
+				SRV_PRI_END ,
+				WRITER ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM
+			FROM
+				GS_SURV_MNG_M AS gsmm
+				
+			WHERE 1=1
+			
+	
+		    
+		    <isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gsmm.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gsmm.CONTENT LIKE CONCAT('%', #schText#, '%')
+					OR
+					gsmm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gsmm.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gsmm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 설문조사 갯수  -->
+	<select id="supportDao.getSurveyMngListTotCnt" parameterClass="surveyMngVO" resultClass="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			GS_SURV_MNG_M AS gsmm
+		WHERE 1=1
+		
+		<isNotEmpty property="schText" > 
+		    	<isEqual prepend="AND" property="schType" compareValue="1">
+					gsmm.TITLE LIKE CONCAT('%', #schText#, '%')
+					OR
+					gsmm.CONTENT LIKE CONCAT('%', #schText#, '%')
+					OR
+					gsmm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gsmm.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gsmm.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+	</select>
+	
+		<!-- 설문조사 상세  -->
+	<select id="supportDao.getSurveyMngDetail" parameterClass="Integer" resultClass="egovMap">
+		SELECT
+			*
+		FROM
+			GS_SURV_MNG_M
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<!-- 설문조사 등록  -->
+	<insert id="supportDao.insertSurveyMng" parameterClass="surveyMngVO">
+		INSERT INTO GS_SURV_MNG_M
+			(
+				NUM ,
+				TITLE ,
+				WRITER ,
+				REG_ID ,
+				CNTN ,
+				SRV_PRI_STD ,
+				SRV_PRI_END ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_SURV_MNG_M AS A) ,
+				#title# ,
+				#writer# ,
+				#regId# ,
+				#cntn# ,
+				#srvPriStd# ,
+				#srvPriEnd# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 설문조사 수정  -->
+	<update id="supportDao.updateSurveyMng" parameterClass="surveyMngVO">
+		UPDATE GS_SURV_MNG_M
+			SET
+				TITLE = #title# ,
+				CNTN = #cntn# ,
+				SRV_PRI_STD = #srvPriStd# ,
+				SRV_PRI_END = #srvPriEnd# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 서명관리 목록  -->
+	<select id="supportDao.getSignList" parameterClass="signVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G82' AND ODR = posi)AS posi ,
+				USER_NM ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM
+			FROM
+				GS_SIGN_M AS gsm
+			WHERE 
+			    1=1
+				<isNotEmpty property="schStartDate" prepend="AND">
+		       		<![CDATA[ gsm.DB_INS_TM >= #schStartDate# ]]>
+		        </isNotEmpty>
+		    
+		   		 <isNotEmpty property="schEndDate" prepend="AND">
+		            <![CDATA[ gsm.DB_INS_TM <= #schEndDate#   ]]>
+		  	     </isNotEmpty>
+		    
+		   		 <isNotEmpty property="schText" > 
+		    	 <isEqual prepend="AND" property="schType" compareValue="1">
+					<!-- gm.기관 LIKE CONCAT('%', #schText#, '%') -->
+					<!-- OR -->
+					gsm.POSI LIKE CONCAT('%', #schText#, '%')
+						OR
+					gsm.USER_NM LIKE CONCAT('%', #schText#, '%')
+					</isEqual>
+				<!-- <isEqual prepend="AND" property="schType" compareValue="2">
+						gsm.기관 LIKE CONCAT('%', #schText#, '%')
+				</isEqual> -->
+				<isEqual prepend="AND" property="schType" compareValue="3">
+						gsm.POSI LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="4">
+						gsm.USER_NM LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 서명관리 갯수  -->
+	<select id="supportDao.getSignListTotCnt" parameterClass="signVO" resultClass="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			GS_SIGN_M AS gsm
+		WHERE 
+			    1=1
+				<isNotEmpty property="schStartDate" prepend="AND">
+		       		<![CDATA[ gsm.DB_INS_TM >= #schStartDate# ]]>
+		        </isNotEmpty>
+		    
+		   		 <isNotEmpty property="schEndDate" prepend="AND">
+		            <![CDATA[ gsm.DB_INS_TM <= #schEndDate#   ]]>
+		  	     </isNotEmpty>
+		    
+		   		 <isNotEmpty property="schText" > 
+		    	 <isEqual prepend="AND" property="schType" compareValue="1">
+					<!-- gm.기관 LIKE CONCAT('%', #schText#, '%') -->
+					<!-- OR -->
+					gsm.POSI LIKE CONCAT('%', #schText#, '%')
+						OR
+					gsm.USER_NM LIKE CONCAT('%', #schText#, '%')
+					</isEqual>
+				<!-- <isEqual prepend="AND" property="schType" compareValue="2">
+						gsm.기관 LIKE CONCAT('%', #schText#, '%')
+				</isEqual> -->
+				<isEqual prepend="AND" property="schType" compareValue="3">
+						gsm.POSI LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="4">
+						gsm.USER_NM LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				</isNotEmpty>
+	</select>
+	
+	<!-- 서명관리 등록  -->
+	<insert id="supportDao.insertSign" parameterClass="signVO">
+		INSERT INTO GS_SIGN_M
+			(
+				USER_ID
+			  , CNS_GB
+			  , ZONE_GB
+			  , LOCAL_GB
+			  , CENTER_GB
+			  , USER_NM
+			  , POSI
+			  , FILE_PATH
+			  , REG_ID
+			  , DB_UPD_TM
+			  , DB_INS_TM
+			) VALUES (
+				#userId#
+			  , #cnsGb#
+			  , #zoneGb#
+			  , #localGb#
+			  , #centerGb#
+			  , (SELECT USER_NM FROM GS_USER_M WHERE USER_ID = #userId#)
+			  , (SELECT POSI FROM GS_CNSR_M WHERE USER_ID = #userId#)
+			  , #filePath#
+			  , #regId#
+			  , now()
+			  , now()
+			)
+	</insert>
+		
+	<!-- 서명관리 상세  -->
+	<select id="supportDao.getSignDetail" parameterClass="signVO" resultClass="egovMap">
+		SELECT *
+		FROM GS_SIGN_M
+		WHERE 
+			<![CDATA[ CASE WHEN #num# > 0 THEN NUM = #num# ELSE USER_ID = #userId# END ]]> 
+			
+	</select>
+	
+	<!-- 서명관리 수정  -->
+	<update id="supportDao.updateSign" parameterClass="signVO">
+		UPDATE GS_SIGN_M
+		SET FILE_PATH = #filePath#, DB_UPD_TM = NOW()
+		WHERE USER_ID = #userId#
+	</update>
+	
+	
+	
+	<!-- 문자 발송내역 상세  -->
+	<select id="supportDao.selectMms" parameterClass="mmsVO" resultClass="egovMap">
+		SELECT 
+			A.NUM
+			,A.MSGID
+			,A.CALLBACK
+			,A.PHONE
+			,A.MSG
+			,A.NAMES
+			, CASE WHEN LENGTH(A.APPDATE) = 0 THEN A.REGDATE ELSE A.APPDATE END APPDATE 
+			,A.SUBJECT
+			,A.ADMINID
+			,A.ADMINNAME
+			,CASE WHEN A.RESULT = 'true' THEN '성공' ELSE '실패' END RESULT
+			,A.RESULTMESSAGE
+			,A.SENDCOUNT
+			,A.MESSAGETYPE
+			,A.REGDATE
+		FROM GS_MMS AS A
+		WHERE 
+			NUM = #num# 
+	</select>
+	
+	<!-- 문자 발송내역 등록  -->
+	<insert id="supportDao.insertMms" parameterClass="mmsVO">
+		INSERT INTO GS_MMS
+			(
+			  MSGID,
+			  CALLBACK,
+			  PHONE,
+			  MSG,
+			  NAMES,
+			  APPDATE,
+			  SUBJECT,
+			  FILEPATH,
+			  ADMINID,
+			  ADMINNAME,
+			  RESULT,
+			  RESULTMESSAGE,
+			  SENDCOUNT,
+			  REGDATE,
+			  MESSAGETYPE
+			) VALUES (
+				#msgId#
+			  , #callback#
+			  , #phone#
+			  , #msg#
+			  , #names#
+			  , #appdate#
+			  , #subject#
+			  , #filePath#
+			  , #adminID#
+			  , #adminName#
+			  , #result#
+			  , #resultMessage#
+			  , #sendCount#
+			  , now()
+			  , #messageType#
+			)
+	</insert>
+	
+	<!-- 문자 발송내역 목록  -->
+	<select id="supportDao.listMms" parameterClass="mmsVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM
+				,ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2
+				,A.NUM
+				,A.MSGID
+				,A.CALLBACK
+				, CASE WHEN LENGTH(A.APPDATE) = 0 THEN A.REGDATE ELSE A.APPDATE END APPDATE 
+				,A.SUBJECT
+				,A.ADMINNAME
+				,CASE WHEN A.RESULT = 'true' THEN '성공' ELSE '실패' END RESULT
+				,A.RESULTMESSAGE
+				,A.SENDCOUNT
+			FROM
+				GS_MMS AS A
+			WHERE 
+			    1=1
+			    <isNotEmpty property="schSdate" >
+				     <isNotEmpty property="schEdate" prepend="AND">
+			        	STR_TO_DATE(APPDATE, '%Y%m%d') BETWEEN #schSdate# AND #schEdate#
+			  	     </isNotEmpty>
+		        </isNotEmpty>
+		        
+		         <isNotEmpty property="schText" prepend="AND">
+		            ( SUBJECT LIKE CONCAT('%', #schText#, '%') OR MSG LIKE CONCAT('%', #schText#, '%') OR ADMINNAME LIKE CONCAT('%', #schText#, '%')  )
+		  	     </isNotEmpty>
+		    
+		   		
+		  	     
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 문자 발송내역 갯수  -->
+	<select id="supportDao.countMms" parameterClass="mmsVO" resultClass="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			GS_MMS 
+		WHERE 1=1
+		 <isNotEmpty property="schSdate" >
+		     <isNotEmpty property="schEdate" prepend="AND">
+	        	STR_TO_DATE(APPDATE, '%Y%m%d')  BETWEEN #schSdate# AND #schEdate#
+	  	     </isNotEmpty>
+        </isNotEmpty>
+         <isNotEmpty property="schText" prepend="AND">
+            ( SUBJECT LIKE CONCAT('%', #schText#, '%') OR MSG LIKE CONCAT('%', #schText#, '%') OR ADMINNAME LIKE CONCAT('%', #schText#, '%')  )
+  	     </isNotEmpty>
+	</select>
+	
+	
+</sqlMap>

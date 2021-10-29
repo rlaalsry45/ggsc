@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.user.mypage.service.impl.MypageMapper">
+
+	
+	
+	<!-- 마이페이지 회원 상세정보를 조회 -->
+	<select id="selectMypageInfo" resultType="mypageVO">
+
+			SELECT
+				ID,
+				PWD,
+				NAME,
+				TEL,
+				CONCAT(BASIC_ADDR, '  ', DTL_ADDR) AS ADDR,  
+				EMAIL, 
+				BIRTH_DT 
+			FROM USR_INFO
+			WHERE USE_YN = 'Y'
+			<!-- AND ADMIN_GB = 'N' -->
+			AND ID=#{id}
+
+	</select>
+	
+	
+	<!-- 마이페이지 지시서 목록을 조회 -->
+	<select id="mypageList" parameterType="searchVO" resultType="egovMap">
+
+			SELECT
+				A.RD_NUM, 
+				A.ID, 
+				A.YEAR, 
+				A.MON, 
+				A.CNT, 
+				A.TITLE, 
+				A.CONTENT, 
+				A.REG_ID, 
+				A.REG_TM, 
+				B.FILE_NUM, 
+				B.FILE_PATH, 
+				B.ORG_FILE_NM, 
+				B.SYS_FILE_NM,
+				B.FILE_SIZE
+			FROM RD A  LEFT JOIN RD_FILE B ON  A.RD_NUM = B.FILE_NUM AND A.ID = B.ID AND A.USE_YN='Y' AND B.USE_YN='Y'
+			WHERE A.ID= #{id}
+			ORDER BY A.RD_NUM ASC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+			
+			
+	</select>
+
+	<!-- 마이페이지 지시서 목록 총수를 조회 -->
+	<select id="mypageListTotCnt" parameterType="searchVO" resultType="int">
+
+			SELECT COUNT(*) totcnt
+			FROM RD A  LEFT JOIN RD_FILE B ON  A.RD_NUM = B.FILE_NUM AND A.ID = B.ID AND A.USE_YN='Y' AND B.USE_YN='Y'
+			WHERE A.ID= #{id}
+			ORDER BY A.RD_NUM ASC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+			
+	</select>
+
+	<!-- 마이페이지 -> 회원 지시서 등록이력 상세정보 조회 -->
+	<select id="selectMyHistView" resultType="mypageVO">
+
+			SELECT
+				A.RD_NUM, 
+				A.ID, 
+				A.YEAR, 
+				A.MON, 
+				A.CNT, 
+				A.TITLE, 
+				A.CONTENT, 
+				A.REG_ID, 
+				A.REG_TM, 
+				B.FILE_NUM, 
+				B.FILE_PATH, 
+				B.ORG_FILE_NM, 
+				B.SYS_FILE_NM,
+				B.FILE_SIZE
+			FROM RD A  LEFT JOIN RD_FILE B ON  A.RD_NUM = B.FILE_NUM AND A.ID = B.ID AND A.USE_YN='Y' AND B.USE_YN='Y'
+			WHERE A.ID= #{id}
+			AND A.RD_NUM = #{rd_num}
+
+	</select>
+
+
+	<!-- 회원정보 등록하기 -->
+	<insert id="insertData" parameterType="mypageVO">
+
+			INSERT INTO USR_INFO(   
+							ID,
+							PWD,
+							NAME,
+							TEL,
+							BIRTH_DT,
+							BASIC_ADDR,
+							DTL_ADDR,
+							EMAIL,
+							USE_YN,
+							ADMIN_GB,
+							REG_TM 
+							  ) 
+			VALUES(
+				   #{id},
+				   #{pwd},
+				   #{name},
+				   #{tel},
+				   #{birth_dt},
+				   #{basic_addr},
+				   #{dtl_addr},
+				   #{email},
+				   'Y	',
+				   'N',
+				   now() 
+				  )
+
+	</insert>
+	
+
+</mapper>

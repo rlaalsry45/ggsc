@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    <typeAlias  alias="comCodeVO" type="ggsc.com.util.service.ComCodeVO"/>
+
+	<select id="comCodeDAO.selectCurrentDay" parameterClass="comCodeVO" resultClass="java.lang.String">
+		SELECT DATE_FORMAT(now(),'%Y-%m-%d')
+	</select>
+
+	<select id="comCodeDAO.selectCurrentDate" parameterClass="comCodeVO" resultClass="java.lang.String">
+		SELECT DATE_FORMAT(now(),'%Y%m%d')
+	</select>
+
+	<select id="comCodeDAO.selectComCodeList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT A.COM_CD
+			 , A.COM_NM
+			 , A.COM_GRP
+			 , A.COM_GRP_NM
+		FROM AT_COM_CD_M A
+		WHERE 1=1
+		<isNotEmpty property="comGrp">
+		  AND COM_GRP = #comGrp#
+		</isNotEmpty>
+		  AND USE_YN = 'Y'
+		ORDER BY ODR
+	</select>
+
+	<select id="comCodeDAO.selectComGrpList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT COM_GRP, COM_GRP_NM
+		  FROM AT_COM_CD_M
+		 GROUP BY COM_GRP, COM_GRP_NM
+		 ORDER BY COM_GRP_NM
+	</select>
+
+	<select id="comCodeDAO.getComCode" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT A.COM_CD
+			 , A.COM_NM
+			 , A.COM_GRP
+			 , A.COM_GRP_NM
+		FROM AT_COM_CD_M A
+		WHERE 1=1
+		  AND COM_GRP = #comGrp#
+		  AND COM_CD = #comCd#
+		  AND USE_YN = 'Y'
+	</select>
+
+	<select id="comCodeDAO.selectDeptList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT A.DEPT_ID
+			 , A.DEPT_NAME
+			 , A.DEPT_CODE
+		  FROM AT_DEPT A
+		WHERE PAR_ID = #deptId#
+		 ORDER BY SEQ
+	</select>
+
+	<select id="comCodeDAO.selectDeptUpList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT A.DEPT_ID
+			 , A.DEPT_NAME
+			 , A.DEPT_CODE
+		  FROM AT_DEPT A
+		WHERE DEPT_ID IN
+				(
+					<!-- 경영기획실, 여성정책실, 가족정책실 3개만 표시 -->
+					'000011702'
+					,'000011703'
+					,'000011701'
+				)
+		 ORDER BY SEQ
+	</select>
+
+	<!-- 부서선택 리스트 -->
+	<select id="comCodeDAO.selectPopupDeptList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT DEPT_ID,
+			   DEPT_NAME,
+			   DEPT_CODE,
+			   PAR_ID,
+			   PAR_NAME
+		  FROM
+		  (
+		    SELECT DEPT_ID, DEPT_NAME, DEPT_CODE, PAR_ID, PAR_NAME FROM AT_DEPT
+		    START WITH DEPT_ID IN
+		                                    (
+		                                        '000011702'
+		                                        ,'000011703'
+		                                        ,'000011701'
+		                                    ) CONNECT BY PRIOR DEPT_ID = PAR_ID
+		    ORDER SIBLINGS BY SEQ ASC
+		  )
+	</select>
+
+	<select id="comCodeDAO.selectAuthList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT AUTH_CD
+			 , AUTH_NM
+		  FROM AT_AUTH
+		 WHERE 1 = 1
+		   AND AUTH_GRP_CD = #authGrpCd#
+	</select>
+
+	<select id="comCodeDAO.selectUserList" parameterClass="comCodeVO" resultClass="egovMap">
+		SELECT SUB.USER_ID
+			 , SUB.USER_NAME
+			 , SUB.EMP_CODE
+			 , SUB.DEPT_ID
+			 , SUB.DEPT_NAME
+			 , SUB.DEPT_CODE
+			 , SUB.JICWI_ID
+			 , SUB.JICWI_NAME
+			 , SUB.JICWI_SEQ
+			 , SUB.STATUS
+			 , SUB.SEQ
+			 , SUB.SANCFLAG
+			 , SUB.TELEPHONE
+			 , SUB.EDS_ID
+			 , SUB.LEVEL_SEQ
+		FROM
+		(
+		SELECT A.USER_ID
+			 , A.USER_NAME
+			 , A.EMP_CODE
+			 , A.DEPT_ID
+			 , A.DEPT_NAME
+			 , A.DEPT_CODE
+			 , A.JICWI_ID
+			 , A.JICWI_NAME
+			 , A.JICWI_SEQ
+			 , A.STATUS
+			 , A.SEQ
+			 , A.SANCFLAG
+			 , A.TELEPHONE
+			 , A.EDS_ID
+			 , TO_NUMBER(CASE WHEN INSTR(A.DEPT_NAME ,'퇴사')>0 THEN '999' ELSE TO_CHAR(B.SEQ) END) AS LEVEL_SEQ
+		  FROM AT_USER A
+		     , AT_JICWI B
+		 WHERE A.JICWI_ID = B.JICWI_ID
+		   AND A.STATUS != '4'
+		   AND A.DEPT_ID NOT IN('000011202', '000011103', '000012500') <!-- 한부모, 개발원 제외 -->
+		<isNotEmpty property="custCd">
+		   AND A.CUST_CD = TRIM(#custCd#)
+		</isNotEmpty>
+		<isNotEmpty property="deptId">
+		   AND A.DEPT_ID = TRIM(#deptId#)
+		</isNotEmpty>
+		<isNotEmpty property="posiCd">
+		   AND A.POSI_CD = TRIM(#posiCd#)
+		</isNotEmpty>
+		<isEqual property="schType" compareValue="schUserName">
+			AND A.USER_NAME LIKE '%' || #schText# || '%'
+		</isEqual>
+		<isEqual property="schType" compareValue="schDeptName">
+			AND A.DEPT_NAME LIKE '%' || #schText# || '%'
+		</isEqual>
+		) SUB
+		ORDER BY SUB.LEVEL_SEQ, SUB.JICWI_NAME, SUB.EMP_CODE, SUB.USER_NAME
+	</select>
+
+	<select id="comCodeDAO.selectJicwiList" resultClass="egovMap">
+		SELECT JICWI_ID
+			 , JICWI_NAME
+			 , JICWI_CODE
+			 , SEQ
+		  FROM AT_JICWI
+		 ORDER BY SEQ, JICWI_ID
+	</select>
+
+	<select id="comCodeDAO.getWeekCntInfo" parameterClass="egovMap" resultClass="egovMap" remapResults="true">
+		SELECT
+			'admin'
+		  FROM DUAL
+	</select>
+	
+	<!-- 지역구분  -->
+	<select id="comCodeDAO.selectAreaList" resultClass="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G72'
+	</select>
+	
+	<!-- 센터구분  -->
+	<select id="comCodeDAO.selectCenterGbList" resultClass="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G25'
+	</select>
+	
+	<!-- 권역구분  -->
+	<select id="comCodeDAO.selectZoneGbList" resultClass="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G71'
+	</select>
+	
+	<!-- 권역구분  -->
+	<select id="comCodeDAO.selectCnsGbList" resultClass="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G15'
+	</select>
+	
+</sqlMap>

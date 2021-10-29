@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Faq">
+
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="faqVO2" type="ams.adm.faq.FaqVO"/>
+
+
+
+
+	<select id="faqDAO.faqList" parameterClass="faqVO2" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY FAQ_NO DESC) AS RNUM,
+					FAQ_NO, 
+					SUBJECT,
+					CNTN,
+					ORI_FILE_NM,
+					FILE_PATH,
+					REG_ID,
+					DATE_FORMAT( DB_INS_DT , '%Y%m%d') AS DB_INS_DT
+        	 FROM GS_FAQ
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="faqDAO.faqListCnt" parameterClass="faqVO2" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_FAQ
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+	</select>
+	
+
+	<select id="faqDAO.faqDtl" parameterClass="faqVO2" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY FAQ_NO DESC) AS RNUM, 
+					FAQ_NO, 
+					SUBJECT,
+					CNTN,
+					ORI_FILE_NM,
+					FILE_PATH,
+					REG_ID,
+					DB_UPD_DT,
+					DB_INS_DT
+        	 FROM GS_FAQ
+        	 WHERE FAQ_NO = #faqNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="faqDAO.delFaq" parameterClass="faqVO2">
+		DELETE FROM GS_FAQ
+		WHERE FAQ_NO = #faqNo#
+	</delete>
+	
+	<update id="faqDAO.updFaq" parameterClass="faqVO2">
+		UPDATE GS_FAQ
+		   SET
+			SUBJECT = #subject# ,
+			CNTN = #cntn# ,
+			DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+		WHERE FAQ_NO = #faqNo#
+	</update>
+
+	<update id="faqDAO.updFaqFile" parameterClass="faqVO2">
+		UPDATE GS_FAQ
+		   SET
+			ORI_FILE_NM = #oriFileNm# ,
+			FILE_PATH = #filePath#
+		WHERE FAQ_NO = #faqNo#
+	</update>
+
+	<insert id="faqDAO.insFaq" parameterClass="faqVO2">
+		INSERT INTO GS_FAQ(
+			SUBJECT ,
+			CNTN ,
+			ORI_FILE_NM ,
+			FILE_PATH ,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#subject# ,
+			#cntn# ,
+			#oriFileNm#,
+			#filePath#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d'),
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+</sqlMap>

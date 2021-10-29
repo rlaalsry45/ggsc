@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Bbs">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="bbsVO" type="ams.bbs.service.BbsVO"/>
+
+	<select id="bbsDao.getBbsList" parameterClass="bbsVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT '1' AS RNUM, 
+					A.BOARD_NO,
+					CONTENTS,
+					A.WRITER,
+					A.TITLE,
+					A.CREATE_DT
+        	 FROM(SELECT *			
+                  FROM BOARD
+                  ORDER BY BOARD_NO DESC
+                  ) A
+        	  ) B
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<select id="bbsDao.getBbsListTotalCnt" parameterClass="bbsVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM BOARD
+	</select>
+	
+	<insert id="bbsDao.insertBbs" parameterClass="bbsVO">
+		INSERT INTO BOARD(
+			BOARD_NO,
+			WRITER,
+			TITLE,
+			CONTENTS,
+			CREATE_DT
+		) VALUES(
+			(SELECT IFNULL(MAX(BOARD_NO)+1, 1) FROM BOARD),
+			#writer#,
+			#title#,
+			#contents#,
+			TO_CHAR(SYSDATE, 'YYYYMMDD')		
+		)
+	</insert>
+	
+	<select id="bbsDao.getBbsDetail" parameterClass="Integer" resultClass="egovMap">
+		SELECT BOARD_NO,
+			   WRITER,
+			   TITLE,
+			   CONTENTS,
+			   COUNT,
+			   CREATE_DT
+		FROM BOARD
+		WHERE BOARD_NO = #boardNo#
+	</select>
+	
+	<insert id="bbsDao.insertComment" parameterClass="bbsVO">
+		INSERT INTO BOARD_CMT(
+			CMT_NO,
+			BOARD_NO,
+			CMT_WRITER,
+			CMT_PWD,
+			CMT_CONTENT,
+			CMT_DT
+		) VALUES(
+			(SELECT IFNULL(MAX(CMT_NO)+1, 1) FROM BOARD_CMT),
+			#boardNo#,
+			#nickname#,
+			#cmtPwd#,
+			#comment#,
+			SYSDATE		
+		)
+	</insert>
+	
+	<select id="bbsDao.getCommentList" parameterClass="Integer" resultClass="egovMap">
+		SELECT CMT_NO,
+			   CMT_CONTENT,
+			   CMT_WRITER,
+			   TO_CHAR(CMT_DT) AS CMT_DT
+		FROM BOARD_CMT
+		WHERE BOARD_NO = #boardNo#
+		ORDER BY CMT_NO DESC
+	</select>
+	
+	<delete id="bbsDao.deleteBbs" parameterClass="bbsVO">
+		DELETE FROM BOARD
+		WHERE BOARD_NO = #boardNo#
+	</delete>
+	
+	<delete id="bbsDao.deleteComment" parameterClass="bbsVO">
+		DELETE FROM BOARD_CMT
+		WHERE BOARD_NO = #boardNo#
+	</delete>
+</sqlMap>

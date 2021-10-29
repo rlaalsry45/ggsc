@@ -1,0 +1,417 @@
+@RequestMapping(value = "/pdfWrite.do")
+	public String pdfWrite(HttpServletRequest request, ModelMap model, HttpServletResponse response){
+		
+		String domain = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+
+		String cusId = request.getParameter("cusId") == null ? "" : request.getParameter("cusId");
+		String cusName = request.getParameter("cusName") == null ? "" : request.getParameter("cusName");
+		String cusDay = request.getParameter("cusDay") == null ? "" : request.getParameter("cusDay");
+		String cusTime = request.getParameter("cusTime") == null ? "" : request.getParameter("cusTime");
+		
+		String year = "2020";
+		String month = " 10";
+		String day = " 06";
+		String position = "사원";
+		String sign = "";
+		String jumin1 = "950101";
+		String jumin2 = "1020304";
+		String name = "홍길동";
+		String imgPath = "C:\\Users\\BeadNet\\eclipse-workspace\\ggsc\\src\\main\\webapp\\images\\sign\\gong-sign_img.png";
+		String idvlInfoCntn1N = "Y";
+		String idvlInfoCntn2N = "N";
+		String radio1 = "Y";
+		
+		String filePath = "";
+		
+		try{
+			Document document = new Document(PageSize.A4, 20, 20, 20, 20); // 용지 및 여백 설정
+		    
+			// 공대리님 경로
+			// String path = "D:/proj/ggsc/src/main/webapp/images/upload/pdf";
+			// 김대리 사용 경로
+			String path = "C:/Users/BeadNet/eclipse-workspace/ggsc/src/main/webapp/images/upload/pdf";
+			
+			File dir = new File(path);
+			if(!dir.exists()){
+				dir.mkdirs();
+			}
+			filePath = path + "/" + UUID.randomUUID()+ ".pdf";
+			FileOutputStream fos = new FileOutputStream(filePath);
+			// PdfWriter 생성
+			PdfWriter writer = PdfWriter.getInstance(document, fos); // 바로 다운로드.
+			
+			//PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+			writer.setInitialLeading(12.5f);
+			 
+			// 파일 다운로드 설정
+			response.setContentType("application/pdf");
+			String fileName = "test";
+			response.setHeader("Content-Transper-Encoding", "binary");
+			response.setHeader("Content-Disposition", "inline; filename=" + fileName + ".pdf");
+			 
+			// Document 오픈
+			document.open();
+			XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
+			     
+			// CSS
+			CSSResolver cssResolver = new StyleAttrCSSResolver();
+			
+			/*// CSS 추가하는 방법
+			FileInputStream cssStream = new FileInputStream("d:\\work\\css1.css");
+			cssResolver.addCss(XMLWorkerHelper.getCSS(cssStream));*/
+			
+			// 공대리님 경로
+			// CssFile cssFile = helper.getCSS(new FileInputStream("D:\\proj\\ggsc\\src\\main\\webapp\\css\\style.css"));
+			// 김대리 사용 경로
+			/*CssFile cssFile = helper.getCSS(new FileInputStream("C:\\Users\\BeadNet\\eclipse-workspace\\ggsc\\src\\main\\webapp\\css\\pdf.css"));*/
+			CssFile cssFile = helper.getCSS(new FileInputStream("C:\\Users\\BeadNet\\eclipse-workspace\\ggsc\\src\\main\\webapp\\css\\psyDocument\\common.css"));
+			//CssFile cssFile2 = helper.getCSS(new FileInputStream("C:\\Users\\BeadNet\\eclipse-workspace\\ggsc\\src\\main\\webapp\\css\\psyDocument\\psyCnsDoc1.css"));
+			cssResolver.addCss(cssFile);
+			//cssResolver.addCss(cssFile2);
+			
+			// HTML, 폰트 설정
+			XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider(XMLWorkerFontProvider.DONTLOOKFORFONTS);
+			// 공대리님 경로
+			// fontProvider.register("D:\\proj\\ggsc\\src\\main\\webapp\\fonts\\malgun.ttf", "mal"); // MalgunGothic은 alias,
+			// 김대리 사용 경로
+			fontProvider.register("C:\\Users\\BeadNet\\eclipse-workspace\\ggsc\\src\\main\\webapp\\fonts\\malgun.ttf", "mal");
+			
+			CssAppliers cssAppliers = new CssAppliersImpl(fontProvider);
+			 
+			HtmlPipelineContext htmlContext = new HtmlPipelineContext(cssAppliers);
+			htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+			 
+			// Pipelines
+			PdfWriterPipeline pdf = new PdfWriterPipeline(document, writer);
+			HtmlPipeline html = new HtmlPipeline(htmlContext, pdf);
+			CssResolverPipeline css = new CssResolverPipeline(cssResolver, html);
+			 
+			XMLWorker worker = new XMLWorker(css, true);
+			XMLParser xmlParser = new XMLParser(worker, Charset.forName("UTF-8"));
+			 
+			// 폰트 설정에서 별칭으로 줬던 "MalgunGothic"을 html 안에 폰트로 지정한다.
+			
+			/*String htmlStr = "<html><head><body style='font-family: mal;'>";
+			htmlStr += "<div class='box-style1 x-scroll-auto' >";                                                                                                                                                                                                                  
+			htmlStr += "<div><h1 style='text-align: center; font-size:x-large; padding-bottom: 25px;'>상담종결서</h1></div>";  
+			htmlStr += "<div>";  
+            htmlStr += "<table class='table-write mg-t5'>";           
+            htmlStr += "    <colgroup>"; 
+	        htmlStr += "        <col style='width: 12%;' />";
+	        htmlStr += "        <col style='width: 25%;' />";
+	        htmlStr += "        <col style='width: 12%;' />";
+	        htmlStr += "        <col style='width: 25%;' />";
+	        htmlStr += "    </colgroup>";
+	        htmlStr += "    <tbody>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th scope='col' style='width: 40px; height: 35px;'>상 담 자*</th>";
+	        htmlStr += "            <td>홍길동</td>";
+	        htmlStr += "            <th scope='col' style='width: 40px;'>상 담 사*</th>";
+	        htmlStr += "            <td>김상담</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th scope='col' style='height: 35px;'>내 담 자*</th>";
+	        htmlStr += "            <td>(남, 여)</td>";
+	        htmlStr += "            <th scope='col'>생년월일*</th>";
+	        htmlStr += "            <td>";
+	        htmlStr += "                <span></span>년&nbsp;&nbsp;&nbsp;<span></span>월&nbsp;&nbsp;&nbsp;<span></span>일";
+	        htmlStr += "                (만세)";
+	        htmlStr += "            </td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th rowspan='2' scope='col' style='height: 70px;'>연 락 처*</th>";
+	        htmlStr += "            <td style='height: 35px;'>&nbsp;&nbsp;&nbsp;&nbsp;Home.&nbsp;&nbsp;</td>";
+	        htmlStr += "            <th rowspan='2' scope='col'>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소*</th>";
+	        htmlStr += "            <td rowspan='2'>경기도</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <td>&nbsp;&nbsp;&nbsp;&nbsp;H.P&nbsp;&nbsp;</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th scope='col' style='height: 35px;'>상담기간*</th>";
+	        htmlStr += "            <td colspan='3'>";
+	        htmlStr += "                <span></span>년&nbsp;&nbsp;&nbsp;<span></span>월&nbsp;&nbsp;&nbsp;<span></span>일&nbsp;&nbsp;&nbsp;";
+	        htmlStr += "                &nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;";
+	        htmlStr += "                <span></span>년&nbsp;&nbsp;&nbsp;<span></span>월&nbsp;&nbsp;&nbsp;<span></span>일";
+	        htmlStr += "                (회)";
+	        htmlStr += "            </td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th scope='col' style='height: 35px;'>종결방법*</th>";
+	        htmlStr += "            <td colspan='3'>합의종결</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "    </tbody>";
+	        htmlStr += "</table>";
+	        htmlStr += "<br/>";
+	        htmlStr += "<table class='table-write mg-t5'>";
+	        htmlStr += "    <colgroup>";
+	        htmlStr += "        <col style='width: 8%;' />";
+	        htmlStr += "        <col style='width: 8%;' />";
+	        htmlStr += "        <col style='width: 8%;' />";
+	        htmlStr += "    </colgroup>";
+	        htmlStr += "    <tbody>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th rowspan='2' colspan='2' style='width: 5px;'>내담자<br/>상담만족도*</th>";
+	        htmlStr += "            <td style='width: 10px; height: 35px;'>상</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <td style='height: 160px;'>";
+	        htmlStr += "                &nbsp;&nbsp;<span>도움된 내용 :</span>";
+	        htmlStr += "            </td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th colspan='2'>종결사유*</th>";
+	        htmlStr += "            <td style='height: 35px;'>이사</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th rowspan='2'>상담사<br/>의견*</th>";
+	        htmlStr += "            <th style='height: 160px;'>상담사</th>";
+	        htmlStr += "            <td>박상담</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "        <tr>";
+	        htmlStr += "            <th style='height: 160px;'>자원<br/>봉사자</th>";
+	        htmlStr += "            <td>홍길동</td>";
+	        htmlStr += "        </tr>";
+	        htmlStr += "    </tbody>";
+	        htmlStr += "</table>";
+	        htmlStr += "<div style='width: 100%;'>";
+	        htmlStr += "    <br/>";
+	        htmlStr += "    <div style='width: 100%; text-align: center; font-size: 20px;'>위 <span class='txtGr'>상담을</span> 종결합니다.</div>";
+	        htmlStr += "    <div style='text-align: right; font-size: 20px;'>";
+	        htmlStr += "        <p>";
+	        htmlStr += "            <span>20</span>년&nbsp;&nbsp;&nbsp;<span></span>월&nbsp;&nbsp;&nbsp;<span></span>일";
+	        htmlStr += "        </p>";
+	        htmlStr += "        <p>상담사 : <span></span>(인)";
+	        htmlStr += "        </p>";
+	        htmlStr += "    </div>";
+	        htmlStr += "</div>";   
+	        htmlStr += "</div>";
+			htmlStr += "</div></body></head></html>";*/
+			
+			/*String htmlStr = "<html><head><body>";
+			htmlStr += "<div class='doc-wrap'>";
+			htmlStr += "<div>안녕하세요</div>";
+		    htmlStr += "    <div class='title mt20'>";
+		    htmlStr += "        <span class='docNum noto700 txt-center'>서식 10</span><span class='docTitle noto700 ml20'>상담 사전 · 사후 기록지</span>";
+		    htmlStr += "    </div>";
+		    htmlStr += "    <div class='doc-box mt20'>";
+		    htmlStr += "        <table class='tbl'>";
+		    htmlStr += "            <caption>상담사전·사후기록지</caption>";
+		    htmlStr += "            <colgroup>";
+		    htmlStr += "                <col style='width: 10%;' />";
+		    htmlStr += "                <col style='width: 20%;' />";
+		    htmlStr += "                <col style='width: 10%;' />";
+		    htmlStr += "                <col style='width: 20%;' />";
+		    htmlStr += "            </colgroup>";
+		    htmlStr += "            <tr>";
+		    htmlStr += "                <th rowspan='2' scope='col'>내담자</th>";
+		    htmlStr += "                <td rowspan='2'></td>";
+		    htmlStr += "                <th rowspan='2' scope='col'>실시일자</th>";
+		    htmlStr += "                <td class='txt-left'>";
+		    htmlStr += "                    시작 : &nbsp;&nbsp;20년&nbsp;&nbsp;월&nbsp;&nbsp;일";
+		    htmlStr += "                </td>";
+		    htmlStr += "            </tr>";
+		    htmlStr += "            <tr>";
+		    htmlStr += "                <td class='txt-left'>";
+		    htmlStr += "                    종결 : &nbsp;&nbsp;20년&nbsp;&nbsp;월&nbsp;&nbsp;일";
+		    htmlStr += "                </td>";
+		    htmlStr += "            </tr>";
+		    htmlStr += "            <tr>";
+		    htmlStr += "                <th scope='col'>주호소문제</th>";
+		    htmlStr += "                <td colspan='3' class='txt-left'>";
+		    htmlStr += "                    1. 가";
+		    htmlStr += "                    2. 나";
+		    htmlStr += "                    3. 다";
+		    htmlStr += "                    4. 라";
+		    htmlStr += "                </td>";
+		    htmlStr += "            </tr>";
+		    htmlStr += "        </table>";
+		    htmlStr += "        <div class='con-info'>";
+		    htmlStr += "            <div class='mt5 noto500'>";
+		    htmlStr += "                ✿ 상담 전과 상담 후의 변화된 점을 적어주세요.";
+		    htmlStr += "            </div>";
+		    htmlStr += "            <div class='mt40'>";
+		    htmlStr += "                <div class='noto500'>1. 현재의 어려움 및 불편함은 어느 정도입니까? ○표해 주세요.<br/>";
+		    htmlStr += "                    &nbsp;&nbsp;&nbsp;&nbsp;(0 가장 만족상태, 10 가장 어려운 상태)</div>";
+		    htmlStr += "                <div class='mt10'>|----------------------------------------------------------------------------------------------------------------------------------------|</div>";
+		    htmlStr += "                <ul class='nl mt5'>";
+		    htmlStr += "                    <li>0</li>";
+		    htmlStr += "                    <li>1</li>";
+		    htmlStr += "                    <li>2</li>";
+		    htmlStr += "                    <li>3</li>";
+		    htmlStr += "                    <li>4</li>";
+		    htmlStr += "                    <li>5</li>";
+		    htmlStr += "                    <li>6</li>";
+		    htmlStr += "                    <li>7</li>";
+		    htmlStr += "                    <li>8</li>";
+		    htmlStr += "                    <li>9</li>";
+		    htmlStr += "                    <li>10</li>";
+		    htmlStr += "                </ul>";
+		    htmlStr += "                <div class='noto500 mt40'>2. 상담 후 문제의 대응정도 및 불편감은 어느 정도입니까? ○표해 주세요.</div>";
+		    htmlStr += "                <div class='mt10'>|----------------------------------------------------------------------------------------------------------------------------------------|</div>";
+		    htmlStr += "                <ul class='nl mt5'>";
+		    htmlStr += "                    <li>0</li>";
+		    htmlStr += "                    <li>1</li>";
+		    htmlStr += "                    <li>2</li>";
+		    htmlStr += "                    <li>3</li>";
+		    htmlStr += "                    <li>4</li>";
+		    htmlStr += "                    <li>5</li>";
+		    htmlStr += "                    <li>6</li>";
+		    htmlStr += "                    <li>7</li>";
+		    htmlStr += "                    <li>8</li>";
+		    htmlStr += "                    <li>9</li>";
+		    htmlStr += "                    <li>10</li>";
+		    htmlStr += "                </ul>";
+		    htmlStr += "                <div class='noto500 mt40'>3. 주호소 문제 검사 : &nbsp;&nbsp;점&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;점</div>";
+		    htmlStr += "                <div class='noto500 mt40'>4. 기본 검사 : S-GDS&nbsp;&nbsp;&nbsp;&nbsp;점&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;점<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GDS-KR&nbsp;&nbsp;&nbsp;&nbsp;점&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;점";
+		    htmlStr += "                </div>";
+		    htmlStr += "                <div class='noto500 mt40'>5. 상담 후 변화된 점은 무엇입니까?</div>";
+		    htmlStr += "                <table class='tbl mt10'>";
+		    htmlStr += "                    <caption>상담표</caption>";
+		    htmlStr += "                    <colgroup>";
+		    htmlStr += "                        <col style='width: 50%;' />";
+		    htmlStr += "                        <col style='width: 50%;' />";
+		    htmlStr += "                    </colgroup>";
+		    htmlStr += "                    <thead>";
+		    htmlStr += "                        <th class='bg-w' scope='col'>상담 전</th>";
+		    htmlStr += "                        <th class='bg-w' scope='col'>상담 후</th>";
+		    htmlStr += "                    </thead>";
+		    htmlStr += "                    <tbody>";
+		    htmlStr += "                        <tr>";
+		    htmlStr += "                            <td>";
+		    htmlStr += "                                textarea";
+		    htmlStr += "                            </td>";
+		    htmlStr += "                            <td>";
+		    htmlStr += "                                textarea";
+		    htmlStr += "                            </td>";
+		    htmlStr += "                        </tr>";
+		    htmlStr += "                    </tbody>";
+		    htmlStr += "                </table>";
+		    htmlStr += "                <div class='noto500 mt40'>6. 상담에 대한 기타 건의 사항</div>";
+		    htmlStr += "                textarea";
+		    htmlStr += "                <div class='noto500 mt40 border'>";
+		    htmlStr += "                    주호소문제<br/>";
+		    htmlStr += "                    <span class='fs16 txt-justify'>① 심리정서&nbsp;&nbsp;② 대인관계&nbsp;&nbsp;③ 치매&nbsp;&nbsp;④ 중독&nbsp;&nbsp;⑤ 정신건강·장애&nbsp;&nbsp;⑥ 건강&nbsp;&nbsp;⑦ 경제&nbsp;&nbsp;⑧ 생활&nbsp;&nbsp;⑨ 성&nbsp;&nbsp;⑩ 부부&nbsp;&nbsp;⑪ 가족&nbsp;&nbsp;⑫ 역할상실&nbsp;&nbsp; ⑬ 생애진로&nbsp;&nbsp;⑭ 기타</span>";
+		    htmlStr += "                </div>";
+		    htmlStr += "            </div>";
+		    htmlStr += "        </div>";
+		    htmlStr += "    </div>";
+		    htmlStr += "</div>";
+			htmlStr += "</body></head></html>";*/
+			
+			String htmlStr = "<html><head><body>";
+			htmlStr += "<div class='doc-wrap'>";
+		    htmlStr += "    <div class='title mt20'>";
+		    htmlStr += "        안녕하세요 안녕하세요 화요일입니다.";
+		    htmlStr += "    </div>";
+		    htmlStr += "    <div class='doc-box mt20'>";
+		    htmlStr += "        <table class='tbl'>";
+		    htmlStr += "            <colgroup>";
+		    htmlStr += "                <col style='width: 10%;' />";
+		    htmlStr += "                <col style='width: 20%;' />";
+		    htmlStr += "                <col style='width: 10%;' />";
+		    htmlStr += "                <col style='width: 20%;' />";
+		    htmlStr += "            </colgroup>";
+		    htmlStr += "            <tr>";
+		    htmlStr += "                <th rowspan='2' scope='col'>내담자</th>";
+		    htmlStr += "                <td rowspan='2'>cnsleNm</td>";
+		    htmlStr += "                <th rowspan='2' scope='col'>실시일자</th>";
+		    htmlStr += "                <td class='txt-left'>";
+		    htmlStr += "                    시작 : &nbsp;&nbsp;20year년&nbsp;&nbsp;month월&nbsp;&nbsp;day일";
+		    htmlStr += "                </td>";
+		    htmlStr += "            </tr>";
+		    htmlStr += "            <tr>";
+		    htmlStr += "                <td class='txt-left'>";
+		    htmlStr += "                    종결 : &nbsp;&nbsp;20year년&nbsp;&nbsp;month2월&nbsp;&nbsp;day2일";
+		    htmlStr += "                </td>";
+		    htmlStr += "            </tr>";
+		    htmlStr += "            <tr>";
+		    htmlStr += "                <th scope='col'>주호소문제</th>";
+		    htmlStr += "                <td colspan='3' class='txt-left'>";
+		    htmlStr += "                    majorAppl1";
+		    htmlStr += "                   majorAppl2";
+		    htmlStr += "                    majorAppl3";
+		    htmlStr += "                    majorAppl4";
+		    htmlStr += "                </td>";
+		    htmlStr += "            </tr>";
+		    htmlStr += "        </table>";
+		    htmlStr += "        <div class='con-info'>";
+		    htmlStr += "            <div class='mt5 noto500'>";
+		    htmlStr += "                ✿ 상담 전과 상담 후의 변화된 점을 적어주세요.";
+		    htmlStr += "            </div>";
+		    htmlStr += "            <div class='mt40'>";
+		    htmlStr += "                <div class='noto500'>1. 현재의 어려움 및 불편함은 어느 정도입니까? ○표해 주세요.</br>";
+		    htmlStr += "                    &nbsp;&nbsp;&nbsp;&nbsp;(0 가장 만족상태, 10 가장 어려운 상태)</div>";
+		    htmlStr += "                <div class='mt10'>|----------------------------------------------------------------------------------------------------------------------------------------|</div>";
+		    htmlStr += "                <ul class='nl mt5'>";
+		    htmlStr += "                    awkwState0";
+		    htmlStr += "                </ul>";
+		    htmlStr += "                <div class='noto500 mt40'>2. 상담 후 문제의 대응정도 및 불편감은 어느 정도입니까? ○표해 주세요.</div>";
+		    htmlStr += "                <div class='mt10'>|----------------------------------------------------------------------------------------------------------------------------------------|</div>";
+		    htmlStr += "                <ul class='nl mt5'>";
+		    htmlStr += "                    cnsState0";
+		    htmlStr += "                </ul>";
+		    htmlStr += "                <div class='noto500 mt40'>3. 주호소 문제 검사 : majorApplExam&nbsp;&nbsp;점&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;점</div>";
+		    htmlStr += "                <div class='noto500 mt40'>4. 기본 검사 : S-GDS&nbsp;&nbsp; sGds &nbsp;&nbsp;점&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;점</br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GDS-KR&nbsp;&nbsp;gdsKr&nbsp;&nbsp;점&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;점";
+		    htmlStr += "                </div>";
+		    htmlStr += "                <div class='noto500 mt40'>5. 상담 후 변화된 점은 무엇입니까?</div>";
+		    htmlStr += "                <table class='tbl mt10'>";
+		    htmlStr += "                    <colgroup>";
+		    htmlStr += "                        <col style='width: 50%;' />";
+		    htmlStr += "                        <col style='width: 50%;' />";
+		    htmlStr += "                    </colgroup>";
+		    htmlStr += "                    <thead>";
+		    htmlStr += "                        <th class='bg-w' scope='col'>상담 전</th>";
+		    htmlStr += "                        <th class='bg-w' scope='col'>상담 후</th>";
+		    htmlStr += "                    </thead>";
+		    htmlStr += "                    <tbody>";
+		    htmlStr += "                        <tr>";
+		    htmlStr += "                            <td>";
+		    htmlStr += "                                cnsBefore";
+		    htmlStr += "                            </td>";
+		    htmlStr += "                            <td>";
+		    htmlStr += "                                cnsAfter";
+		    htmlStr += "                            </td>";
+		    htmlStr += "                        </tr>";
+		    htmlStr += "                    </tbody>";
+		    htmlStr += "                </table>";
+		    htmlStr += "                <div class='noto500 mt40'>6. 상담에 대한 기타 건의 사항</div>";
+		    htmlStr += "                suggestions";
+		    htmlStr += "                <div class='noto500 mt40 border'>";
+		    htmlStr += "                    주호소문제</br>";
+		    htmlStr += "                    <span class='fs16 txt-justify'>① 심리정서&nbsp;&nbsp;② 대인관계&nbsp;&nbsp;③ 치매&nbsp;&nbsp;④ 중독&nbsp;&nbsp;⑤ 정신건강·장애&nbsp;&nbsp;⑥ 건강&nbsp;&nbsp;⑦ 경제&nbsp;&nbsp;⑧ 생활&nbsp;&nbsp;⑨ 성&nbsp;&nbsp;⑩ 부부&nbsp;&nbsp;⑪ 가족&nbsp;&nbsp;⑫ 역할상실&nbsp;&nbsp; ⑬ 생애진로&nbsp;&nbsp;⑭ 기타</span>";
+		    htmlStr += "                </div>";
+		    htmlStr += "            </div>";
+		    htmlStr += "        </div>";
+		    htmlStr += "    </div>";
+		    htmlStr += "</div>";
+		    htmlStr += "</body></head></html>";	
+			Image img = Image.getInstance("C:\\Users\\BeadNet\\eclipse-workspace\\ggsc\\src\\main\\webapp\\images\\ams.png");
+			img.scalePercent(80f, 50f);
+			img.setAbsolutePosition(100f, 200f);
+			
+			StringReader strReader = new StringReader(htmlStr);
+			xmlParser.parse(strReader);
+			// Image img = Image.getInstance("D:\\proj\\ggsc\\src\\main\\webapp\\images\\ams.png");
+			
+	/*Image img = Image.getInstance("data:image/png;base64,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");
+			img.scalePercent(80f, 50f);
+			img.setAbsolutePosition(100f, 200f);
+			document.add(img);*/
+			
+			document.close();
+			writer.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		EgovMap map = new EgovMap();
+		map.put("cusId", cusId);
+		map.put("cusName", cusName);
+		map.put("cusDay", cusDay);
+		map.put("cusTime", cusTime);
+		map.put("filePath", filePath);
+		bbsService.insertPdf(map);
+
+		return "forward:/pdfList.do";
+	}

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RelatedOrganMngDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="RorgMngVO" type="ggsc.rorgmng.service.RorgMngVO"/>
+	<typeAlias  alias="ExcelVO" type="ggsc.support.service.ExcelVO"/>
+
+	<!-- 유관기관관리 목록  -->
+	<select id="RelatedOrganMngDAO.getRelatedOrganMngList" parameterClass="RorgMngVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				REL_ORG_GB ,
+				REL_ORG_CD ,
+				LOCAL_GB ,
+				REL_ORG_NM ,
+				URL ,
+				TEL ,
+				FAX 
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G80' AND ODR = A.REL_ORG_GB) AS ORG_GB_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = A.LOCAL_GB) AS LOCAL_GB_NM
+				
+			FROM
+				GS_REL_ORG_M AS A
+			WHERE
+				1=1
+			<isNotEmpty property="schLocalGb" prepend="AND">
+				LOCAL_GB = #schLocalGb#
+			</isNotEmpty>
+			<isNotEmpty property="schorganGb" prepend="AND">
+				REL_ORG_GB = #schorganGb#
+			</isNotEmpty>
+			<isNotEmpty property="schRelOrgNm" prepend="AND">
+				REL_ORG_NM LIKE CONCAT('%', #schRelOrgNm#, '%')
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND">
+				REL_ORG_NM LIKE CONCAT('%', #schCenterGb#, '%')
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]> 
+	</select>
+	
+	<!-- 유관기관관리 엑셀  -->
+	<select id="RelatedOrganMngDAO.getRelatedOrganMngListExcel" parameterClass="ExcelVO" resultClass="egovMap">
+		
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				REL_ORG_GB ,
+				REL_ORG_CD ,
+				LOCAL_GB ,
+				REL_ORG_NM ,
+				URL ,
+				TEL ,
+				FAX 
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G80' AND ODR = A.REL_ORG_GB) AS ORG_GB_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = A.LOCAL_GB) AS LOCAL_GB_NM
+				
+			FROM
+				GS_REL_ORG_M AS A
+			WHERE
+				1=1
+			<isNotEmpty property="schLocalGb" prepend="AND">
+				LOCAL_GB = #schLocalGb#
+			</isNotEmpty>
+			<isNotEmpty property="schorganGb" prepend="AND">
+				REL_ORG_GB = #schorganGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND">
+				REL_ORG_NM LIKE CONCAT('%', #schCenterGb#, '%')
+			</isNotEmpty>
+			
+			ORDER BY RNUM ASC
+	</select>
+	
+	<!-- 유관기관관리 목록 갯수  -->
+	<select id="RelatedOrganMngDAO.getRelatedOrganMngTotalCnt" parameterClass="RorgMngVO" resultClass="Integer">
+		SELECT
+			COUNT(REL_ORG_CD) 
+		FROM
+			GS_REL_ORG_M
+		WHERE
+			1=1
+		<isNotEmpty property="schLocalGb" prepend="AND">
+			LOCAL_GB = #schLocalGb#
+		</isNotEmpty>
+		<isNotEmpty property="schorganGb" prepend="AND">
+			REL_ORG_GB = #schorganGb#
+		</isNotEmpty>
+		<isNotEmpty property="schRelOrgNm" prepend="AND">
+			REL_ORG_NM LIKE CONCAT('%', #schRelOrgNm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND">
+			REL_ORG_NM LIKE CONCAT('%', #schCenterGb#, '%')
+		</isNotEmpty>
+	</select>
+	
+	<!-- 유관기관 등록  -->
+	<insert id="RelatedOrganMngDAO.insertRelatedOrgan" parameterClass="RorgMngVO">
+		INSERT INTO 
+			GS_REL_ORG_M (
+				NUM ,
+				REL_ORG_CD ,
+				REL_ORG_GB ,
+				LOCAL_GB ,
+				REL_ORG_NM ,
+				ADDR ,
+				URL ,
+				TEL ,
+				FAX ,
+				REG_ID ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_REL_ORG_M AS A ) ,
+				(SELECT CONCAT('org', LPAD(MAX(B.NUM)+1, 3, '0')) FROM GS_REL_ORG_M AS B) ,
+				#relOrgGb# ,
+				#localGb# ,
+				#relOrgNm# ,
+				#addr# ,
+				#url# ,
+				#tel# ,
+				#fax# ,
+				#regId# ,
+				now() 
+			)
+			
+	</insert>
+	
+	<!-- 유관기관명 중복 체크  -->
+	<select id="RelatedOrganMngDAO.getRelatedOrganCdChk" parameterClass="RorgMngVO" resultClass="Integer">
+		SELECT 
+			COUNT(REL_ORG_NM) 
+		FROM 
+			GS_REL_ORG_M 
+		WHERE 
+			REL_ORG_NM = #relOrgNm#
+			AND REL_ORG_GB = #relOrgGb#
+			AND LOCAL_GB = #localGb#
+	</select>
+	
+	<!-- 유관기관 상세보기  -->
+	<select id="RelatedOrganMngDAO.getRelatedOrganMngDtl" parameterClass="Integer" resultClass="EgovMap">
+		SELECT
+			NUM ,
+			REL_ORG_GB ,
+			REL_ORG_CD ,
+			LOCAL_GB ,
+			REL_ORG_NM ,
+			ADDR ,
+			ADDR_DTL ,
+			URL ,
+			TEL ,
+			FAX
+		FROM
+			GS_REL_ORG_M
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<!-- 유관기관 수정  -->
+	<update id="RelatedOrganMngDAO.updateRelatedOrgan" parameterClass="RorgMngVO">
+		UPDATE GS_REL_ORG_M
+			SET
+				REL_ORG_GB = #relOrgGb# ,
+				LOCAL_GB = #localGb# ,
+				REL_ORG_NM = #relOrgNm# ,
+				ADDR = #addr# ,
+				ADDR_DTL = #addrDtl# ,
+				URL = #url# ,
+				TEL = #tel# ,
+				FAX = #fax#
+			WHERE
+				NUM = #num#
+	</update>
+	
+</sqlMap>

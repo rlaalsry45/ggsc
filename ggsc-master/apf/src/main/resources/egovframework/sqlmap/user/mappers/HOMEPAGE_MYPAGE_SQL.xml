@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.mypage.service.impl.HomepageMypageMapper">
+
+	<!-- 최근상담내역 -->
+	<select id="getMypageRecCns" parameterType="mypageVO" resultType="egovMap">
+		<!-- SELECT
+			NUM ,
+			CENTER_GB ,
+			CNS_GB ,
+			CNSLE_NM ,
+			CNS_DT 
+		FROM
+			GS_CNS_REQ_ADD
+		WHERE
+			CNSLE_ID = #{cnsleId} -->
+		SELECT
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = A.CNS_GB) AS cnsGbNm ,
+			A.CNSLE_NM ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G18' AND ODR = A.CNS_STAT) AS cnsStatNm ,
+			B.CNS_RSVT_DT ,
+			B.CNS_RSVT_STRT_HOUR ,
+			B.CNS_RSVT_STRT_MIN ,
+			B.CASE_NO ,
+			C.CENTER_NM ,
+			C.WRITE_DT ,
+			MAX(C.WRITE_DT)
+		FROM
+			GS_PER_CNS AS A
+		LEFT JOIN GS_PER_CNS_DTL AS B
+			ON A.CNSLE_ID = B.CNSLE_ID
+		LEFT JOIN GS_PER_INFO_AGRE AS C
+			ON B.CNSLE_ID = C.CNSLE_ID
+		WHERE
+			A.CNSLE_ID = #{cnsleId}
+		
+	</select>
+
+	<!-- 상담이력 목록 -->
+	<select id="getMypageCnsHisList" parameterType="mypageVO" resultType="egovMap">
+		SELECT
+			MAS.*
+		FROM(
+			SELECT
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = A.CNS_GB) AS cnsGbNm ,
+				A.CNSLE_NM ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G18' AND ODR = A.CNS_STAT) AS cnsStatNm ,
+				A.CNS_END_DT ,
+				B.CASE_NO ,
+				C.CENTER_NM ,
+				C.WRITE_DT
+			FROM
+				GS_PER_CNS AS A
+			LEFT JOIN GS_PER_CNS_DTL AS B
+				ON A.CNSLE_ID = B.CNSLE_ID
+				AND A.CASE_NO = B.CASE_NO
+			LEFT JOIN GS_PER_INFO_AGRE AS C
+				ON B.CNSLE_ID = C.CNSLE_ID
+				AND B.CASE_NO = C.CASE_NO
+			WHERE
+				A.CNSLE_ID = #{cnsleId}
+			<!-- AND A.CNS_STAT != '1' -->
+			ORDER BY C.WRITE_DT DESC
+		) AS MAS
+			GROUP BY CASE_NO
+			LIMIT 0,7
+	</select>
+
+	<!-- 마이페이지 상세보기 -->
+	<select id="getMypageRecCnsDtl" parameterType="mypageVO" resultType="egovMap">
+		<!-- SELECT              
+			MAS.*            
+		FROM(    
+			SELECT           
+				A.CNS_GB ,       
+				A.CNSLE_NM ,     
+				A.CNS_STAT ,     
+				A.GENDER ,       
+				A.BIRTH_DT ,     
+				A.MOBILE ,       
+				B.CNS_RSVT_DT ,  
+				B.CNS_RSVT_STRT_HOUR ,
+				B.CNS_RSVT_STRT_MIN ,
+				B.CASE_NO ,      
+				C.CENTER_NM ,    
+				C.WRITE_DT ,     
+				D.EMAIL          
+			FROM                
+				GS_PER_CNS AS A  
+			LEFT JOIN GS_PER_CNS_DTL AS B
+				ON A.CNSLE_ID = B.CNSLE_ID
+			LEFT JOIN GS_PER_INFO_AGRE AS C
+				ON B.CNSLE_ID = C.CNSLE_ID
+			INNER JOIN GS_USER_M AS D
+				ON A.CNSLE_ID = D.USER_ID
+			WHERE               
+				A.CNSLE_ID = #{cnsleId}
+				AND B.CASE_NO = #{caseNo}
+		) AS MAS         
+			GROUP BY CASE_NO -->
+		SELECT              
+			MAS.*            
+		FROM(    
+			SELECT           
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = A.CNS_GB) AS cnsGbNm ,
+				A.CNSLE_NM ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G18' AND ODR = A.CNS_STAT) AS cnsStatNm ,
+				A.GENDER ,       
+				A.BIRTH_DT ,     
+				A.MOBILE ,       
+				B.CNS_RSVT_DT ,  
+				B.CNS_RSVT_STRT_HOUR ,
+				B.CNS_RSVT_STRT_MIN ,
+				B.CASE_NO ,      
+				C.CENTER_NM ,    
+				C.WRITE_DT ,     
+				D.EMAIL          
+			FROM                
+				GS_PER_CNS AS A  
+			LEFT JOIN GS_PER_CNS_DTL AS B
+				ON A.CNSLE_ID = B.CNSLE_ID
+				AND A.CASE_NO = B.CASE_NO
+			LEFT JOIN GS_PER_INFO_AGRE AS C
+				ON B.CNSLE_ID = C.CNSLE_ID
+				AND B.CASE_NO = C.CASE_NO
+			INNER JOIN GS_USER_M AS D
+				ON A.CNSLE_ID = D.USER_ID
+			WHERE               
+				A.CNSLE_ID = #{cnsleId}
+				AND A.CASE_NO = #{caseNo}
+		) AS MAS
+			GROUP BY CASE_NO
+	</select>
+
+</mapper>

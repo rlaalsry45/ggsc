@@ -1,0 +1,1010 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="HomepageMng">
+ 
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="hNoticeVO" type="ggsc.hpgmng.service.HnoticeVO"/>
+	<typeAlias alias="freeBrdVO" type="ggsc.hpgmng.service.FreeBrdVO"/>
+	<typeAlias alias="libraryVO" type="ggsc.hpgmng.service.LibraryVO"/>
+	<typeAlias alias="newsVO" type="ggsc.hpgmng.service.NewsVO"/>
+	<typeAlias alias="onlineAskVO" type="ggsc.hpgmng.service.OnlineAskVO"/>
+	<typeAlias alias="eduAppVO" type="ggsc.hpgmng.service.EduAppVO"/>
+<!--	<typeAlias alias="faqVO" type="ggsc.support.service.FaqVO"/>-->
+
+	<!-- 센터소식 목록 -->
+	<select id="hpgmngDao.getCenterNewsList" parameterClass="newsVO" resultClass="egovMap">
+ 		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gcn.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gcn.NUM DESC) AS RNUM2 ,
+				gcn.NUM ,
+				gcn.VIEW_COUNT,
+				gcn.TITLE ,
+				gcn.CNTN ,
+				gcn.WRITER ,
+				gcn.REG_ID ,
+				DATE_FORMAT(gcn.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM,
+				gcnf.FILE_NM,
+				gcnf.SYS_FILE_NM,
+				gcnf.FILE_PATH ,
+				gcn.IMG_PATH 
+			FROM
+				GS_CENTER_NEWS AS gcn
+			LEFT JOIN
+				GS_CENTER_NEWS_FILE gcnf
+			ON gcn.NUM = gcnf.FILE_NUM
+			 
+			WHERE 1=1
+			
+			<isNotEmpty property="schStartDate" prepend="AND"> 
+				<![CDATA[ gcn.DB_INS_TM >= #schStartDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property="schEndDate" prepend="AND"> 
+				<![CDATA[ gcn.DB_INS_TM <= #schEndDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property="schText" > 
+				<isEqual prepend="AND" property="schType" compareValue="1">
+					gcn.TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="2">
+					gcn.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schType" compareValue="3">
+					gcn.CNTN LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			
+			
+			) A
+			
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 센터소식 갯수-->
+	<select id="hpgmngDao.getCenterNewsListTotCnt" parameterClass="newsVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_CENTER_NEWS AS gcn
+		WHERE 
+			1=1
+		<isNotEmpty property="schStartDate" prepend="AND"> 
+			<![CDATA[ gcn.DB_INS_TM >= #schStartDate# ]]>
+		</isNotEmpty>
+		
+		<isNotEmpty property="schEndDate" prepend="AND"> 
+			<![CDATA[ gcn.DB_INS_TM <= #schEndDate# ]]>
+		</isNotEmpty>
+		
+		<isNotEmpty property="schText" > 
+			<isEqual prepend="AND" property="schType" compareValue="1">
+				gcn.TITLE LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual prepend="AND" property="schType" compareValue="2">
+				gcn.WRITER LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual prepend="AND" property="schType" compareValue="3">
+				gcn.CNTN LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<!-- 센터소식 등록-->
+	<insert id="hpgmngDao.insertCenterNews" parameterClass="newsVO">
+	<![CDATA[
+		INSERT INTO GS_CENTER_NEWS(
+			NUM,
+			WRITER,
+			TITLE,
+			CNTN,
+			REG_ID,
+			DB_INS_TM ,
+			IMG_PATH
+		) VALUES(
+			(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_CENTER_NEWS A) ,
+			#writer#,
+			#title#,
+			#cntn#,
+			#regId#,
+			NOW() ,
+			#imgPath#
+		)	
+		]]>
+	</insert>
+	
+	<!-- 센터소식 파일업로드 등록  -->
+	<insert id="hpgmngDao.insertCenterNewsUpload" parameterClass="egovMap">
+		INSERT INTO GS_CENTER_NEWS_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT IFNULL(MAX(NUM),0) FROM GS_CENTER_NEWS) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				#fileSize# ,
+				now() 
+			)
+	</insert>
+	
+	<!-- 센터소식 수정  -->
+	<update id="hpgmngDao.updateCenterNews" parameterClass="newsVO">
+		UPDATE GS_CENTER_NEWS
+			SET
+				TITLE = #title# ,
+				CNTN = #cntn#
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 센터소식 파일업로드 수정 
+	<update id="hpgmngDao.updateNoticeUpload" parameterClass="noticeVO">
+		UPDATE GS_NOTICE_A_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	 -->
+	<!-- 센터소식 상세-->	
+	<select id="hpgmngDao.getCenterNewsDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.REG_ID ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_CENTER_NEWS AS A
+		LEFT JOIN GS_CENTER_NEWS_FILE AS B
+			ON A.NUM = B.FILE_NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+
+	<!-- 공지사항 목록 -->
+	<select id="hpgmngDao.getNoticeList" parameterClass="hNoticeVO" resultClass="egovMap">
+ 		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gn.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gn.NUM DESC) AS RNUM2 ,
+				gn.NUM ,
+				gn.VIEW_COUNT,
+				gn.TITLE ,
+				gn.CNTN ,
+				gn.WRITER ,
+				gn.REG_ID ,
+				DATE_FORMAT(gn.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM,
+				gnf.FILE_NM,
+				gnf.SYS_FILE_NM,
+				gnf.FILE_PATH
+			FROM
+				GS_NOTICE gn
+			LEFT JOIN
+				GS_NOTICE_FILE gnf
+			ON gn.NUM = gnf.FILE_NUM 
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 공지사항 갯수-->
+	<select id="hpgmngDao.getNoticeListTotCnt" parameterClass="hNoticeVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_NOTICE
+		WHERE 
+			1=1
+		 <!-- <isNotEmpty property="schTitle" prepend="AND"> 
+			TITLE LIKE CONCAT('%', #schTitle#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schWriter" prepend="AND"> 
+			WRITER LIKE CONCAT('%', #schWriter#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schCntn" prepend="AND"> 
+			CNTN LIKE CONCAT('%', #schCntn#, '%')
+		</isNotEmpty> -->
+	</select>
+	
+	<!-- 공지사항 등록-->
+	<insert id="hpgmngDao.insertNotice" parameterClass="hNoticeVO">
+	<![CDATA[
+		INSERT INTO GS_NOTICE(
+			NUM,
+			WRITER,
+			TITLE,
+			CNTN,
+			REG_ID,
+			DB_INS_TM
+		) VALUES(
+			(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_NOTICE A) ,
+			#writer#,
+			#title#,
+			#cntn#,
+			#regId#,
+			NOW()
+		)	
+		]]>
+	</insert>
+	
+	<!-- 공지사항 파일업로드 등록  -->
+	<insert id="hpgmngDao.insertNoticeUpload" parameterClass="egovMap">
+		INSERT INTO GS_NOTICE_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(NUM),0) FROM GS_NOTICE) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				#fileSize# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 공지사항 수정  -->
+	<update id="hpgmngDao.updateNotice" parameterClass="hNoticeVO">
+		UPDATE GS_NOTICE
+			SET
+				TITLE = #title# ,
+				CNTN = #cntn#
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 공지사항 파일업로드 수정 
+	<update id="hpgmngDao.updateNoticeUpload" parameterClass="noticeVO">
+		UPDATE GS_NOTICE_A_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	 -->
+	<!-- 공지사항 상세-->	
+	<select id="hpgmngDao.getNoticeDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_NOTICE AS A
+		LEFT JOIN GS_NOTICE_FILE AS B
+			ON A.NUM = B.FILE_NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+	<!-- 게시판관리 목록 -->
+	<select id="hpgmngDao.getFreeBoardList" parameterClass="freeBrdVO" resultClass="egovMap">
+ 		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gfb.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gfb.NUM DESC) AS RNUM2 ,
+				gfb.NUM ,
+				gfb.VIEW_COUNT,
+				gfb.TITLE ,
+				gfb.CNTN ,
+				gfb.WRITER ,
+				gfb.REG_ID ,
+				DATE_FORMAT(gfb.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM,
+				gfbf.FILE_NM,
+				gfbf.SYS_FILE_NM,
+				gfbf.FILE_PATH
+			FROM
+				GS_FREE_BOARD AS gfb
+			LEFT JOIN
+				GS_FREE_BOARD_FILE gfbf
+			ON gfb.NUM = gfbf.FILE_NUM 
+			
+			WHERE 1 = 1 
+			
+			<isNotEmpty property="schFblStartDate" prepend="AND">
+			   <![CDATA[ gfb.DB_INS_TM >= #schFblStartDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property = "schFblEndDate" prepend="AND">
+			   <![CDATA[ gfb.DB_INS_TM <= #schFblEndDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property = "schFblText">
+			    <isEqual prepend="AND" property = "schFblType" compareValue="1">
+			       gfb.TITLE LIKE CONCAT('%' , #schFblText# , '%')
+			    </isEqual>
+			    <isEqual prepend="AND" property = "schFblType" compareValue="2">
+			       gfb.WRITER LIKE CONCAT('%' , #schFblText# , '%')
+			    </isEqual>
+			    <isEqual prepend="AND" property = "schFblType" compareValue="3">
+			       gfb.CNTN LIKE CONCAT('%' , #schFblText# , '%')
+			    </isEqual>
+			    
+			</isNotEmpty>
+			
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 게시판관리 갯수-->
+	<select id="hpgmngDao.getFreeBoardListTotCnt" parameterClass="freeBrdVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_FREE_BOARD AS gfb
+		WHERE 
+			1=1
+		<isNotEmpty property="schFblStartDate" prepend="AND">
+			   <![CDATA[ gfb.DB_INS_TM >= #schFblStartDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property = "schFblEndDate" prepend="AND">
+			   <![CDATA[ gfb.DB_INS_TM <= #schFblEndDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property = "schFblText">
+			    <isEqual prepend="AND" property = "schFblType" compareValue="1">
+			       gfb.TITLE LIKE CONCAT('%' , #schFblText# , '%')
+			    </isEqual>
+			    <isEqual prepend="AND" property = "schFblType" compareValue="2">
+			       gfb.WRITER LIKE CONCAT('%' , #schFblText# , '%')
+			    </isEqual>
+			    <isEqual prepend="AND" property = "schFblType" compareValue="3">
+			       gfb.CNTN LIKE CONCAT('%' , #schFblText# , '%')
+			    </isEqual>
+			    
+			</isNotEmpty>
+		 <!-- <isNotEmpty property="schTitle" prepend="AND"> 
+			TITLE LIKE CONCAT('%', #schTitle#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schWriter" prepend="AND"> 
+			WRITER LIKE CONCAT('%', #schWriter#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schCntn" prepend="AND"> 
+			CNTN LIKE CONCAT('%', #schCntn#, '%')
+		</isNotEmpty> -->
+	</select>
+	
+	<!-- 게시판관리 등록-->
+	<insert id="hpgmngDao.insertFreeBoard" parameterClass="freeBrdVO">
+	<![CDATA[
+		INSERT INTO GS_FREE_BOARD(
+			NUM,
+			WRITER,
+			TITLE,
+			CNTN,
+			REG_ID,
+			DB_INS_TM
+		) VALUES(
+			(SELECT IFNULL(MAX(A.NUM), 0)+1 FROM GS_FREE_BOARD A) ,
+			#writer#,
+			#title#,
+			#cntn#,
+			#regId#,
+			NOW()
+		)	
+		]]>
+	</insert>
+	
+	<!-- 게시판관리 파일업로드 등록  -->
+	<insert id="hpgmngDao.insertFreeBoardUpload" parameterClass="egovMap">
+		INSERT INTO GS_FREE_BOARD_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(NUM),0) FROM GS_FREE_BOARD) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				#fileSize# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 게시판관리 수정  -->
+	<update id="hpgmngDao.updateFreeBoard" parameterClass="freeBrdVO">
+		UPDATE GS_FREE_BOARD
+			SET
+				TITLE = #title# ,
+				CNTN = #cntn#
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 게시판관리 파일업로드 수정 
+	<update id="hpgmngDao.updateFreeBoardUpload" parameterClass="noticeVO">
+		UPDATE GS_NOTICE_A_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	 -->
+	<!-- 게시판관리 상세-->	
+	<select id="hpgmngDao.getFreeBoardDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.REG_ID ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_FREE_BOARD AS A
+		LEFT JOIN GS_FREE_BOARD_FILE AS B
+			ON A.NUM = B.FILE_NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+		<!-- 문서자료실 목록 -->
+	<select id="hpgmngDao.getLibraryList" parameterClass="libraryVO" resultClass="egovMap">
+ 		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY gl.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY gl.NUM DESC) AS RNUM2 ,
+				gl.NUM ,
+				gl.TITLE ,
+				gl.CNTN ,
+				gl.WRITER ,
+				gl.REG_ID ,
+				DATE_FORMAT(gl.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM,
+				glf.FILE_NM,
+				glf.SYS_FILE_NM,
+				glf.FILE_PATH
+			FROM
+				GS_LIBRARY AS gl
+			LEFT JOIN
+				GS_LIBRARY_FILE glf
+			ON gl.NUM = glf.FILE_NUM 
+			
+			WHERE 1=1
+			
+			<isNotEmpty property="schDcuStartDate" prepend="AND">
+		       	<![CDATA[ gl.DB_INS_TM >= #schDcuStartDate# ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schDcuEndDate" prepend="AND">
+		        <![CDATA[ gl.DB_INS_TM <= #schDcuEndDate#   ]]>
+		    </isNotEmpty>
+		    
+		    <isNotEmpty property="schDcuText" > 
+				<isEqual prepend="AND" property="schDcuType" compareValue="1">
+					gl.TITLE LIKE CONCAT('%', #schDcuText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schDcuType" compareValue="2">
+					gl.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schDcuType" compareValue="3">
+					gl.CNTN LIKE CONCAT('%', #schDcuText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 문서자료실 갯수-->
+	<select id="hpgmngDao.getLibraryListTotCnt" parameterClass="libraryVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_LIBRARY AS gl
+		WHERE 
+			1=1
+		   
+	    <isNotEmpty property ="schDcuStartDate" prepend="AND">
+	        <![CDATA[ gl.DB_INS_TM >= #schDcuStartDate#  ]]>
+	    </isNotEmpty>
+	     <isNotEmpty property ="schDcuEndDate" prepend="AND">
+	        <![CDATA[ gl.DB_INS_TM <= #schDcuEndDate#  ]]>
+	    </isNotEmpty>
+	    
+	    <isNotEmpty property="schDcuText" > 
+				<isEqual prepend="AND" property="schDcuType" compareValue="1">
+					gl.TITLE LIKE CONCAT('%', #schDcuText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schDcuType" compareValue="2">
+					gl.WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual prepend="AND" property="schDcuType" compareValue="3">
+					gl.CNTN LIKE CONCAT('%', #schDcuText#, '%')
+				</isEqual>
+		</isNotEmpty>
+	    
+	</select>
+	
+	<!-- 문서자료실 등록-->
+	<insert id="hpgmngDao.insertLibrary" parameterClass="libraryVO">
+	<![CDATA[
+		INSERT INTO GS_LIBRARY(
+			NUM,
+			WRITER,
+			TITLE,
+			CNTN,
+			REG_ID,
+			DB_INS_TM
+		) VALUES(
+			(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_LIBRARY A) ,
+			#writer#,
+			#title#,
+			#cntn#,
+			#regId#,
+			NOW()
+		)	
+		]]>
+	</insert>
+	
+	<!-- 문서자료실 파일업로드 등록  -->
+	<insert id="hpgmngDao.insertLibraryUpload" parameterClass="egovMap">
+		INSERT INTO GS_LIBRARY_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(NUM),0) FROM GS_LIBRARY) ,
+				#regId# ,
+				#writer# ,
+				#fileNm# ,
+				#sysFileNm# ,
+				#filePath# ,
+				#fileSize# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 문서자료실 수정  -->
+	<update id="hpgmngDao.updateLibrary" parameterClass="libraryVO">
+		UPDATE GS_LIBRARY
+			SET
+				TITLE = #title# ,
+				CNTN = #cntn#
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 문서자료실 파일업로드 수정 
+	<update id="hpgmngDao.updateLibraryUpload" parameterClass="libraryVO">
+		UPDATE GS_NOTICE_A_FILE
+			SET
+				FILE_NM = #fileNm# ,
+				SYS_FILE_NM = #sysFileNm# ,
+				FILE_PATH = #filePath# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+	 -->
+	<!-- 문서자료실 상세-->	
+	<select id="hpgmngDao.getLibraryDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.REG_ID ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			B.FILE_NM ,
+			B.FILE_PATH ,
+			B.SYS_FILE_NM
+		FROM
+			GS_LIBRARY AS A
+		LEFT JOIN GS_LIBRARY_FILE AS B
+			ON A.NUM = B.FILE_NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+	<!-- 온라인상담 목록 -->
+	<select id="hpgmngDao.getOnlineAskList" parameterClass="onlineAskVO" resultClass="egovMap">
+ 		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY goa.NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY goa.NUM DESC) AS RNUM2 ,
+				goa.NUM ,
+				goa.VIEW_COUNT,
+				goa.TITLE ,
+				goa.CNTN ,
+				goa.WRITER ,
+				goa.REG_ID ,
+				DATE_FORMAT(goa.DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM,
+				CASE WHEN goaa.NUM IS NOT NULL THEN 'Y'
+					ELSE 'N' END AS ANS_YN
+			FROM
+				GS_ONLINE_ASK AS goa
+			LEFT JOIN
+				GS_ONLINE_ASK_ANS goaa
+			ON goa.NUM = goaa.NUM 
+			
+			WHERE 1=1
+			
+			<isNotEmpty property="schOlaStartDate" prepend="AND"> 
+				<![CDATA[ goa.DB_INS_TM >= #schOlaStartDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property="schOlaEndDate" prepend="AND"> 
+				<![CDATA[ goa.DB_INS_TM <= #schOlaEndDate# ]]>
+			</isNotEmpty>
+			
+				<isNotEmpty property="schOlaText" > 
+					<isEqual prepend="AND" property="schOlaType" compareValue="1">
+						goa.TITLE LIKE CONCAT('%', #schOlaText#, '%')
+					</isEqual>
+					<isEqual prepend="AND" property="schOlaType" compareValue="2">
+						goa.WRITER LIKE CONCAT('%', #schOlaText#, '%')
+					</isEqual>
+					<isEqual prepend="AND" property="schOlaType" compareValue="3">
+						goa.CNTN LIKE CONCAT('%', #schOlaText#, '%')
+					</isEqual>
+				</isNotEmpty>
+			
+			
+			
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 온라인상담 갯수-->
+	<select id="hpgmngDao.getOnlineAskListTotCnt" parameterClass="onlineAskVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_ONLINE_ASK AS goa
+		WHERE 
+			1=1
+			
+	    <isNotEmpty property="schOlaStartDate" prepend="AND"> 
+				<![CDATA[ goa.DB_INS_TM >= #schOlaStartDate# ]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property="schOlaEndDate" prepend="AND"> 
+				<![CDATA[ goa.DB_INS_TM <= #schOlaEndDate# ]]>
+			</isNotEmpty>
+			
+				<isNotEmpty property="schOlaText" > 
+					<isEqual prepend="AND" property="schOlaType" compareValue="1">
+						goa.TITLE LIKE CONCAT('%', #schOlaText#, '%')
+					</isEqual>
+					<isEqual prepend="AND" property="schOlaType" compareValue="2">
+						goa.WRITER LIKE CONCAT('%', #schOlaText#, '%')
+					</isEqual>
+					<isEqual prepend="AND" property="schOlaType" compareValue="3">
+						goa.CNTN LIKE CONCAT('%', #schOlaText#, '%')
+					</isEqual>
+				</isNotEmpty>
+			
+		 <!-- <isNotEmpty property="schTitle" prepend="AND"> 
+			TITLE LIKE CONCAT('%', #schTitle#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schWriter" prepend="AND"> 
+			WRITER LIKE CONCAT('%', #schWriter#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schCntn" prepend="AND"> 
+			CNTN LIKE CONCAT('%', #schCntn#, '%')
+		</isNotEmpty> -->
+	</select>
+	
+	<!-- 온라인상담 등록-->
+	<insert id="hpgmngDao.insertOnlineAsk" parameterClass="onlineAskVO">
+	<![CDATA[
+		INSERT INTO GS_ONLINE_ASK_ANS(
+			NUM,
+			ANS_TITLE ,
+			ANS_CNTN,
+			REG_ID,
+			REG_NM,
+			ANS_DB_INS_TM
+		) VALUES(
+			#num# ,
+			#title# ,
+			#ansCntn#,
+			#regId#,
+			#regNm#,
+			NOW()
+		)	
+		]]>
+	</insert>
+	
+	<!-- 온라인상담 수정  -->
+	<update id="hpgmngDao.updateOnlineAsk" parameterClass="onlineAskVO">
+		UPDATE GS_ONLINE_ASK_ANS
+			SET
+				ANS_CNTN = #ansCntn# ,
+				REG_ID = #regId# ,
+				REG_NM = #regNm#
+			WHERE
+				NUM = #num#
+	</update>
+	
+	<!-- 온라인상담 상세-->	
+	<select id="hpgmngDao.getOnlineAskDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.REG_ID ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			B.ANS_CNTN
+		FROM
+			GS_ONLINE_ASK AS A
+		LEFT JOIN GS_ONLINE_ASK_ANS AS B
+			ON A.NUM = B.NUM
+		WHERE
+			A.NUM = #num#
+	</select>
+	
+	
+	<!-- 교육신청 목록  -->
+	<select id="hpgmngDao.getEduAppList" parameterClass="eduAppVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				BIRTH ,
+				PHONE ,
+				USER_ID ,
+				USER_NM ,
+				CENTER_NM ,
+				DEPART ,
+				EMAIL ,
+				LOCAL_GB , 
+				SIGUN_CD ,
+				REG_DATE ,
+				EDU_NAME ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM
+			FROM
+				GS_EDU_APP
+			WHERE
+				1=1
+			<isNotEmpty property="schText"> 
+				<isEqual property="schType" compareValue="1"> 
+					AND USER_NM LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual property="schType" compareValue="2"> 
+					AND CENTER_NM LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual property="schType" compareValue="3"> 
+					AND DEPART LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 교육신청 갯수  -->
+	<select id="hpgmngDao.getEduAppListTotCnt" parameterClass="eduAppVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_EDU_APP
+		WHERE 
+			1=1
+		<isNotEmpty property="schText"> 
+			<isEqual property="schType" compareValue="1"> 
+				AND USER_NM LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual property="schType" compareValue="2"> 
+				AND CENTER_NM LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual property="schType" compareValue="3"> 
+				AND DEPART LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 교육신청 상세 -->
+	<select id="hpgmngDao.getEduAppDtl" parameterClass="Integer" resultClass="egovMap">		
+		SELECT
+			*
+		FROM
+			GS_EDU_APP
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<update id="hpgmngDao.updateEduApp" parameterClass="eduAppVO">
+		UPDATE GS_EDU_APP
+			SET
+				PHONE = #phone# ,
+				EMAIL = #email# ,
+				CENTER_NM = #centerNm# ,
+				DEPART = #depart# ,
+				EDU_NAME = #eduName# ,
+				REG_DATE = #regDate#
+			WHERE
+				NUM = #num#
+	</update>
+	
+	
+	<!-- FAQ 목록  -->
+	<select id="hpgmngDao.getFaqList" parameterClass="faqVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY NUM) AS RNUM ,
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM2 ,
+				NUM ,
+				TITLE ,
+				WRITER ,
+				RPLY_CNTN ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS DB_INS_TM
+			FROM
+				GS_EDU_APP
+			WHERE
+				1=1
+			<isNotEmpty property="schText"> 
+				<isEqual property="schType" compareValue="1"> 
+					AND TITLE LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual property="schType" compareValue="2"> 
+					AND RPLY_CNTN LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+				<isEqual property="schType" compareValue="3"> 
+					AND WRITER LIKE CONCAT('%', #schText#, '%')
+				</isEqual>
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM2 > #firstIndex# AND RNUM2 <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- FAQ 갯수  -->
+	<select id="hpgmngDao.getFaqListTotCnt" parameterClass="faqVO" resultClass="Integer">
+		SELECT 
+			COUNT(*)
+		FROM 
+			GS_FAQ_A
+		WHERE 
+			1=1
+		<isNotEmpty property="schText"> 
+			<isEqual property="schType" compareValue="1"> 
+				AND TITLE LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual property="schType" compareValue="2"> 
+				AND RPLY_CNTN LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+			<isEqual property="schType" compareValue="3"> 
+				AND WRITER LIKE CONCAT('%', #schText#, '%')
+			</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<!-- FAQ 등록  -->
+	<insert id="hpgmngDao.insertFaq" parameterClass="faqVO">
+		INSERT INTO GS_FAQ_A
+			(
+				NUM ,
+				TITLE ,
+				WRITER ,
+				REG_ID ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_FAQ_A AS A) ,
+				#title# ,
+				#writer# ,
+				#regId# ,
+				now()
+			)
+	</insert>
+	
+	<!-- FAQ 상세  -->
+	<select id="hpgmngDao.getFaqDetail" parameterClass="Integer" resultClass="egovMap">
+		SELECT
+			NUM ,
+			TITLE ,
+			WRITER ,
+			RPLY_CNTN
+		FROM
+			GS_FAQ_A
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<!-- FAQ 수정  -->
+	<update id="hpgmngDao.updateFaq" parameterClass="faqVO">
+		UPDATE GS_FAQ_A
+			SET
+				TITLE = #title# ,
+				RPLY_CNTN = #rplyCntn# ,
+				DB_UPD_TM = now()
+			WHERE
+				NUM = #num#
+	</update>
+</sqlMap>

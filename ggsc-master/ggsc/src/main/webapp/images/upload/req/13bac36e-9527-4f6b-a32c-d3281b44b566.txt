@@ -1,0 +1,114 @@
+상담구분 넣어줄것
+집단 or 개인
+
+순번 rnum
+case.no caseNo 0
+내담자명 cnsleNm 0
+상담구분 cnsGb ( 1 : 개인상담 , 2 : 집단상담 ) 0
+총상담회기 cnsCnt(dtl) 0
+최근상담일 cnsDt 0
+상담진행상태 0
+상담자 cnsrNm 0
+성별 gender 0
+현재연령 age(아직없음) x 
+학력 edu 내담자 id로 검색
+초기위험도
+자살위험도 0 (dtl)
+상담일지
+
+
+구글에 NGINx가 있다
+
+
+순번 rnum
+구분명 exam_doc_nm
+필수구분 being_yn(1 : 필수 , 2 : 불필요 , 3 : 선택)
+상담자 reg_id (상담자 컬럼으로 바꿔야되는건 아닌지?)
+시작일자 db_ins_tm
+종결일자
+
+Administrative 
+
+순번 rnum
+상담구분 cns_gb
+검사지종류 exam_doc_nm
+구분 being_yn
+다운로드 
+등록일자 db_ins_tm
+
+gs_rel_org_m
+순번 rnum 
+기관구분 relOrgGb
+지역 localGb
+기관명 relOrgNm
+홈페이지 url
+전화번호 tel
+팩스번호fax
+
+NUM
+
+
+num
+relOrgCd
+relOrgGb
+localGb
+relOrgNm
+addr
+addrDtl
+url
+tel
+fax
+regId
+dbInsTm
+
+최근 3년 심리검사 내용
+SELECT BOX 년도 추가
+SELECT BOX 구분 값 : 구분명
+- 연계의뢰서 M -
+상담구분 : 노인상담,중장년층상담
+상담세부구분코드 : 개인상담관리 , 집단상담관리
+
+공문 사용여부 추가
+내부연계,외부연계 구분값 추가
+
+사전 및 심리검사
+
+유관기관 등록창
+기관구분은 팝업으로 만들것
+
+일련번호 num
+case_no
+상담구분 cns_gb
+상담세부구분코드 cns_dtl_gb_cd
+권역구분 zone_gb
+지역구분 local_gb
+센터구분 center_gb
+내담자ID cnsle_id
+상담사ID cnsr_id
+
+의뢰부서 req_dept reqDept
+담당 req_dept_per reqDeptPer
+의뢰일 req_dt reqDt
+협조부서 help_dept helpDept
+담당 help_dept_per helpDeptPer
+회신기한 rely_term
+성명 cnsle_nm
+성별 gender
+생년월일 birth_dt birthDt
+주소 addr ( addr_dtl )
+연락처 tel_no telNo
+대상자특이사항 rcpt_sgct rcptSgct
+의뢰사유 req_resn_cntn reqResnCntn
+처리결과 pgrs_rslt pgrsRslt
+비고 etc
+공문 offi_note_yn offiNoteYn
+연계구분 req_gb reqGb
+
+
+
+
+
+
+
+
+

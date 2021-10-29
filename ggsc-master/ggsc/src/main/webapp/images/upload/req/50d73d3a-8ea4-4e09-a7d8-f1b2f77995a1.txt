@@ -1,0 +1,30 @@
+2020.10.16(금요일) 경기도청 Server 설치 정보
+PC ip 주소 : 172.15.170.60
+서브넷 마스크 : 255.255.0.0
+기본 게이트웨이 : 172.15.170.1
+기본 설정 DNS 서버 : 8.8.8.8
+
+putty 연결 정보
+172.15.170.61 ~ 63 
+61 -> WEB
+61(3개의 was로 나뉜다) -> 81(ip 끝자리) -> ggscnoib1
+61 -> 82 -> ggscnoib2
+61 -> 83 -> ggscnoib3
+ 
+62 -> WAS
+63 -> DB
+port : 2102
+계정 id : root
+pw : ggscnoin#!123
+
+WAS 폴더 위치 경로
+/software/tomcat/servers
+/tomcat.sh start or stop
+
+DB유저 
+id : ggscnoin
+pw : ggscnoin#!123 
+
+DB Port : 3308
+
+

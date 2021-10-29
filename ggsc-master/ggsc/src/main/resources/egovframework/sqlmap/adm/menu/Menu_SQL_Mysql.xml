@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="Menu">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="menuVO" type="ams.main.mnu.service.MenuVO"/>
+
+	<select id="menuDAO.selectMenuList" parameterClass="menuVO" resultClass="egovMap">
+		SELECT /**  메뉴 조회  menuDAO.selectMenuList */ *
+		    FROM (SELECT ROW_NUMBER() OVER(ORDER BY SUBSTR(B.MNU_CD, 1, 3), B.MNU_LVL, B.ODR) AS RNUM
+		               , B.*
+		    FROM (SELECT
+        		     /* (CONCAT(LPAD('--', 4 * (MNU_LVL - 1)), ' ', A.MNU_NM)) AS MNU_NM */
+        		     A.MNU_NM
+              		 , A.MNU_NO
+			         , A.MNU_CD
+			         , A.H_MNU_CD
+			         , A.CNTN
+			         , A.MNU_PATH
+			         , A.ODR
+			         , A.MNU_LVL
+			         , A.USE_YN
+			         , A.REG_ID
+			         , A.DB_UPD_DT
+			         , A.DB_INS_DT
+
+			      FROM GS_MENU A
+			      WHERE 1=1
+				<isNotEmpty property="searchNm">
+					AND A.MNU_NM LIKE CONCAT('%', #searchNm#, '%')
+				</isNotEmpty>
+				<isNotEmpty property="searchLvl">
+					AND A.MNU_LVL LIKE CONCAT('%', #searchLvl#, '%')
+				</isNotEmpty>
+       	<!--            START WITH A.H_MNU_CD IS NULL		 -->
+       	<!--           CONNECT BY PRIOR A.MNU_CD = A.H_MNU_CD		 -->
+                  ORDER BY SUBSTR(A.MNU_CD, 1, 3), A.ODR
+			      ) B ) C
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<select id="menuDAO.selectLeftMenuList" parameterClass="String" resultClass="egovMap">
+		SELECT /**  메뉴 조회(left)  menuDAO.selectLeftMenuList */ *
+		    FROM (SELECT ROW_NUMBER() OVER(ORDER BY SUBSTR(B.MNU_CD, 1, 3), B.MNU_LVL, B.ODR) AS RNUM
+		               , B.*
+		    FROM (SELECT
+        		     A.MNU_NM
+              		 , A.MNU_NO
+			         , A.MNU_CD
+			         , A.H_MNU_CD
+			         , A.CNTN
+			         , A.MNU_PATH
+			         , A.ODR
+			         , A.MNU_LVL
+			         , A.USE_YN
+			         , A.REG_ID
+			         , A.DB_UPD_DT
+			         , A.DB_INS_DT
+
+			      FROM GS_MENU A
+			      WHERE A.USE_YN = 'Y'
+			      AND (H_MNU_CD LIKE CONCAT(#mnuCd#, '%') OR MNU_CD = #mnuCd#)
+			      ) B ) C
+ 			ORDER BY RNUM
+	</select>
+	
+	<select id="menuDAO.selectTopMenuList" parameterClass="menuVO" resultClass="egovMap">
+		SELECT /**  메뉴 조회(top)  menuDAO.selectTopMenuList */ *
+		    FROM GS_MENU
+		    WHERE MNU_LVL = 1
+		    AND USE_YN = 'Y'
+		    ORDER BY ODR
+		    <!-- 권한별 검색 조건 -->
+		    <isEqual property="authCd" compareValue="2">
+				LIMIT 8
+			</isEqual>
+			<isEqual property="authCd" compareValue="3">
+				LIMIT 8
+			</isEqual>
+			<isEqual property="authCd" compareValue="4">
+				LIMIT 6
+			</isEqual>
+	</select>
+
+	<select id="menuDAO.selectMenuListTotalCnt" parameterClass="menuVO"
+		resultClass="java.lang.Integer">
+		SELECT /** 메뉴 총 건수 menuDAO.selectMenuListTotalCnt */ COUNT(*) AS NUM_CNT
+			FROM (SELECT A.*
+					FROM GS_MENU A
+					WHERE 1 = 1
+				<isNotEmpty property="searchNm">
+					AND A.MNU_NM LIKE CONCAT('%', #searchNm#, '%')
+				</isNotEmpty>
+				<isNotEmpty property="searchLvl">
+					AND A.MNU_LVL LIKE CONCAT('%', #searchLvl#, '%')
+				</isNotEmpty>
+		) B
+	</select>
+
+	<select id="menuDAO.selectEditMenuList" parameterClass="menuVO" resultClass="egovMap">
+		SELECT /**  메뉴 조회  menuDAO.selectEditMenuList */ *
+		    FROM (SELECT ROWNUM AS RNUM
+		               , B.*
+		    FROM (SELECT
+        		      (CONCAT(LPAD('--', 4 * (MNU_LVL - 1)),' ', A.MNU_NM)) AS MNU_NM
+              		 , A.MNU_NO
+			         , A.MNU_CD
+			         , A.H_MNU_CD
+			         , A.CNTN
+			         , A.MNU_PATH
+			         , A.ODR
+			         , A.MNU_LVL
+			         , A.USE_YN
+			         , A.REG_ID
+			         , A.DB_UPD_DT
+			         , A.DB_INS_DT
+					 , A.AUTH_TYPE
+			      FROM GS_MENU A
+			      WHERE 1 = 1
+<!-- 				<isNotEmpty property="searchNm"> -->
+<!-- 					AND A.MNU_NM LIKE '%' || #searchNm# || '%' -->
+<!-- 				</isNotEmpty> -->
+<!-- 				<isNotEmpty property="searchLvl"> -->
+<!-- 					AND A.MNU_LVL LIKE '%' || #searchLvl# || '%' -->
+<!-- 				</isNotEmpty> -->
+<!-- 	                  START WITH A.H_MNU_CD IS NULL	 -->
+<!-- 	                  CONNECT BY PRIOR A.MNU_CD = A.H_MNU_CD	 -->
+			      ) B ) C
+	</select>
+
+	<insert id="menuDAO.insertMenu" parameterClass="menuVO">
+		INSERT /**  메뉴등록 menuDAO.selectInsertMenu */ INTO GS_MENU(
+			  MNU_NO
+			, MNU_CD
+			, MNU_NM
+			, CNTN
+			, MNU_PATH
+			, ODR
+			, H_MNU_CD
+			, USE_YN
+			, DB_INS_DT
+			, REG_ID
+			, MNU_LVL
+			, AUTH_TYPE
+		) VALUES (
+			  (SELECT IFNULL(MAX(A.MNU_NO), 0) + 1 FROM GS_MENU A)
+			, (SELECT CONCAT(IF(#mnuLvl# = 1, 'M', #hMnuCd#), LPAD(IFNULL(MAX(CAST(SUBSTR(A.MNU_CD, -2) AS UNSIGNED)),0)+ 1, 2, '0')) AS MNU_CD
+  				FROM GS_MENU A WHERE 1 = 1
+  			<isNotEmpty property="hMnuCd">
+  				AND A.H_MNU_CD = #hMnuCd#
+  			</isNotEmpty>)
+			, #mnuNm#
+			, #cntn#
+			, #mnuPath#
+			, (SELECT IFNULL(MAX(A.ODR), 0) + 1 FROM GS_MENU A WHERE A.MNU_LVL = #mnuLvl#
+			<isNotEmpty property="hMnuCd">
+  				AND A.H_MNU_CD = #hMnuCd#
+  			</isNotEmpty>)
+			, #hMnuCd#
+			, #useYn#
+			, NOW()
+			, #regId#
+			, #mnuLvl#
+			, #authType#
+		)
+	</insert>
+
+
+	<update id="menuDAO.updateMenu" parameterClass="menuVO">
+		UPDATE /**  메뉴수정 menuDAO.selectUpdateMenu */ GS_MENU
+		   SET MNU_NM = #mnuNm#
+		     , CNTN = #cntn#
+		     , MNU_PATH = #mnuPath#
+		     , USE_YN = #useYn#
+		     , DB_UPD_DT = NOW()
+		     , AUTH_TYPE = #authType#
+		     , ODR = #odr#
+		WHERE MNU_NO = #mnuNo#
+	</update>
+
+	<select id="menuDAO.selectMenuInfo" parameterClass="menuVO" resultClass="egovMap">
+				  SELECT /**  메뉴정보 menuDAO.selectMenuInfo */
+					   A.MNU_NO
+			         , A.MNU_CD
+			         , A.MNU_NM
+			         , A.H_MNU_CD
+			         , A.CNTN
+			         , A.MNU_PATH
+			         , A.ODR
+			         , A.MNU_LVL
+			         , A.USE_YN
+			         , A.REG_ID
+			         , DATE_FORMAT(A.DB_INS_DT, '%Y-%m-%d') AS DB_INS_DT
+			         , IFNULL((SELECT MNU_NM FROM GS_MENU WHERE MNU_CD = A.H_MNU_CD), '') AS H_MNU_NM
+			         , A.AUTH_TYPE
+                  FROM	GS_MENU A
+                  WHERE MNU_NO=#mnuNo#
+	</select>
+
+	<select id="menuDAO.selectUpMenuInfo" parameterClass="menuVO" resultClass="egovMap">
+				SELECT /** 상위메뉴 정보 menuDAO.selectUpMenuInfo */
+	            	    A.MNU_NO
+                     ,  A.MNU_NM
+                     ,  A.MNU_LVL
+                     ,  A.MNU_CD
+                  FROM	GS_MENU A
+                  WHERE 1=1
+				  AND    A.MNU_LVL = #mnuLvl#
+				  ORDER BY MNU_NM
+	</select>
+
+	<select id="menuDAO.selectMapList" parameterClass="menuVO" resultClass="egovMap">
+		SELECT /**  메뉴 맵핑 조회  menuDAO.selectMapList */ *
+		    FROM (SELECT ROWNUM AS RNUM
+		               , A.*
+		    FROM (SELECT
+        		       A.MAP_SER
+        			 , A.MNU_NUM
+        			 , B.MNU_NM
+			         , A.MNU_CD
+			         , A.AUTH_CD
+			         , C.AUTH_NM
+			         , A.ODR
+			         , A.MNU_LVL
+			         , C.USE_YN
+			         , A.REG_ID
+			         , TO_CHAR(A.DB_UPD_TM, 'YYYY-MM-DD') AS DB_UPD_TM
+			         , TO_CHAR(A.DB_INS_TM, 'YYYY-MM-DD') AS DB_INS_TM
+			         , (SELECT MNU_NM FROM AT_MNU A WHERE A.MNU_CD = B.H_MNU_CD) AS H_MNU_NM
+			         , DECODE(MNU_PARAM, NULL, B.MNU_PATH, B.MNU_PATH || '?' || MNU_PARAM) AS MNU_PATH
+			         , D.AUTH_GRP_NM
+
+			      FROM AT_MNU_MAP A, AT_MNU B, AT_AUTH C, AT_AUTH_GRP D
+			      WHERE 1 = 1
+<!-- 			    <isNotEmpty property="searchText"> -->
+<!-- 			    	 <isEqual property="searchType" compareValue="1depth"> -->
+<!-- 				   		AND (A.MNU_NM LIKE '%' || #searchText# || '%' OR A.MNU_CNTN LIKE '%' || #searchText# || '%') -->
+<!-- 				   	 </isEqual> -->
+<!-- 			    	 <isEqual property="searchType" compareValue="2depth"> -->
+<!-- 				   		AND A.MNU_NM LIKE '%' || #searchText# || '%' -->
+<!-- 				   	 </isEqual> -->
+<!-- 			    	 <isEqual property="searchType" compareValue="mnuDesc"> -->
+<!-- 				   		AND A.MNU_CNTN LIKE '%' || #searchText# || '%' -->
+<!-- 				   	 </isEqual> -->
+<!-- 				</isNotEmpty> -->
+                AND A.MNU_NUM = B.MNU_NUM
+                AND A.AUTH_CD = C.AUTH_CD
+                AND C.AUTH_GRP_CD = D.AUTH_GRP_CD
+              <isNotEmpty property="authCd">
+                AND A.AUTH_CD = #authCd#
+              </isNotEmpty>
+                ORDER BY A.MAP_SER DESC
+                ) A )
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+
+	<select id="menuDAO.selectMapListTotalCnt" parameterClass="menuVO"
+		resultClass="java.lang.Integer">
+		SELECT /** 맵핑 총 건수 menuDAO.selectMapListTotalCnt */ COUNT(*) AS NUM_CNT
+			FROM (SELECT A.*
+					FROM AT_MNU_MAP A, AT_MNU B, AT_AUTH C, AT_AUTH_GRP D
+					WHERE 1 = 1
+	                  AND A.MNU_NUM = B.MNU_NUM
+	                  AND A.AUTH_CD = C.AUTH_CD
+	                  AND C.AUTH_GRP_CD = D.AUTH_GRP_CD
+	              <isNotEmpty property="authCd">
+	                  AND A.AUTH_CD = #authCd#
+	              </isNotEmpty>
+<!-- 						<isNotEmpty property="searchText"> -->
+<!-- 							<isEqual property="searchType" compareValue="all"> -->
+<!-- 								AND (A.MNU_NM LIKE '%' || #searchText# || '%' OR A.MNU_CNTN LIKE '%' || #searchText# || '%') -->
+<!-- 							</isEqual> -->
+<!-- 							<isEqual property="searchType" compareValue="mnuNm"> -->
+<!-- 								AND A.MNU_NM LIKE '%' || #searchText# || '%' -->
+<!-- 							</isEqual> -->
+<!-- 							<isEqual property="searchType" compareValue="mnuDesc"> -->
+<!-- 								AND A.MNU_CNTN LIKE '%' || #searchText# || '%' -->
+<!-- 							</isEqual> -->
+<!-- 						</isNotEmpty> -->
+		)
+	</select>
+
+	<select id="menuDAO.mapListCnt" parameterClass="menuVO" resultClass="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM AT_MNU_MAP
+		 WHERE 1 = 1
+		   AND AUTH_CD = #authCd#
+		   AND MNU_CD = #mnuCd#
+	</select>
+
+	<insert id="menuDAO.insertMap" parameterClass="menuVO">
+		INSERT INTO AT_MNU_MAP(
+			  MAP_SER
+			, MNU_SER
+			, MNU_CD
+			, AUTH_CD
+			, AUTH_NM
+			, MNU_LVL
+			, ODR
+			, USE_YN
+			, REG_ID
+			, DB_INS_TM
+		) VALUES (
+			  (SELECT NVL(MAX(MAP_SER), 0) + 1 FROM AT_MNU_MAP)
+			, #mnuSer#
+			, #mnuCd#
+			, #authCd#
+			, #authNm#
+			, #mnuLvl#
+			, #odr#
+			, #useYn#
+			, #regId#
+			, sysdate
+		)
+	</insert>
+
+	<delete id="menuDAO.deleteMap" parameterClass="menuVO">
+		DELETE FROM AT_MNU_MAP
+			WHERE MAP_SER = #mapSer#
+	</delete>
+
+	<delete id="menuDAO.deleteByAuthCdMap" parameterClass="menuVO">
+		DELETE FROM AT_MNU_MAP
+			WHERE AUTH_CD = #authCd#
+	</delete>
+
+	<select id="menuDAO.selectAuthMenuMapList" parameterClass="menuVO" resultClass="egovMap">
+		SELECT *
+  		  FROM AT_MNU_MAP
+ 		 WHERE AUTH_CD = #authCd#
+	</select>
+</sqlMap>

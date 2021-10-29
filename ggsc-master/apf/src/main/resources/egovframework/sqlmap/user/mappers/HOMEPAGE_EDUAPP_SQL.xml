@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.edu.service.impl.HomepageEduMapper">
+
+
+	<!-- 상담문의 등록 -->
+	<insert id="insertEduReg" parameterType="EduVO">
+		INSERT INTO GS_EDU_APP
+			(
+				USER_ID ,
+				REG_ID ,
+				USER_NM ,
+				REG_DATE ,
+				EDU_NAME ,
+				BIRTH ,
+				PHONE ,
+				EMAIL ,
+				CENTER_NM ,
+				DEPART ,
+				ZONE_GB ,
+				LOCAL_GB ,
+				SIGUN_CD ,
+				CENTER_GB ,
+				DB_INS_TM 
+			) VALUES (
+				#{userId} ,
+				#{userId} ,
+				#{userNm} ,
+				#{regDate} ,
+				#{eduName} ,
+				#{birth} ,
+				#{phone} ,
+				#{email} ,
+				#{centerNm} ,
+				#{depart} ,
+				#{zoneGb} ,
+				'9' ,
+				#{sigunCd} ,
+				#{centerGb} ,
+				NOW()
+			)
+	</insert>
+
+</mapper>

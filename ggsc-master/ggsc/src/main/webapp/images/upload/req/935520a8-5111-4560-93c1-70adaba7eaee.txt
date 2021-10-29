@@ -1,0 +1,19 @@
+#   줄을 바꿀 필요가 있으면 '\'를 라인의 끝에 추가(만약  '\'문자를 사용해야 하는 경우는 '\\'를 사용)
+#   Windows에서의 디렉토리 표시 : '\\' or '/'  ('\' 사용하면 안됨)
+#   Unix에서의 디렉토리 표시 : '/'
+
+Globals.DbType = mariadb
+Globals.UserName= ggsc_dbadmin
+Globals.Password= huen1423#
+
+#mariadb
+Globals.DriverClassName=org.mariadb.jdbc.Driver
+Globals.Url=jdbc:mariadb://192.168.0.200:3306/ggsc_db1
+
+#Globals.DbType = mariadb
+#Globals.UserName= root
+#Globals.Password= 1234
+
+#mariadb localhost
+#Globals.DriverClassName=org.mariadb.jdbc.Driver
+#Globals.Url=jdbc:mariadb://127.0.0.1:3306/ggsc_db1

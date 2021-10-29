@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.com.util.service.impl.ComCodeMapper">
+
+	<!-- 상담신청구분  -->
+	<select id="selectCnsReqList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G14'
+	</select>
+	
+	<!-- 센터구분  -->
+	<select id="selectCenterGbList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G25'
+	</select>
+	
+	<!-- 권역구분  -->
+	<select id="selectZoneGbList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G71'
+	</select>
+	
+	<!-- 상담구분  -->
+	<select id="selectCnsGbList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G15'
+	</select>
+	
+	<!-- 학력 -->
+	<select id="selectEduList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G7'
+	</select>
+
+	<!-- 주거형태 -->
+	<select id="selectLivgList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G9'
+	</select>
+
+	<!-- 주택형태 -->
+	<select id="selectHouseList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G10'
+	</select>
+	
+	<!-- 동거형태 -->
+	<select id="selectLiveList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G11'
+	</select>
+	
+	<!-- 상담진행상태 -->
+	<select id="selectCnsStatList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G18'
+	</select>
+	
+	<!-- 상담자구분 -->
+	<select id="selectCnsrGbList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G19'
+	</select>
+
+	<!-- 상담경위 -->
+	<select id="selectCnsDtlList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G21'
+	</select>
+	
+	<!-- 노인과의 관계 -->
+	<select id="selectOlderRelList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G44'
+	</select>
+
+	<!-- 결혼상태 -->
+	<select id="selectMerrStatList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G59'
+	</select>
+	
+	<!-- 주요문제 -->
+	<select id="selectMajorProbList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G57'
+	</select>
+	
+	<!-- 지역구분 -->
+	<select id="selectLocalGbList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G72'
+	</select>
+	
+	<!-- 주호소문제 -->
+	<select id="selectMajorApplList" resultType="egovMap">
+		SELECT
+			ODR , 
+			MCLASS_NM
+		FROM
+			GS_M_CLASS
+		WHERE
+			HCLASS_CD = 'G58'
+	</select>
+	
+</mapper>

@@ -1,0 +1,28 @@
+계(건) 심리정서 대인관계 건강 자살 경제,생활 치매 성 역할상실 가족 기타
+내부연계소계 여가 법률,세무 경제후원 취업,일자리 생활,식생활,주거 기타
+
+외부연계 정신보건자살예방센터 노인보호전문기관 보건소방문간호 일자리관련기관
+무한돌봄센터긴급지원 법률기관 성폭력,가정폭력상담소 치매안심센터 건강가정다문화가정지원센터
+행정기관주민센터 기타
+
+사후관리 - 안부확인(방문) 사후관리 - 안부확인(전화) 심리검사 연계상담 시 동행
+홍보활동 기타
+
+권역네트워크회의 네트워크회의(구 권역장회의) 실무회의 기관내부사레회의
+지역사회 네트워크회의 기타
+
+function fn_select(userId, userNm, caseNo, cnsGb){
+		opener.document.getElementById("cnsleId").value = userId;
+		opener.document.getElementById("cnsleNm").value = userNm;
+		opener.document.getElementById("cnsleNm2").value = userNm;
+		opener.document.getElementById("cnsleNm3").value = userNm;
+		opener.document.getElementById("caseNo").value = caseNo;
+		opener.document.getElementById("cnsGb").value = cnsGb;
+		window.close();
+	}
+
+acadmbCnsState_list
+mainApplPbCnsState_list
+personalCnsState_list
+groupCnsState_list
+상담사전사후기록지 DUKE-AD 죽음학대질문지

@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>개인상담일지</title>
+<style>
+
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000; }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; border-bottom:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.h70 {height: 70px;}
+
+</style>
+</head>
+<body>
+	<div id="wrap">
+		<div class='title'>개인상담일지</div>
+		<br />
+	
+				<table class="table-write">
+					<colgroup>
+						<col width="15%"></col>
+						<col width="10%"></col> 
+						<col width="25%"></col>
+						<col width="15%"></col>
+						<col width="35%"></col>
+					</colgroup>
+					<tr>
+						<th>상담상태</th>
+						<td colspan="2">##상담상태##</td>
+					</tr>
+					<tr>
+						<th>상담구분  </th>
+						<td colspan="2">##상담구분##</td>
+						<th>상담회기  </th>
+						<td>##상담회기##회</td>
+					</tr>
+					<tr>
+						<th>상담자구분  </th>
+						<td colspan="2">##상담사구분##</td>
+						<th>상담자명  </th>
+						<td>##상담자명##</td>
+					</tr>
+					<tr>
+						<th>내담자명  </th>
+						<td colspan="2">##내담자명##</td>
+						<th>생년월일  </th>
+						<td>##생년월일##</td>
+					</tr>
+					<tr>
+						<th>성별  </th>
+						<td colspan="2">##성별##</td>
+						<th>주소  </th>
+						<td>##주소##</td>
+					</tr>
+					<tr>
+						<th>내담자연락처  </th>
+						<td colspan="2">##내담자연락처##</td>
+						<th>긴급연락처  </th>
+						<td>##긴급연락처##</td>
+						
+					</tr>
+					<tr>
+						<th>상담실시장소</th>
+						<td colspan="2">##상담실시장소##</td>
+						<th>상담예약장소</th>
+						<td>##상담예약장소##</td>
+					</tr>
+					<tr>
+						<th>상담일시</th>
+						<td colspan="2">##상담일시##
+							<br/>
+							(##시##시 ##분##분 ~
+							##시2##시 ##분2##분)
+							(총##총##분) 
+						</td>
+						<th>다음상담예약일</th>
+						<td>##상담일시2##<br/>
+							(##시3##시 ##분3##분 ~
+							##시4##시 ##분4##분)
+							(총##총2##분) 
+						</td>
+					</tr>
+					<tr>
+						<th>위기긴급성</th>
+						<td colspan="2">##위기긴급성##</td>
+						<th>자살사례</th>
+						<td>##자살사례##</td>
+					</tr>
+					<tr>
+						<th>항우울제지원여부</th>
+						<td colspan="2">##항우울제지원여부##<br/>
+							게시일 (##게시일##) <br/>
+							종결일 (##종결일##)
+						</td>
+						<th>학대사례</th>
+						<td>##학대사례##</td>
+					</tr>
+					<tr>
+						<th>상담방법</th>
+						<td colspan="4">##상담방법##</td>
+					</tr>
+					<tr>
+						<th>내담자의관계</th>
+						<td colspan="4">##내담자의관계##</td>
+					</tr>
+					<tr>
+						<th>주호소문제</th>
+						<td colspan="4">##주호소문제##</td>
+					</tr>
+					</table>
+					
+				<table class="table-write">
+					<colgroup>
+						<col width="10%"></col>
+						<col width="10%"></col> 
+						<col width="40%"></col>
+					</colgroup>
+					<!-- <tr>
+						<th rowspan="12">변화추이<br/>조사항목</th>
+						<td>주거형태</td>
+						<td >##주거형태##</td>
+					</tr>
+					<tr>
+						<td>주택형태</td>
+						<td >##주택형태##</td>
+					</tr>
+					<tr>
+						<td>거주지변동</td>
+						<td >##거주지변동##</td>
+					</tr>
+					<tr>
+						<td>결혼상태</td>
+						<td >##결혼상태##</td>
+					</tr>
+					<tr>
+						<td>동거형태</td>
+						<td >##동거형태##</td>
+					</tr>
+					<tr>
+						<td>주관적 건강상태</td>
+						<td >##주관적 건강상태##</td>
+					</tr>
+					<tr>
+						<td>진단병력</td>
+						<td >##진단병력##</td>
+					</tr>
+					<tr>
+						<td>복용약</td>
+						<td >##복용약##</td>
+					</tr>
+					<tr>
+						<td>경제상태</td>
+						<td >##경제상태##</td>
+					</tr>
+					<tr>
+						<td>최근가족사별경험</td>
+						<td >##최근가족사별경험##</td>
+					</tr>
+					<tr>
+						<td>최근주변인사별경험</td>
+						<td >##최근주변인사별경험##</td>
+					</tr>
+					<tr>
+						<td>노인일자리참여여부</td>
+						<td >##노인일자리참여여부##</td>
+					</tr> --> 
+					<tr>
+						<th rowspan="16">상담내용</th>
+						<td>자살위험성</td>
+						<td >##자살위험성##</td>
+					</tr>
+					<tr>
+						<td>심리문제</td>
+						<td >##심리문제##</td>
+					</tr>
+					<tr>
+						<td>대인관계문제</td>
+						<td >##대인관계문제##</td>
+					</tr>
+					<tr>
+						<td>중독</td>
+						<td >##중독##</td>
+					</tr>
+					<tr>
+						<td>치매</td>
+						<td >##치매##</td>
+					</tr>
+					<tr>
+						<td>정신장애</td>
+						<td >##정신장애##</td>
+					</tr>
+					<tr>
+						<td>건강문제</td>
+						<td >##건강문제##</td>
+					</tr>
+					<tr>
+						<td>경제문제</td>
+						<td >##경제문제##</td>
+					</tr>
+					<!-- <tr>
+						<td>생활문제</td>
+						<td ><textarea name="lifeQust"></textarea></td>
+					</tr> -->
+					<tr>
+						<td>상담내용</td>
+						<td style="height: 175px;">##상담내용##</td>
+					</tr>
+					<tr>
+						<td>상담개입및연계</td>
+						<td style="height: 100px;">##상담개입및연계##</td>
+					</tr>
+					<tr>
+						<td>상담회기 평가 및<br/>추후계획</td>
+						<td style="height: 100px;">##상담회기 평가 및 추후계획##</td>
+					</tr>
+					<tr>
+						<td>사후관리<br/>(사례관리)</td>
+						<td style="height: 125px;">##사후관리##</td>
+					</tr>
+					<tr>
+						<td>정서적 편안함 정도</td>
+						<td >##정서적편안함정도##</td>
+					</tr>
+					<tr>
+						<td>도움 받은 정도</td>
+						<td >##도움받은정도##</td>
+					</tr>
+					<tr>
+						<td>상담으로 인한<br/>변화 정도</td>
+						<td >##상담으로인한변화정도##</td>
+					</tr>
+				</table>
+		</div>
+</body>
+</html>

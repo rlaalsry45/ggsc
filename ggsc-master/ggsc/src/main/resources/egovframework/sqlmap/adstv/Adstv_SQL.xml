@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdministrativeDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="InspectionVO" type="ggsc.adstv.service.InspectionVO"/>
+	
+	<!-- 검사지관리 목록  -->
+	<select id="AdministrativeDAO.getInspectionList" parameterClass="InspectionVO" resultClass="egovMap">
+		SELECT
+			A.*
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY EXAM_DOC_CD) AS RNUM ,
+				CNS_GB ,
+				EXAM_DOC_NM ,
+				EXAM_DOC_CD ,
+				BEING_YN ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm 
+			FROM
+				GS_EXAM_DOC_M AS gedm
+			WHERE
+			    1=1
+			<isNotEmpty property="schCnsGb" prepend="AND">
+				gedm.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schBeingYn" prepend="AND">
+				gedm.BEING_YN = #schBeingYn#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="schExamDocNm">
+				gedm.EXAM_DOC_NM LIKE CONCAT('%', #schExamDocNm#, '%')
+			</isNotEmpty>	
+		    
+			
+			) A 
+		<!-- <![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]> -->
+	</select>
+	
+	<!-- 검사지관리목록 갯수 -->
+	<select id="AdministrativeDAO.getInspectionTotalCnt" resultClass="Integer">
+		SELECT
+			COUNT(EXAM_DOC_CD)
+		FROM
+			GS_EXAM_DOC_M AS gedm
+		WHERE
+			1=1
+			<isNotEmpty property="schCnsGb" prepend="AND">
+				gedm.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schBeingYn" prepend="AND">
+				gedm.BEING_YN = #schBeingYn#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="schExamDocNm">
+				gedm.EXAM_DOC_NM LIKE CONCAT('%', #schExamDocNm#, '%')
+			</isNotEmpty>	
+			
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,79 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* css 기본값 정의 */
+::selection {background:#2699FB; color:#fff;}
+.blind {display:block; overflow:hidden; position:absolute; left:-9999px; width:1px; height:1px; font-size:0; line-height:0; text-indent:-9999px;}
+.scroll {overflow:auto;}
+
+.blank {margin:0; padding:0; border:none; background:none;}
+.fl {float:left !important;}
+.fr {float:right !important;}
+.center {text-align:center !important;}
+.left {text-align:left !important;}
+.right {text-align:right !important;}
+.top {vertical-align:top;}
+.bottom {vertical-align:bottom;}
+.btn {cursor:pointer;}
+i.btn {cursor:default;}
+.block {display:block !important;}
+.none {display:none !important;}
+.ib {display:inline-block; vertical-align:middle;}
+.area {display:inline-block; vertical-align:middle; width:100%;}
+.bundle {display:inline-block; vertical-align:middle; float:left;}
+.ac {margin:0 auto;}
+.shadow {box-shadow:0 0 10px rgba(0, 0, 0, 0.1);}
+.test {border:red solid 1px}
+
+/* 컬러 */
+.cm {color:#1b9be2 !important;}		/* 메인 */
+.cs {color:#124479 !important;}		/* 서브 */
+.cp {color:#d60d8d !important;}		/* 서브 - 핑크 */
+.cg {color:#5cb85c !important;}		/* 서브 - 그린 */
+.cy {color:#f8981d !important;}		/* 서브 - 옐로우 */
+.ck {color:#000000 !important;}		/* 검은색 */
+.cw {color:#ffffff !important;}		/* 흰색 */
+.cb {color:#1b9be2 !important;}		/* blue */
+.ca {color:#474747 !important;}		/* 옅은 회색 */
+.ci {color:#b2b1b1 !important;}		/* 밝은 회색 */
+.cr {color:#fa1416 !important;}		/* 붉은색 */
+/* 꾸밈 */
+.bg {background-color:#f0f0f0 !important;}	/* 기본 */
+.bgm {background-color:#1b9be2 !important;}	/* 메인 */
+.bgs {background-color:#124479 !important;}	/* 서브 */
+.bgp {background-color:#d60d8d !important;}	/* 서브 - 핑크 */
+.bgg {background-color:#bcc613 !important;}	/* 서브 - 그린 */
+.bgy {background-color:#F8B029 !important;}	/* 서브 - 옐로우 */
+.bgo {background-color:#f8981d !important;}	/* 서브 - orange */
+.bgw {background-color:#ffffff !important;}	/* 흰색 */
+.bga {background-color:#626262 !important;}	/* 옅은 회색 */
+.bgi {background-color:#f8f8f8 !important;}	/* 옅은 회색 */
+.bgb {background-color:#b2b1b1 !important;}	/* 옅은 회색 */
+.bgr {background-color:#FB6565 !important}	/* red */
+/* 배경색 밝음 */
+.bgpl {background-color:#ffedfa !important;}	/* 밝은 핑크 */
+.bgyl {background-color:#ffffee !important;}	/* 밝은 옐로우 */
+.bgbl {background-color:#edf7ff !important;}	/* 밝은 블루 */
+.bggl {background-color:#edfff8 !important;}	/* 밝은 그린 */
+.bgkl {background-color:#f8f8f8 !important;}	/* 밝은 그레이 */
+
+.line.ba {border:#e3e3e3 solid 1px;}
+.line.bt {border-top:#e3e3e3 solid 1px;}
+.line.bl {border-left:#e3e3e3 solid 1px;}
+.line.br {border-right:#e3e3e3 solid 1px;}
+.line.bb {border-bottom:#e3e3e3 solid 1px;}
+.line.bt.dashed {border-top-style:dashed;}
+.line.bl.dashed {border-left-style:dashed;}
+.line.br.dashed {border-right-style:dashed;}
+.line.bb.dashed {border-bottom-style:dashed;}
+.line.w2 {width:auto; border-width:2px;}
+.line.w3 {width:auto; border-width:3px;}
+.line.w4 {width:auto; border-width:4px;}
+.line.w5 {width:auto; border-width:5px;}
+.line.bci {border-color:#f0f0f0;}
+.line.bcb {border-color:#282828;}
+.line.bcm {border-color:#1b9be2;}
+.line.t1 {border-color:rgba(255, 255, 255, 0.08); box-shadow:0 1px 0 rgba(0, 0, 0, 0.2);}
+
+.tag {padding:0 8px; border-radius:30px; background-color:#b2b1b1; color:#fff;}
+.tag.t1 {background-color:#0078aa;}

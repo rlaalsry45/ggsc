@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="AuthUserMng">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    <typeAlias  alias="authMngVO" type="ams.adm.auth.service.AuthVO"/>
+
+	<select id="authUserDAO.selectAuthMenuList" resultClass="egovMap">
+		SELECT /**  메뉴 조회  authUserDAO.selectAuthMenuList */ *
+		    FROM (SELECT ROWNUM AS RNUM
+		               , A.*
+		    FROM (SELECT
+        		      (LPAD('--', 4 * (MNU_LVL - 1)) || ' ' || A.MNU_NM) AS MNU_NM
+              		 , A.MNU_SER
+			         , A.MNU_CD
+			         , A.H_MNU_CD
+			         , A.MNU_CNTN
+			         , A.MNU_PATH
+			         , A.ODR
+			         , A.MNU_LVL
+			         , A.USE_YN
+			         , A.REG_ID
+			         , A.DB_UPD_TM
+			         , A.DB_INS_TM
+					 , A.MNU_TYPE
+			      FROM AT_MNU A
+			      WHERE 1 = 1
+                  START WITH A.H_MNU_CD IS NULL
+                  CONNECT BY PRIOR A.MNU_CD = A.H_MNU_CD
+                  ORDER BY SUBSTR(A.MNU_CD, 1, 3), A.ODR
+			      ) A )
+	</select>
+
+	<select id="authUserDAO.selectAuthUserList" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT A.USER_ID
+			 , A.USER_NAME
+			 , A.DEPT_NAME
+			 , C.JICWI_ID
+			 , C.JICWI_NAME
+		     , B.AUTH_GRP_CD
+		     , B.AUTH_CD
+		  FROM AT_USER A, AT_AUTH_USER B, AT_JICWI C
+		 WHERE A.USER_ID = B.USER_ID
+		   AND A.JICWI_ID = C.JICWI_ID(+)
+		   AND A.STATUS = '1'
+		   AND B.AUTH_CD = #authCd#
+		  ORDER BY A.SEQ, C.SEQ ASC
+	</select>
+
+	<select id="authUserDAO.selectAuthUserDeptList" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT A.DEPT_ID
+		     , B.DEPT_NAME
+		  FROM GT_USER_DEPT A, AT_DEPT B
+		 WHERE A.DEPT_ID = B.DEPT_ID
+		   AND USER_ID = #userId#
+	</select>
+
+	<select id="authUserDAO.selectAuthUserMenuList" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT MNU_CD
+		     , TYPE
+		     , ADMIN_YN
+		  FROM
+		    (
+		    SELECT NVL(A.MNU_CD, B.MNU_CD) AS MNU_CD
+		    	 , NVL(TYPE, 'MAIN') AS TYPE
+		    	 , ADMIN_YN
+		      FROM (SELECT MNU_CD
+		      			 , AUTH_CD
+		      		  FROM AT_MNU_MAP
+		      		 WHERE AUTH_CD = (SELECT AUTH_CD FROM AT_AUTH_USER WHERE USER_ID = #userId#)
+		      		) A
+		     FULL OUTER JOIN
+		     	   (SELECT MNU_CD, TYPE, ADMIN_YN
+		     	      FROM AT_MNU_USER_MAP
+		     	     WHERE USER_ID = #userId#
+		     	   ) B
+		       ON A.MNU_CD = B.MNU_CD
+		    )
+		    WHERE TYPE != 'DEL'
+	</select>
+
+	<insert id="authUserDAO.insertAuthUser" parameterClass="authMngVO">
+	INSERT INTO AT_AUTH_USER	/**  사용자별 권한 저장  authUserDAO.insertAuthUser */
+	(
+		USER_ID
+	  , AUTH_CD
+	  , AUTH_GRP_CD
+	  , REG_ID
+	  , DB_INS_TM
+	)
+	VALUES
+	(
+        #userId#
+      , #authCd#
+      , #authGrpCd#
+      , #regId#
+      , SYSDATE
+	)
+	</insert>
+
+	<insert id="authUserDAO.insertGtUserDept" parameterClass="authMngVO">
+	INSERT INTO GT_USER_DEPT	/**  사용자별 부서 권한 저장  authUserDAO.insertGtUserDept */
+	(
+		USER_ID
+	  , DEPT_ID
+	  , SEQ
+	)
+	VALUES
+	(
+        #userId#
+      , #deptId#
+      , (SELECT NVL(MAX(SEQ), 0) + 1 FROM GT_USER_DEPT WHERE USER_ID = #userId#)
+	)
+	</insert>
+
+	<select id="authUserDAO.selectAuthUserDelList" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT USER_ID
+		  FROM AT_AUTH_USER
+		 WHERE AUTH_CD = #authCd#
+		   AND USER_ID NOT IN
+		<iterate property="userIdArr" open="(" conjunction="," close=")">
+			#userIdArr[]#
+		</iterate>
+	</select>
+
+	<update id="authUserDAO.updateAuthUser" parameterClass="authMngVO">
+		UPDATE AT_AUTH_USER			/**  사용자별 권한 기본권한 부여 authUserDAO.updateAuthUser */
+		   SET AUTH_CD = 'U0001'
+     		 , AUTH_GRP_CD = 'USER'
+		 WHERE AUTH_CD = #authCd#
+		   AND USER_ID = #userId#
+	</update>
+
+	<delete id="authUserDAO.deleteAuthUser" parameterClass="authMngVO">
+		DELETE FROM AT_AUTH_USER	/**  사용자별 권한 삭제  authUserDAO.deleteAuthUser */
+		 WHERE AUTH_CD = #authCd#
+		 	OR USER_ID IN
+			   <iterate property="userIdArr" open="(" conjunction="," close=")">
+				   #userIdArr[]#
+			   </iterate>
+	</delete>
+
+	<delete id="authUserDAO.deleteGtUserDept" parameterClass="authMngVO">
+		DELETE FROM GT_USER_DEPT	/**  사용자별 부서 권한 삭제  authUserDAO.deleteGtUserDept */
+		 WHERE USER_ID = #userId#
+	</delete>
+
+	<delete id="authUserDAO.deleteAtMnuUserMap" parameterClass="authMngVO">
+		DELETE FROM AT_MNU_USER_MAP	/**  사용자별 메뉴 권한 삭제  authUserDAO.deleteAtMnuUserMap */
+		 WHERE USER_ID = #userId#
+	</delete>
+
+	<insert id="authUserDAO.insertAtMnuUserMap" parameterClass="authMngVO">
+	INSERT INTO AT_MNU_USER_MAP	/**  사용자별 메뉴 권한 저장  authUserDAO.insertAtMnuUserMap */
+	(
+		USER_ID
+	  , MNU_CD
+	  , TYPE
+	  , ADMIN_YN
+	)
+	VALUES
+	(
+        #userId#
+      , #mnuCd#
+      , #type#
+      , #adminYn#
+	)
+	</insert>
+
+</sqlMap>

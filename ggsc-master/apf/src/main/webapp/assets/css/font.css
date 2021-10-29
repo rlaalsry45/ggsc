@@ -1,0 +1,113 @@
+@charset "utf-8";
+/* CSS Document */
+/* 웹폰트 */
+@font-face {
+	font-family: 'Noto';
+	font-style: normal;
+	font-weight: 100;
+	src: local("※"),
+    
+    url("../fonts/NotoSansKR-Thin.woff")
+		url('../fonts/NotoSansKR-Thin.eot'),
+		url('../fonts/NotoSansKR-Thin.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NotoSansKR-Thin.woff2') format('woff2'),
+		url('../fonts/NotoSansKR-Thin.woff') format('woff'),
+		url('../fonts/NotoSansKR-Thin.otf') format('opentype');
+	}
+@font-face {
+	font-family: 'Noto';
+	font-style: normal;
+	font-weight: 300;
+	src: local("※"),
+		url('../fonts/NotoSansKR-Light.eot'),
+		url('../fonts/NotoSansKR-Light.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NotoSansKR-Light.woff2') format('woff2'),
+		url('../fonts/NotoSansKR-Light.woff') format('woff'),
+		url('../fonts/NotoSansKR-Light.otf') format('opentype');
+	}
+@font-face {
+	font-family: 'Noto';
+	font-style: normal;
+	font-weight: 400;
+	src: local("※"),
+		url('../fonts/NotoSansKR-Regular.eot'),
+		url('../fonts/NotoSansKR-Regular.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NotoSansKR-Regular.woff2') format('woff2'),
+		url('../fonts/NotoSansKR-Regular.woff') format('woff'),
+		url('../fonts/NotoSansKR-Regular.otf') format('opentype');
+	}
+@font-face {
+	font-family: 'Noto';
+	font-style: normal;
+	font-weight: 500;
+src: local("※"),
+		url('../fonts/NotoSansKR-Medium.eot'),
+		url('../fonts/NotoSansKR-Medium.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NotoSansKR-Medium.woff2') format('woff2'),
+		url('../fonts/NotoSansKR-Medium.woff') format('woff'),
+		url('../fonts/NotoSansKR-Medium.otf') format('opentype');
+	}
+@font-face {
+	font-family: 'Noto';
+	font-style: normal;
+	font-weight: 700;
+	src: local("※"),
+		url('../fonts/NotoSansKR-Bold.eot'),
+		url('../fonts/NotoSansKR-Bold.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NotoSansKR-Bold.woff2') format('woff2'),
+		url('../fonts/NotoSansKR-Bold.woff') format('woff'),
+		url('../fonts/NotoSansKR-Bold.otf') format('opentype');
+	}
+@font-face {
+	font-family: 'Noto';
+	font-style: normal;
+	font-weight: 900;
+	src: local("※"),
+		url('../fonts/NotoSansKR-Black.eot'),
+		url('../fonts/NotoSansKR-Black.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NotoSansKR-Black.woff2') format('woff2'),
+		url('../fonts/NotoSansKR-Black.woff') format('woff'),
+		url('../fonts/NotoSansKR-Black.otf') format('opentype');
+	}
+/* 나눔스퀘어 */
+@font-face {
+  font-family: 'NanumSquare';
+  font-weight: 300;
+  src: local("※"),
+    url('../fonts/NanumSquareL.eot'),
+    url('../fonts/NanumSquareL.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/NanumSquareL.woff') format('woff'),
+    url('../fonts/NanumSquareL.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'NanumSquare';
+  font-weight: 400;
+  src: local("※"),
+    url('../fonts/NanumSquareR.eot'),
+    url('../fonts/NanumSquareR.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/NanumSquareR.woff') format('woff'),
+    url('../fonts/NanumSquareR.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'NanumSquare';
+  font-weight: 500;
+  src: local("※"),
+    url('../fonts/NanumSquareB.eot'),
+    url('../fonts/NanumSquareB.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/NanumSquareB.woff') format('woff'),
+    url('../fonts/NanumSquareB.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'NanumSquare';
+  font-weight: 600;
+  src: local("※"),
+    url('../fonts/NanumSquareEB.eot'),
+    url('../fonts/NanumSquareEB.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/NanumSquareEB.woff') format('woff'),
+    url('../fonts/NanumSquareEB.ttf') format('truetype');
+}
+
+
+/** {
+	font-family:'Noto Sans KR','NanumGothic', 'Roboto', 'Droid Sans', 'Malgun Gothic', 'Helvetica', 'Apple-Gothic', '', 'Tahoma', dotum, '돋움', gulim, '굴림', sans-serif;
+}*/

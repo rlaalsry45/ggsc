@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.main.service.impl.HomepageMainMapper">
+
+	<!-- 로그인 정보  -->
+	<select id="actionLogin" parameterType="loginVO" resultType="EgovMap">
+		SELECT
+			USER_ID ,
+			USER_NM ,
+			USE_YN ,
+			TEL ,
+			MOBILE ,
+			ADDR ,
+			BIRTH_DT ,
+			year(now()) - year(BIRTH_DT)+1 AS age ,
+			GENDER ,
+			APPRV_YN ,
+			email ,
+			ADDR ,
+			SIGUN_CD ,
+			ZONE_GB ,
+			CENTER_GB
+		FROM
+			GS_USER_M
+		WHERE
+			USER_ID = #{userId}
+			AND PW = #{pw} 
+	</select>
+	
+	<!-- 회원 ID 찾기 -->
+	<select id="findUserId" parameterType="loginVO" resultType="EgovMap">
+		SELECT
+			USER_ID ,
+			USER_NM ,
+			EMAIL
+		FROM
+			GS_USER_M
+		WHERE
+			USER_NM = #{userNm}
+		AND MOBILE = #{tel}
+		AND EMAIL = #{email}
+	</select>
+	
+	<!-- 회원 PW 찾기 -->
+	<select id="findPw" parameterType="loginVO" resultType="Integer">
+					
+		SELECT 
+			COUNT(USER_ID)
+		FROM
+			GS_USER_M
+		WHERE
+			USER_NM = #{userNm}
+		AND MOBILE = #{tel}
+		AND EMAIL = #{email}
+	</select>
+	
+	<!-- 회원 PW 재설정 -->
+	<update id="userPwReset" parameterType="loginVO">
+		UPDATE GS_USER_M
+			SET
+				PW = SCP.ENC_B64('KEY1','s12341234')
+			WHERE
+				USER_NM = #{userNm}
+			AND MOBILE = #{tel}
+	</update>
+	
+	<!-- 센터관리 목록 조회(select 코드용)  -->
+	<select id="getCenterManageList" parameterType="centerVO" resultType="egovMap">
+		SELECT *
+		FROM (
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM ,
+				NUM ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G71' AND ODR = zone_gb) AS zoneGb ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G72' AND ODR = local_gb) AS localNm ,
+				SIGUN_CD ,
+				LOCAL_GB ,
+				SIGUN_NM ,
+				CENTER_NM ,
+				CENTER_GB ,
+				ADDR ,
+				ADDR_DTL ,
+				ZIP_CD ,
+				HOMEPAGE ,
+				TEL ,
+				USE_YN ,
+				REG_ID ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+			FROM
+				GS_CENTER_M
+			WHERE
+				1=1
+		) A
+		
+	</select>
+	
+	<!-- 분류관리 상세보기(중분류)  -->
+	<select id="getGroupMngDtlMList" parameterType="commonVO" resultType="egovMap">
+	
+		SELECT
+			M.MCLASS_CD ,
+			M.MCLASS_NM ,
+			M.ODR ,
+			H.HCLASS_CD
+		FROM
+			GS_H_CLASS AS H
+		INNER JOIN GS_M_CLASS AS M
+			ON H.HCLASS_CD = M.HCLASS_CD
+		WHERE
+			H.HCLASS_CD = #{hclassCd}
+			AND M.USE_YN = 'Y' 
+		ORDER BY M.MCLASS_CD ASC
+		
+	</select>
+	
+</mapper>

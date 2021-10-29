@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Log">
+
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="logVO" type="ams.adm.log.LogVO"/>
+
+
+
+
+	<select id="logDAO.logList" parameterClass="logVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY LOG_NO DESC) AS RNUM,
+					LOG_NO, 
+					LOG_ID,
+					CNTN,
+					DATE_FORMAT(LOG_DT, '%Y%m%d') AS LOG_DT
+        	 FROM GS_LOG
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND LOG_ID LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+		     
+		     		AND LOG_DT BETWEEN #schFrom# AND #schTo#
+				
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="logDAO.logListCnt" parameterClass="logVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_LOG
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND LOG_ID LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+	</select>
+	
+
+	<select id="logDAO.logDtl" parameterClass="logVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY LOG_NO DESC) AS RNUM, 
+					LOG_NO, 
+					LOG_ID,
+					CNTN,
+					LOG_DT
+        	 FROM GS_LOG
+        	 WHERE LOG_NO = #logNo#
+        	  ) A
+	</select>
+
+
+
+
+</sqlMap>

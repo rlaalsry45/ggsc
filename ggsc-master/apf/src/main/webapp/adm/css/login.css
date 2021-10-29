@@ -1,0 +1,11 @@
+/* Styles -------------------------------------------------------------- */
+#login {padding-top:100px;}
+#login h1{}
+#login h2{margin:15px 0 25px;font-size:18px;}
+#login .login_bg{background:url(../img/login_bg.gif) no-repeat top center;height:400px;}
+#login .login_bg .login_box{margin:0 auto;width:570px;padding-top:100px;}
+#login .login_bg .login_box .ico{background:#fff url(../img/ico_id.gif)no-repeat left top;height:60px;text-align:left;padding-left:80px;}
+#login .login_bg .login_box .id{background:#fff url(../img/ico_id.gif)no-repeat left top;}
+#login .login_bg .login_box .pw{background:#fff url(../img/ico_pw.gif)no-repeat left top;margin:10px 0}
+#login .login_bg .login_box input[type=text], #login .login_bg .login_box input[type=password]{border:none;width:470px;height:38px;margin-top:10px;font-size:14px}
+#login .login_bg .login_box a.btn_login{display:block;background:#5a5a5a;height:60px;line-height:60px;color:#fff;font-size:17px;font-weight:bold;}

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="common">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="pageEditVO" type="ams.cmm.PageEditVO"/>
+
+	<resultMap id="pageEditClob" class="egovMap">
+	    <result property="content" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+
+	<!-- 조회를 위한 sql fragment 작성 : 시작 -->
+    <sql id="userTargetTb">
+        WITH TARGET AS (
+			SELECT
+				SA.USER_ID
+			  FROM AT_USER SA
+			WHERE 1=1
+			<isNotEmpty property="schUserId">
+				AND SA.USER_ID = #schUserId#
+			</isNotEmpty>
+		    <isNotEmpty property="schDeptId">
+				AND SA.DEPT_ID = #schDeptId#
+			</isNotEmpty>
+			<!-- 관리자 권한 -->
+			<isEqual property="authGrpCd" compareValue="ADMIN">
+				<!-- 전체 조회 -->
+			</isEqual>
+			<!-- 업무관리자 권한 -->
+			<isEqual property="authGrpCd" compareValue="WORK_ADMIN">
+				AND EXISTS (
+							SELECT 1
+							  FROM GT_USER_DEPT SB
+							 WHERE SA.DEPT_ID = SB.DEPT_ID
+							   AND SB.USER_ID = #regId#
+           				   )
+			</isEqual>
+			<!-- 사용자 권한 -->
+			<isEqual property="authGrpCd" compareValue="USER">
+				AND SA.USER_ID = #regId#
+			</isEqual>
+			<!-- 빈값일시 예외 방지 -->
+			<isEmpty property="authGrpCd">
+				AND SA.USER_ID = #regId#
+			</isEmpty>
+		)
+    </sql>
+
+    <select id="commonDAO.selectSeq" parameterClass="egovMap" resultClass="java.lang.Long">
+		SELECT IFNULL(MAX(SEQ_NUM)+1,1) AS SEQ_NUM
+		  FROM AT_ID_TABLE
+		 WHERE ID_NAME = #idName#
+		   AND ID_CODE = #idCode#
+    </select>
+
+    <update id="commonDAO.updateSeq" parameterClass="egovMap">
+    	UPDATE AT_ID_TABLE
+    	   SET SEQ_NUM = #seq#
+    	 WHERE ID_NAME = #idName#
+		   AND ID_CODE = #idCode#
+    </update>
+
+    <insert id="commonDAO.insertIdTable" parameterClass="egovMap">
+    	INSERT INTO AT_ID_TABLE
+    	(
+    		ID_Name,
+    		ID_Code,
+    		SEQ_NUM
+    	) VALUES
+    	(
+    	 	#idName#,
+    	 	#idCode#,
+    	 	1
+    	 )
+    </insert>
+
+    <select id="commonDAO.selectPageData" parameterClass="pageEditVO" resultMap="pageEditClob">
+    	SELECT  MENU_ID
+			  , PAGE_ID
+			  , TITLE
+			  , CONTENT
+			  , SEQ
+		FROM AT_PAGE
+		WHERE PAGE_ID = #pageId#
+		  AND MENU_ID = #menuId#
+    </select>
+
+    <update id="commonDAO.mergePageData" parameterClass="pageEditVO">
+    	<!-- MERGE INTO AT_PAGE
+    	USING DUAL
+    	ON (
+    		 AND PAGE_ID = #pageId#
+		  	 AND MENU_ID = #menuId#
+    	   )
+    	WHERE NOT MATCHED THEN -->
+		UPDATE AT_PAGE SET CONTENT = #content:CLOB#
+		WHERE PAGE_ID = #pageId#
+		  AND MENU_ID = #menuId#
+    </update>
+
+    <select id="commonDAO.getInOutDate" parameterClass="egovMap" resultClass="java.lang.String">
+    	SELECT
+    			<isEqual property="reqType" compareValue="0">
+    				MIN(EVENT_DATE) AS EVENT_DATE
+    			</isEqual>
+    			<isEqual property="reqType" compareValue="1">
+    				MAX(EVENT_DATE) AS EVENT_DATE
+    			</isEqual>
+	    FROM HANSE_EVENT
+	    WHERE EVENT_DATE >= #reqDate#||' 00:00:00'
+	    AND EVENT_DATE <![CDATA[<=]]> #reqDate#||' 99:99:99'
+	    AND USER_ID = #reqUserId#
+	    AND TYPE = #reqType#
+    </select>
+
+    <select id="commonDAO.selectMealTimeCut" resultClass="egovMap">
+		 SELECT SUBSTR(FN_GET_CODE_NM('MODTIME','LUNCH_STIME'),0,2) AS LUNCH_STIME
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','LUNCH_STIME'),3) AS LUNCH_SMIN
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','LUNCH_ETIME'),0,2) AS LUNCH_ETIME
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','LUNCH_ETIME'),3) AS LUNCH_EMIN
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','DINNER_STIME'),0,2) AS DINNER_STIME
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','DINNER_STIME'),3) AS DINNER_SMIN
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','DINNER_ETIME'),0,2) AS DINNER_ETIME
+		 	  , SUBSTR(FN_GET_CODE_NM('MODTIME','DINNER_ETIME'),3) AS DINNER_EMIN
+		   FROM DUAL
+    </select>
+
+	<select id="commonDAO.getMenuAdminYn" parameterClass="egovMap" resultClass="java.lang.String">
+		SELECT ADMIN_YN
+		  FROM
+		  (
+		    SELECT IFNULL(A.MNU_CD, B.MNU_CD) AS MNU_CD
+		         , IFNULL(TYPE, 'MAIN') AS TYPE
+		         , ADMIN_YN
+		      FROM (SELECT MNU_CD
+		                   , AUTH_CD
+		                FROM AT_MNU_MAP
+		               WHERE AUTH_CD = (SELECT AUTH_CD FROM AT_AUTH_USER WHERE USER_ID = #userId#)
+		              ) A
+		     FULL OUTER JOIN
+		            (SELECT MNU_CD, TYPE, ADMIN_YN
+		               FROM AT_MNU_USER_MAP
+		              WHERE USER_ID = #userId#
+		            ) B
+		       ON A.MNU_CD = B.MNU_CD
+		  )
+		 WHERE MNU_CD = #mnuCd#
+    </select>
+
+    <select id="commonDAO.getAuthBtnArray" parameterClass="java.lang.String" resultClass="java.lang.String">
+    SELECT TO_CHAR(WM_CONCAT(MNU_PATH)) AS MNU_PATH
+	  FROM
+	  (
+	    SELECT IFNULL(A.MNU_CD, B.MNU_CD) AS MNU_CD
+	         , IFNULL(TYPE, 'MAIN') AS TYPE
+	         , ADMIN_YN
+	      FROM (SELECT MNU_CD
+	                   , AUTH_CD
+	                FROM AT_MNU_MAP
+	               WHERE AUTH_CD = (SELECT AUTH_CD FROM AT_AUTH_USER WHERE USER_ID = #userId#)
+	              ) A
+	     FULL OUTER JOIN
+	            (SELECT MNU_CD, TYPE, ADMIN_YN
+	               FROM AT_MNU_USER_MAP
+	              WHERE USER_ID = #userId#
+	            ) B
+	       ON A.MNU_CD = B.MNU_CD
+	  ) A, AT_MNU B
+	 WHERE A.MNU_CD = B.MNU_CD
+	   AND B.MNU_TYPE = 'B'
+	   AND TYPE != 'DEL'
+	</select>
+</sqlMap>

@@ -1,0 +1,933 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>대인관계 변화 척도</title>
+<style>
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000; }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+</style>
+</head>
+<body>
+    <div class="wrap">
+            <div class="headName noto500">
+                Case No. (##caseNo##)
+            </div>
+            <div class="title">대인관계 변화 척도</div>
+			
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 12%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <td>##내담자명##</td>
+                        <th scope="col">연락처</th>
+                        <td>##설문1Y##</td>
+                        <th scope="col">검사일</th>
+                        <td>##날짜##</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                ※ 아래의 문항은 여러분과 여러분의 주변 사람들과의 관계에 대해 묻는 질문입니다. 평소 자신의 모습에 비추어 볼 때, 일반적으로 그렇다고 생각되는 곳에 √표 해주십시오.
+            </div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">1. 나는 나 자신에 대하여</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문2Y##'>●</span><label for="no11">매우 불만족스럽다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문2N##'>●</span><label for="no12">약간 불만족스럽다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문3Y##'>●</span><label for="no13">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문3N##'>●</span><label for="no14">약간 만족한다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문4Y##'>●</span><label for="no15">매우 만족한다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">2. 나는 다른 사람에 대하여</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문4N##'>●</span><label for="no21">매우 불만족스럽다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문5Y##'>●</span><label for="no22">약간 불만족스럽다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문5N##'>●</span><label for="no23">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문6Y##'>●</span><label for="no124">약간 만족한다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문6N##'>●</span><label for="no25">매우 만족한다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">
+                            3. 다른 사람들은 나를 () 사람으로 볼 것이라고 생각한다.
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문7Y##'>●</span><label for="no31">매우 불만족스러운</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문7N##'>●</span><label for="no32">약간 불만족스러운</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문8Y##'>●</span><label for="no33">그저 그런</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문8N##'>●</span><label for="no34">약간 만족스러운</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문9Y##'>●</span><label for="no35">매우 만족스러운</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">
+                            4. 다른 사람들은 그 자신에 대하여 () 사람으로 본다.
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문9N##'>●</span><label for="no41">매우 불만족스러운</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문10Y##'>●</span><label for="no42">약간 불만족스러운</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문10N##'>●</span><label for="no43">그저 그런</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문11Y##'>●</span><label for="no44">약간 만족스러운</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문11N##'>●</span><label for="no45">매우 만족스러운</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">5. 다른 사람과 나의 관계는</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문12Y##'>●</span><label for="no51">매우 원만하지 못하다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문12N##'>●</span><label for="no52">약간 원만하지 못하다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문13Y##'>●</span><label for="no53">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문13N##'>●</span><label for="no54">약간 원만하다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문14Y##'>●</span><label for="no55">매우 원만하다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">6. 나는 다른 사람이 바라는 욕구를</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문14N##'>●</span><label for="no61">거의 알지 못한다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문15Y##'>●</span><label for="no62">약간 알지 못한다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문15N##'>●</span><label for="no63">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문16Y##'>●</span><label for="no64">약간 아는 편이다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문16N##'>●</span><label for="no65">매우 아는 편이다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">7. 나는 나 자신의 감정을</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문17Y##'>●</span><label for="no71">거의 이해하지 못한다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문17N##'>●</span><label for="no72">약간 이해하지 못한다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문18Y##'>●</span><label for="no73">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문18N##'>●</span><label for="no74">약간 이해한다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문19Y##'>●</span><label for="no75">매우 이해한다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">8. 나는 다른 사람의 감정을</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문19N##'>●</span><label for="no81">거의 이해하지 못한다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문20Y##'>●</span><label for="no82">약간 이해하지 못한다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문20N##'>●</span><label for="no83">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문21Y##'>●</span><label for="no84">약간 이해한다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문21N##'>●</span><label for="no85">매우 이해한다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">9. 나는 다른 사람과 이야기를 하는 것에 대하여</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문22Y##'>●</span><label for="no91">매우 어려움을 느낀다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문22N##'>●</span><label for="no92">약간 어려움을 느낀다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문23Y##'>●</span><label for="no93">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문23N##'>●</span><label for="no94">약간 쉽게 느낀다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문24Y##'>●</span><label for="no95">매우 쉽게 느낀다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">10. 다른 사람에 대한 나의 감수성은</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문24N##'>●</span><label for="no101">매우 느리다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문25Y##'>●</span><label for="no102">약간 느리다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문25N##'>●</span><label for="no103">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문26Y##'>●</span><label for="no104">약간 빠르다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문26N##'>●</span><label for="no105">매우 빠르다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">11. 다른 삶에 대한 나의 온정적인 태도는</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문27Y##'>●</span><label for="no111">매우 적다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문27N##'>●</span><label for="no112">약간 적다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문28Y##'>●</span><label for="no113">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문28N##'>●</span><label for="no114">약간 많다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문29Y##'>●</span><label for="no115">매우 많다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">12. 다른 사람에 대한 나의 표현이나 개방성 정도는</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문29N##'>●</span><label for="no121">매우 적다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문30Y##'>●</span><label for="no122">약간 적다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문30N##'>●</span><label for="no123">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문31Y##'>●</span><label for="no124">약간 많다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문31N##'>●</span><label for="no125">매우 많다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">13. 나는 다른 사람의 느낌을 이해하는 것이</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문32Y##'>●</span><label for="no131">매우 어렵다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문32N##'>●</span><label for="no132">약간 어렵다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문33Y##'>●</span><label for="no133">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문33N##'>●</span><label for="no134">약간 쉽다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문34Y##'>●</span><label for="no135">매우 쉽다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">14. 나는 다른 사람의 이야기를 듣는 것이</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문34N##'>●</span><label for="no141">매우 어렵다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문35Y##'>●</span><label for="no142">약간 어렵다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문35N##'>●</span><label for="no143">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문36Y##'>●</span><label for="no144">약간 쉽다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문36N##'>●</span><label for="no145">매우 쉽다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">15. 나는 다른 사람을</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문37Y##'>●</span><label for="no151">거의 믿지 않는다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문37N##'>●</span><label for="no152">약간 믿지 않는 편이다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문38Y##'>●</span><label for="no153">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문38N##'>●</span><label for="no154">약간 믿는다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문39Y##'>●</span><label for="no155">매우 믿는다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">16. 나는 다른 사람에 대하여</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문39N##'>●</span><label for="no161">매우 거리감을 느낀다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문40Y##'>●</span><label for="no162">약간 거리감을 느낀다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문40N##'>●</span><label for="no163">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문41Y##'>●</span><label for="no164">약간 친근감을 느낀다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문41N##'>●</span><label for="no165">매우 친근감을 느낀다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">17. 나는 인간관계(사람들과 만나는데) 있어서 자신감이</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문42Y##'>●</span><label for="no171">매우 적다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문42N##'>●</span><label for="no172">약간 적다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문43Y##'>●</span><label for="no173">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문43N##'>●</span><label for="no174">약간 많다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문44Y##'>●</span><label for="no175">매우 많다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">
+                            18. 나는 다른 사람과 의견이 맞지 않을 경우 그것을 건설적으로(좋게)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문44N##'>●</span><label for="no181">매우 못 다룬다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문45Y##'>●</span><label for="no182">약간 못 다룬다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문45N##'>●</span><label for="no183">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문46Y##'>●</span><label for="no184">약간 잘 다룬다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문46N##'>●</span><label for="no185">매우 잘 다룬다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">19. 나는 다른 사람과 이야기를 할 경우 어려움을</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문47Y##'>●</span><label for="no191">매우 많이 느낀다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문47N##'>●</span><label for="no192">약간 많이 느낀다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문48Y##'>●</span><label for="no193">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문48N##'>●</span><label for="no194">약간 안 느낀다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문49Y##'>●</span><label for="no195">거의 안 느낀다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">20. 나는 다른 사람에 대한 긍정적인 느낌을</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문49N##'>●</span><label for="no201">거의 표현하지 못한다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문50Y##'>●</span><label for="no202">약간 많이 느낀다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문50N##'>●</span><label for="no203">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문51Y##'>●</span><label for="no204">약간 안 느낀다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문51N##'>●</span><label for="no205">거의 안 느낀다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">21. 나는 다른 사람에 대한 부정적인 느낌을 (건설적으로)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문52Y##'>●</span><label for="no211">거의 표현하지 못한다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문52N##'>●</span><label for="no212">약간 많이 느낀다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문53Y##'>●</span><label for="no213">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문53N##'>●</span><label for="no214">약간 안 느낀다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문54Y##'>●</span><label for="no215">거의 안 느낀다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">22. 나는 나의 개인적인 관심사에 대하여 다른 사람들과</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문54N##'>●</span><label for="no221">거의 나누지 않는다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문55Y##'>●</span><label for="no222">약간 나누지 않는다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문55N##'>●</span><label for="no223">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문56Y##'>●</span><label for="no224">약간 나눈다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문56N##'>●</span><label for="no225">매우 나눈다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">
+                            23. 다른 사람이 나에 대한 느낌을 표현할 경우 그것을 믿고 받아들이는 정도는
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문57Y##'>●</span><label for="no231">매우 적다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문57N##'>●</span><label for="no232">약간 적다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문58Y##'>●</span><label for="no233">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문58N##'>●</span><label for="no234">약간 많다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문59Y##'>●</span><label for="no235">매우 많다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">
+                            24. 다른 사람이 나에 대한 부정적인 느낌을 표현할 때 내가 건설적으로 대하는 정도
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문59N##'>●</span><label for="no241">매우 적다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문60Y##'>●</span><label for="no242">약간 적다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문60N##'>●</span><label for="no243">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문61Y##'>●</span><label for="no244">약간 많다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문61N##'>●</span><label for="no245">매우 많다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 50%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" class="txt-left txtIn20 bgG bRight-none">25. 나는 다른 사람과 앞으로 대인관계를 어떻게 해야 할 지를</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문62Y##'>●</span><label for="no251">거의 이해하지 못한다.</label></td>
+                        <td>2.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문62N##'>●</span><label for="no252">약간 이해하지 못한다.</label></td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문63Y##'>●</span><label for="no253">그저 그렇다.</label></td>
+                        <td>4.</td>
+                        <td class="txt-left txtIn40 bRight-none"><span class='icon circle ##설문63N##'>●</span><label for="no254">약간 잘 이해한다.</label></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td>5.</td>
+                        <td class="txt-left txtIn40"><span class='icon circle ##설문63Y##'>●</span><label for="no255">매우 잘 이해한다.</label></td>
+                        <td></td>
+                        <td class="txt-left txtIn40 bRight-none"></td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+
+</body>
+</html>

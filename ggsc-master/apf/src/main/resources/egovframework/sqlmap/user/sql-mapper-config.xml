@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <typeAliases>
+		<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+		<typeAlias alias="searchVO" type="egovframework.user.main.service.MainDefaultVO"/>
+		<typeAlias alias="mainVO" type="egovframework.user.main.service.MainVO"/>
+		<typeAlias alias="loginVO" type="egovframework.user.main.service.LoginVO"/>
+		<typeAlias alias="notVO" type="egovframework.user.notice.service.NotVO"/>
+		<typeAlias alias="aboutVO" type="egovframework.user.about.service.AboutVO"/>
+		<typeAlias alias="busiVO" type="egovframework.user.busi.service.BusiVO"/>
+		<typeAlias alias="regVO" type="egovframework.user.reg.service.RegVO"/>
+		<!-- <typeAlias alias="mypageVO" type="egovframework.user.mypage.service.MypageVO"/> -->
+		<!-- <typeAlias alias="joinVO" type="egovframework.user.join.service.JoinVO"/> -->
+		<typeAlias alias="fileVO" type="egovframework.cmm.service.FileVO"/>
+		<typeAlias alias="boardVO" type="egovframework.cmm.service.BoardVO"/>
+		<typeAlias alias="tmpFileVO" type="egovframework.cmm.util.EditorTmpFileVO"/>
+		<typeAlias alias="bbsVO" type="egovframework.homepage.freeBbs.service.BbsVO"/>
+		<typeAlias alias="crLibraryVO" type="egovframework.homepage.crLibrary.service.CrLibraryVO"/>
+		<typeAlias alias="comCodeVO" type="egovframework.homepage.com.util.service.ComCodeVO"/>
+		<typeAlias alias="comfCnsVO" type="egovframework.homepage.comfCns.service.ComfCnsVO"/>
+		<typeAlias alias="addComfCnsVO" type="egovframework.homepage.comfCns.service.AddComfCnsVO"/>
+		<typeAlias alias="psyCnsDocVO" type="egovframework.homepage.psyCns.service.PsyCnsDocVO"/>
+		<typeAlias alias="mypageVO" type="egovframework.homepage.mypage.service.MypageVO"/>
+		<typeAlias alias="joinVO" type="egovframework.homepage.join.service.JoinVO"/>
+		<typeAlias alias="cnsAskVO" type="egovframework.homepage.cnsAsk.service.CnsAskVO"/>
+		<typeAlias alias="cmSpaceVO" type="egovframework.homepage.cmSpace.service.CmSpaceVO"/>
+		<typeAlias alias="mailSendVO" type="egovframework.homepage.com.util.service.MailSendVO"/>
+		<typeAlias alias="commonVO" type="egovframework.homepage.main.service.CommonVO"/>
+		<typeAlias alias="centerVO" type="egovframework.homepage.main.service.CenterVO"/>
+		<typeAlias alias="eduVO" type="egovframework.homepage.edu.service.EduVO"/>
+		
+    </typeAliases>
+</configuration>

@@ -1,0 +1,112 @@
+@charset "utf-8";
+@import url('reset.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.doc-box {
+    border: 2px solid #333;
+}
+
+.con-info {
+    border-bottom: 1px solid #333;
+    border-right: 1px solid #333;
+    border-left: 1px solid #333;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333333;
+    font-size: 18px;
+    padding: 15px;
+}
+
+.inp {
+    width: 10px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333333;
+    font-size: 16px;
+    position: relative;
+    top: -3px;
+    text-align: left;
+}
+
+.inp14 {
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333333;
+    font-size: 18px;
+    width: 100%;
+    font-weight: 500;
+    position: relative;
+    top: -3px;
+}
+
+.month {
+    width: 20px;
+}
+
+.tbl th {
+    background-color: #F3DBDB;
+}
+
+.tbl tbody>tr {
+    height: 40px;
+    font-size: 18px;
+}
+
+.tbl tbody>tr>td {
+    padding: 5px;
+    font-weight: 500;
+}
+
+.tbl thead th.bg-w {
+    background-color: #fff;
+    font-size: 18px;
+}
+
+.w21 {
+    width: 21%;
+}
+
+.under {
+    border-bottom: 1px solid #333;
+}
+
+.nl {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+}
+
+.nl li {
+    width: 9%;
+    float: left;
+}
+
+.w100 {
+    width: 100px;
+}
+
+.w90 {
+    width: 90px;
+}
+
+textarea {
+    width: 100%;
+    height: 130px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333333;
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+}
+
+.small {
+    height: 60px;
+}
+
+.border {
+    border: 1px solid #333;
+    padding: 5px;
+    word-break: break-all;
+}
+
+.fs16 {
+    font-size: 16px;
+}

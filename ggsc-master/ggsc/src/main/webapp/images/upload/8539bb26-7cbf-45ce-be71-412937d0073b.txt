@@ -1,0 +1,27 @@
+
+CREATE TABLE OBJ
+(
+    OBJ_GB_CD            CHAR(10) NOT NULL,
+	OBJ_CD               CHAR(10) NOT NULL,	
+	OBJ_NM               VARCHAR(100) NULL,
+	NUM                  NUMERIC NULL,
+	CNTN                 VARCHAR(100) NULL,
+	USE_YN               CHAR(1) NULL,
+	REG_ID               VARCHAR(50) NULL,
+	REG_TM               TIMESTAMP NULL
+);
+
+
+ALTER TABLE OBJ
+ADD PRIMARY KEY (OBJ_GB_CD,OBJ_CD);
+
+
+ALTER TABLE OBJ
+ADD FOREIGN KEY R_OBJ (OBJ_GB_CD) REFERENCES OBJ_GB (OBJ_GB_CD);
+
+
+OBJ_GB  : MASTER
+
+OBJ : SUB
+
+MASTER 의 OBJ_GB_CD 키값과  OBJ의 OBJ_GB_CD 키값이 매핑된것

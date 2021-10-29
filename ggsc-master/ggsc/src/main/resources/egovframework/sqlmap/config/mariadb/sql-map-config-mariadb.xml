@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>						
+	
+<!-- <sqlMap resource="egovframework/sqlmap/bbs/Bbs_SQL_Mariadb.xml"></sqlMap> -->
+<sqlMap resource="egovframework/sqlmap/adm/menu/Menu_SQL_Mysql.xml"></sqlMap>
+
+<sqlMap resource="egovframework/sqlmap/mariadb/Auth.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/mariadb/Code.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/mariadb/ComCode.xml"></sqlMap>
+<!-- <sqlMap resource="egovframework/sqlmap/mariadb/Faq.xml"></sqlMap> -->
+<sqlMap resource="egovframework/sqlmap/mariadb/Log.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/mariadb/Login.xml"></sqlMap>
+<!-- <sqlMap resource="egovframework/sqlmap/mariadb/Mail.xml"></sqlMap> -->
+<sqlMap resource="egovframework/sqlmap/mariadb/Main.xml"></sqlMap>
+<!-- <sqlMap resource="egovframework/sqlmap/mariadb/Manual.xml"></sqlMap> -->
+<sqlMap resource="egovframework/sqlmap/mariadb/Mnu.xml"></sqlMap>
+<!-- <sqlMap resource="egovframework/sqlmap/mariadb/Notice.xml"></sqlMap> -->
+<!-- <sqlMap resource="egovframework/sqlmap/mariadb/Reference.xml"></sqlMap> -->
+<sqlMap resource="egovframework/sqlmap/mariadb/Sms.xml"></sqlMap>
+<!-- <sqlMap resource="egovframework/sqlmap/mariadb/User.xml"></sqlMap> -->
+<sqlMap resource="egovframework/sqlmap/opr/Admin_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/cnsMng/CounselMng_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/join/Join_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/orgMng/OrgMng_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/adstv/Adstv_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/report/Report_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/support/Support_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/stats/Stats_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/hpgmng/HomepageMng_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/main/Main_SQL_Maria.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/monitoring/Monitoring_SQL.xml"></sqlMap>
+<sqlMap resource="egovframework/sqlmap/cmmmng/CommonMng_SQL.xml"></sqlMap>
+
+</sqlMapConfig>

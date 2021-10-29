@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Sms">
+
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="smsVO" type="ams.adm.sms.SmsVO"/>
+
+
+
+
+	<select id="smsDAO.smsList" parameterClass="smsVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY SMS_NO DESC) AS RNUM,
+					SMS_NO, 
+					SUBJECT,
+					CNTN,
+					SEND_LIST,
+					DATE_FORMAT( SEND_DT , '%Y%m%d') AS SEND_DT,
+					<![CDATA[
+					IF( SEND_DT < NOW() , '발송완료' , '대기' ) AS SEND_RESULT,
+ 					]]>
+					
+					REG_ID,
+					DATE_FORMAT( DB_INS_DT , '%Y%m%d') AS DB_INS_DT
+        	 FROM GS_SMS
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+            	<isEqual property="schColm" compareValue="2">
+					AND SEND_LIST LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+             <isNotEmpty property="schFrom">
+		     		AND SEND_DT BETWEEN #schFrom# AND #schTo#
+		     </isNotEmpty>
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="smsDAO.smsListCnt" parameterClass="smsVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_SMS
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND SUBJECT LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+            	<isEqual property="schColm" compareValue="2">
+					AND SEND_LIST LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+             <isNotEmpty property="schFrom">
+		     		AND SEND_DT BETWEEN #schFrom# AND #schTo#
+		     </isNotEmpty>
+	</select>
+	
+
+	<select id="smsDAO.smsDtl" parameterClass="smsVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY SMS_NO DESC) AS RNUM, 
+					SMS_NO, 
+					SUBJECT,
+					CNTN,
+					SEND_LIST,
+					DATE_FORMAT( SEND_DT , '%Y%m%d') AS SEND_DT,
+					<![CDATA[
+					IF( SEND_DT < NOW() , '발송완료' , '대기' ) AS SEND_RESULT,
+ 					]]>
+					REG_ID,
+					DB_UPD_DT,
+					DB_INS_DT
+        	 FROM GS_SMS
+        	 WHERE SMS_NO = #smsNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="smsDAO.delSms" parameterClass="smsVO">
+		DELETE FROM GS_SMS
+		WHERE SMS_NO = #smsNo#
+	</delete>
+	
+	<update id="smsDAO.updSms" parameterClass="smsVO">
+		UPDATE GS_SMS
+		   SET
+			SUBJECT = #subject# ,
+			CNTN = #cntn# ,
+			SEND_LIST = #sendList# ,
+			SEND_DT = #sendDt# ,
+			SEND_RESULT = #sendResult# ,
+			DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+		WHERE SMS_NO = #smsNo#
+	</update>
+
+	<insert id="smsDAO.insSms" parameterClass="smsVO">
+		INSERT INTO GS_SMS(
+			SUBJECT ,
+			CNTN ,
+			SEND_LIST ,
+			SEND_DT ,
+			SEND_RESULT ,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#subject# ,
+			#cntn# ,
+			#sendList# ,
+			#sendDt# ,
+			#sendResult# ,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d'),
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+</sqlMap>

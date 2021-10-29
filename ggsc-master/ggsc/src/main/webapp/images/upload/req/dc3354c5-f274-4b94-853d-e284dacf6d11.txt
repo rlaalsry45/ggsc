@@ -1,0 +1,71 @@
+gs_per_cns
+순번 RNUM
+caseNo CASE_NO
+총상담회기 CNS_CNT cnsCnt
+최근상담일시 CNS_DT cnsDt
+내담자성명 CNSLE_NM cnsleNm
+성별 GENDER 
+간략상담내용 CNS_CNTN cnsCntn
+현재연령 AGE
+학력 EDU
+초기위험도 없음
+자살위험도 KILLS_RSKN killsRskn
+상담진행상태 없음
+상담자 CNSR_NM cnsrNm
+상담일지등록 없음
+
+gs_ealy_cns_doc
+상담상태 없음
+caseNo CASE_NO caseNo
+상담일시 CNS_DT cnsDt
+성명 cnsle_nm cnsleNm
+성별 gender
+현재연령 age
+자살위험도 KILLS_RSKN
+주호소 MAJOR_APPL_CD majorApplCd
+주결과 없음
+상담자 cnsr_nm cnsrNm
+상담일지수정 없음
+
+gs_per_cns_dtl
+상담회기 CNS_CNT cnsCnt
+
+초기상담신청서 나이 (컬럼추가요청)
+
+상담일지 이력정보
+개인상담 재신청
+개인상담 종결
+심리검사
+
+
+caseNo
+상담회기
+일자
+c-srs
+gds-k-r
+ssi
+ghs
+gsis
+이사
+거주지
+사별
+
+
+
+
+gs_per_cns
+초기위험도 없음
+상담진행상태 없음
+상담일지등록 없음
+
+gs_ealy_cns_doc
+상담상태 없음
+주결과 없음
+상담일지수정 없음
+
+gs_per_cns_dtl
+초기상담신청서 나이 (컬럼추가요청)
+
+
+
+

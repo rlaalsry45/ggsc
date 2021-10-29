@@ -1,0 +1,125 @@
+@charset "utf-8";
+
+/* 서브 컨텐츠 영역 공통 */
+.cont-box blockquote {margin:0px 0px 60px 25px;color:#414141;word-break:keep-all; border-left: none; padding:0;}
+blockquote.headbox { border-bottom:1px #d9d9d9 solid;height:150px;}
+blockquote.headbox img { float:left;margin:50px 20px 0px 0px;}
+blockquote.headbox ul { float:left;margin:50px 0px 0px 0px;}
+blockquote.img01 {background:url('../img/contents03.png') no-repeat right bottom;}
+
+blockquote.grid { width:851px;height:121px;line-height:150px;text-align:center;background:url('../img/bg_grid.png') no-repeat center top;font:bold 26px/121px "NanumMyeongjo"; color:#267337 !important; }
+.cont-box { } 
+.cont-box h3 {display:block;clear:both;font:bold 20px/20px "NanumGothic";color:#414141;word-break:keep-all; padding:0px 0px 0px 25px;margin-bottom:20px;background:url('../img/blit_h3.png') no-repeat left 7px;}
+.cont-box h3 input {  font:bold 20px/20px "NanumGothic";color:#fff; padding:3px 20px; margin:0px 0px 0px 50px; border:none; border-radius:4px; background-color:#00a5ea;}
+.cont-box h3 input:hover {background-color:#066992;}
+.cont-box h4 {display:block; clear:both; font:bold 17px/20px "NanumGothic";color:#d2436e;word-break:keep-all;padding:0px 0px 0px 25px;margin:0px 0px 10px 0px;} 
+.cont-box blockquote {margin:0px 0px 60px 25px;color:#414141;word-break:keep-all;}
+.cont-box blockquote ul { padding: 0; }
+.cont-box blockquote li { list-style: none;}
+.cont-box input.sudden {  font:bold 16px/16px "NanumGothic";color:#fff; padding:3px 20px; margin:0px 0px 0px 20px; border:none; border-radius:4px; background-color:#00a5ea;}
+.cont-box input.sudden:hover {background-color:#066992;}
+
+/* 센터소개 */
+dl.intro {}
+dl.intro dt{ font-size: 42px; text-align:center; margin:30px 0px 50px 0px; word-break: keep-all; color: #ffffff; font-weight: 400; background-color: rgba(115, 91, 255, .75); border-radius: 100px; padding: 40px 30px; }
+dl.intro dt strong{ display:block; position: relative; margin-bottom: 30px; color: #ffff00;}
+dl.intro dt strong:after{ content:''; position: absolute; width: 20px; height: 3px; background-color: #ffff00; bottom: -15px; left: calc(50% - 10px); }
+dl.intro dt em { display: block; font-style: normal; font-size: 24px; color: #eee; }
+dl.intro dd{ font-size: 20px; word-break:keep-all; margin: 0 auto 30px; line-height: 1.5em; }
+dl.intro dd strong { font-weight: 400; color: #f09d4c; text-decoration: underline; text-underline-position: under; text-decoration-thickness: 0.1em;}
+
+dl.intro dd strong.title {color: #f09d4c; font-weight: 400; font-size: 32px; margin-bottom: 30px; margin-top: 120px; display: block; text-decoration: none;  }
+dl.intro dd strong.title > em { color: #000; font-weight: 400; font-size: 32px; margin-top: 30px;  margin-bottom: 30px; display: block; text-decoration: none; font-style: normal; /*color: #f09d4c; */}
+dl.intro dd > span { display: block; margin-bottom: 20px; }
+dl.intro dd font { display:block;font:bold 15px/30px "NanumGothic";}
+dl.intro dd:nth-child(2) { color:#000; font-weight: 300; font-size: 24px;  margin-bottom:  50px; }
+dl.intro dd:last-child { margin-top: 80px; text-align:right; color:#414141; font-size: 18px; font-weight: 500; line-height: 1.5em; }
+/* 운영법인 */
+.cont-box{margin:10px 0 30px 0;}
+	.cont-box article{margin-bottom:20px; font-size:17px; line-height:1.5;}
+	.cont-box .col-set{margin:0 -10px;}
+	.cont-box .col-set li{display:inline-block; width:206px; height:185px; vertical-align:middle; margin:0 10px; border:1px solid #dddddd; padding:15px; text-align:center;}
+	.cont-box .col-set li b{font-size:17px; color:#0066b3; font-weight:bold; display:block; padding-bottom:10px;}
+	.cont-box .col-set li em{font-size:17px; font-style:normal; font-weight:bold; display:block; padding-bottom:15px;}
+	.cont-box .col-set li span{font-size:13px; display:block; padding:15px 0; border-top:1px solid #dddddd; letter-spacing:-1px;}
+	.cont-box .col-set li span.bold{font-size:17px; font-weight:bold; color:#333333; display:block; padding:15px 0; border-top:1px solid #dddddd; letter-spacing:-1px;}
+	.cont-box .b-box{margin-bottom:20px; border:1px solid #dddddd; padding:15px;}
+	.cont-box .b-box b{font-size:20px; color:#0066b3; display:block; padding-bottom:10px; font-weight:bold;}
+	.cont-box .b-box em{font-size:15px; padding-bottom:10px; font-weight:bold; display:block; font-style:normal;}
+
+/* 미션과 비젼 */
+ul.Core { overflow:hidden;}
+ul.Core li {overflow:hidden;float:left; margin:0px 20px 0px 0px; }
+ul.Core li b { display:table-cell;vertical-align:middle;width:130px;height:130px; border-radius:400px;font:normal 17px/26px "NanumGothic"; color:#fff;letter-spacing:-1px;text-align:center;margin:0px 0px 0px 0px;}
+ul.Core li b span { display:block;font:bold 30px/30px "NANUMGOTHICEXTRABOLD";color:#fff;}
+ul.Core li:nth-child(1) b{  background:url('../img/bg_dot.png') #e03d6e repeat center top;}
+ul.Core li:nth-child(2) b{  background:url('../img/bg_dot.png') #48649f repeat center top;}
+ul.Core li:nth-child(3) b{ background:url('../img/bg_dot.png') #499f5c repeat center top;}
+ul.Core li:nth-child(4) b{ background:url('../img/bg_dot.png') #e1b560 repeat center top;}
+/* 센터의 발자취 */
+.yearhistory { padding:20px 0px 0px 0px; }
+.yearhistory p{ float:left;width:100px; padding:0px;margin:0px;}
+.yearhistory p span { display:table-cell;width:100px; height:100px; vertical-align:middle;text-align:center; font:bold 30px/30px "Daum_Regular"; color:#fff;  background:url('../img/bg_dot.png') #499f5c repeat center top;  border-radius:100px 0px 100px 100px}
+.yearhistory ul {float:left; width: calc(100% - 120px);; min-height:120px;margin:0px 0px 40px 20px;padding:0px 0px 30px 0px;border-bottom:1px #cdcdcd  dashed;}
+.yearhistory ul li { margin:0px 0px 15px 0px; clear:both; overflow:hidden; transition:all 0.2s ease;}
+.yearhistory ul li:hover { background-color:#EEE}
+.yearhistory ul li strong { float:left;width:70px; display:block;font:bold 16px/18px "NanumGothic";color:#499f5c; }
+.yearhistory ul li span {float:left;width:600px;  display:block;font:normal 15px/18px "NanumGothic";color:#585858; word-break:keep-all;}
+/* 함께하는 사람들 */
+table.basic {width:100%;border-collapse:collapse;margin:0px 0px 0px 0px;border-top:2px #446687 solid;border-left:1px #d2d2d2 solid;}
+table.basic tr:hover {background-color:#f1f1f1}
+table.basic th {background:url('../img/bg_table.png') repeat center bottom;height:43px; font:bold 17px/40px "NanumGothic"; color:#fff;text-align:center; border-bottom:1px #d2d2d2 solid;border-right:1px #d2d2d2 solid;letter-spacing:-1px;}
+table.basic td {text-align:left;padding:7px 8px;border-bottom:1px #d2d2d2 solid;border-right:1px #d2d2d2 solid;word-break:keep-all;}
+table.basic td.l {text-align:left;word-break:keep-all;}
+table.basic td.b {font-weight:bold;color:#016497;background-color:#f0f4f6;}
+table.basic td.m { font:normal 13px/22px "NanumGothic";  }
+/* 사업소개 */
+.contents h3 {display:block;clear:both;font:bold 20px/20px "NanumGothic";color:#414141;word-break:keep-all; padding:0px 0px 0px 25px;margin-bottom:20px;background:url('../img/blit_h3.png') no-repeat left 7px;}
+.contents h3 input {  font:bold 20px/20px "NanumGothic";color:#fff; padding:3px 20px; margin:0px 0px 0px 50px; border:none; border-radius:4px; background-color:#00a5ea;}
+.contents h3 input:hover {background-color:#066992;}
+.contents h4 {display:block; clear:both; font:bold 17px/20px "NanumGothic";color:#d2436e;word-break:keep-all;padding:0px 0px 0px 25px;margin:0px 0px 10px 0px;} 
+.contents blockquote {margin:0px 0px 60px 25px;color:#414141;word-break:keep-all;}
+.contents input.sudden {  font:bold 16px/16px "NanumGothic";color:#fff; padding:3px 20px; margin:0px 0px 0px 20px; border:none; border-radius:4px; background-color:#00a5ea;}
+.contents input.sudden:hover {background-color:#066992;}
+
+/* 오시는 길 */
+section.api_map {border:1px #d1c6c6 solid;overflow:hidden;padding:0px !important;margin:0px 0px 30px 0px;}
+blockquote.traffic { padding:0px !important;margin:0px 0px 50px 30px;}
+.traffic { overflow:hidden;clear:both;}
+.traffic p  { float:left;width:20%;}
+.traffic p span { display:table-cell;text-align:center;vertical-align:middle;width:125px;height:125px; background:url('../img/page/bg_dot.png') #499f5c repeat center top;border-radius:100px; }
+.traffic h3 { margin:0px 0px 5px 0px !important; }
+.traffic div {float:left;width:80%;margin:0px 0px 0px 0px;}
+.traffic ul { display:table-cell;text-align:left;vertical-align:middle;height:125px; }
+.traffic ul li {font:normal 16px/24px "NanumGothic";margin:0px 0px 10px 0px}
+
+/* 시군 노인상담센터 */
+.acronym  {display:block;font-size:0px;margin:0px 0px 20px 0px;overflow:hidden; position:relative; /*background-color:#dfedf4;*/} 
+.acronym p { padding:20px 0;display:block; border-bottom: solid 1px #eee; border-radius:3px;background-color:#fff;background-position:right top;background-repeat:no-repeat;}
+.acronym p strong{ display:block;font-size:17px;font-weight:bold;color:#f09d4c;}
+.acronym p strong span {font-size:13px;display:block;font-weight:normal;color:#999;}
+.acronym input { position:absolute;right:10px;top:10px;background:url('../img/bg_linkbutton.png') repeat-x center -5px;font:bold 20px/50px "NanumGothic";letter-spacing:-1px;color:#0a3652;border:0px;border-radius:5px;box-shadow:0px 0px 5px #d5d5d5;padding:0px 20px;}
+.acronym input:hover {background:url('../img/bg_linkbutton.png') repeat-x center -64px;cursor:pointer;}
+
+.panel-map.sub-map .implication { height: auto; }
+/* 사업소개 */
+/* 상담지원사업 */
+ul.basic { overflow:hidden; margin:0; padding:0; }
+ul.basic li { list-style: none; margin:0; background:url('../img/blit_basic.png')  no-repeat left 8px; padding:0px 0px 5px 10px;  word-break:keep-all;}
+
+ul.linebox { overflow:hidden; border:1px #d2d2d2 solid; border-radius:10px; padding:15px; }
+ul.linebox li { list-style: none; margin:0; background:url('../img/blit_basic.png')  no-repeat left 8px; padding:0px 0px 5px 10px;   word-break:keep-all;}
+
+ol.flowchart { clear:both;overflow:hidden;list-style-type:none;margin:0px;padding:0px;}
+ol.flowchart li{ list-style: none; float:left;padding:0px 25px 0px 0px;margin:0px 5px 15px 0px;background:url('../img/blit_flowchart.png') no-repeat right 50px;}
+ol.flowchart li span {font:normal 13px/15px "NanumGothic";color:#fff;text-align:center;display:table-cell;vertical-align:middle;border:0px #c3c3c3 solid;border-radius:100px;width:130px;height:130px;word-break:keep-all; padding:10px;}
+ol.flowchart li strong {font:bold 15px/22px "NanumGothic";color:#fff;}
+ol.flowchart li:last-child{ background-image:none;}
+ol.flowchart li:nth-child(1) span { background-color:#e03d6e;}
+ol.flowchart li:nth-child(2) span {  background-color:#48649f;}
+ol.flowchart li:nth-child(3) span { background-color:#499f5c;}
+ol.flowchart li:nth-child(4)  span{ background-color:#e1b560;}
+ol.flowchart li:nth-child(5) span { background-color:#e03d6e;}
+ol.flowchart li:nth-child(6) span {  background-color:#48649f;}
+ol.flowchart li:nth-child(7) span { background-color:#499f5c;}
+ol.flowchart li:nth-child(8)  span{ background-color:#e1b560;}

@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>사별 스트레스 척도</title>
+<style>
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000; }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    
+</style>
+</head>
+<body>
+    <div class="wrap">
+            <div class="headName noto500">
+                Case No. (##caseNo##)
+            </div>
+            <div class="title">사별 스트레스 척도</div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 12%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <td>##내담자명##</td>
+                        <th scope="col">연락처</th>
+                        <td>##설문1Y##</td>
+                        <th scope="col">검사일</th>
+                        <td>##날짜##</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                ※ 다음은 어르신께서 배우자와 사별하고 혼자 살면서 경험할 수 있는 여러 가지 스트레스에 관한 질문입니다. 잘 읽고 해당되는 곳에 ‘√’표시 해 주시길 바랍니다.
+            </div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 5%;" />
+                    <col style="width: 50%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">내용</th>
+                        <th scope="col">전혀<br/>그렇지<br/>않다</th>
+                        <th scope="col">그렇지<br/>않다</th>
+                        <th scope="col">보통<br/>이다</th>
+                        <th scope="col">그렇다</th>
+                        <th scope="col" class="bRight-none">매우<br/>그렇다</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">1.</td>
+                        <td class="txt-left">배우자가 없어서 외롭다고 느낄 때가 많다.</td>
+                        <td><span class='icon circle ##설문2Y##'>●</span></td>
+						<td><span class='icon circle ##설문2N##'>●</span></td>
+						<td><span class='icon circle ##설문3Y##'>●</span></td>
+						<td><span class='icon circle ##설문3N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문4Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">2.</td>
+                        <td class="txt-left">부부동반 모임에 가야할 때 어려움을 느낀다.</td>
+                        <td><span class='icon circle ##설문4N##'>●</span></td>
+						<td><span class='icon circle ##설문5Y##'>●</span></td>
+						<td><span class='icon circle ##설문5N##'>●</span></td>
+						<td><span class='icon circle ##설문6Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문6N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">3.</td>
+                        <td class="txt-left">배우자와 사별하고 경제적으로 어려웠다.</td>
+                        <td><span class='icon circle ##설문7Y##'>●</span></td>
+						<td><span class='icon circle ##설문7N##'>●</span></td>
+						<td><span class='icon circle ##설문8Y##'>●</span></td>
+						<td><span class='icon circle ##설문8N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문9Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">4.</td>
+                        <td class="txt-left">중요한 결정을 할 때 상의할 대상이 없어서 힘들다.</td>
+                        <td><span class='icon circle ##설문9N##'>●</span></td>
+						<td><span class='icon circle ##설문10Y##'>●</span></td>
+						<td><span class='icon circle ##설문10N##'>●</span></td>
+						<td><span class='icon circle ##설문11Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문11N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">5.</td>
+                        <td class="txt-left">혼자 있어서 자주 쓸쓸한 마음이 든다.</td>
+                        <td><span class='icon circle ##설문12Y##'>●</span></td>
+						<td><span class='icon circle ##설문12N##'>●</span></td>
+						<td><span class='icon circle ##설문13Y##'>●</span></td>
+						<td><span class='icon circle ##설문13N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문14Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">6.</td>
+                        <td class="txt-left">혼자라고 무시하는 눈초리가 느껴진다.</td>
+                        <td><span class='icon circle ##설문14N##'>●</span></td>
+						<td><span class='icon circle ##설문15Y##'>●</span></td>
+						<td><span class='icon circle ##설문15N##'>●</span></td>
+						<td><span class='icon circle ##설문16Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문16N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">7.</td>
+                        <td class="txt-left">생계가 막막하다.</td>
+                        <td><span class='icon circle ##설문17Y##'>●</span></td>
+						<td><span class='icon circle ##설문17N##'>●</span></td>
+						<td><span class='icon circle ##설문18Y##'>●</span></td>
+						<td><span class='icon circle ##설문18N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문19Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">8.</td>
+                        <td class="txt-left">배우자가 없어서 자녀들과 소통이 안될 때 힘들다.</td>
+                        <td><span class='icon circle ##설문19N##'>●</span></td>
+						<td><span class='icon circle ##설문20Y##'>●</span></td>
+						<td><span class='icon circle ##설문20N##'>●</span></td>
+						<td><span class='icon circle ##설문21Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문21N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">9.</td>
+                        <td class="txt-left">혼자 있을 때 배우자 생각이 나서 허무할 때가 있다.</td>
+                        <td><span class='icon circle ##설문22Y##'>●</span></td>
+						<td><span class='icon circle ##설문22N##'>●</span></td>
+						<td><span class='icon circle ##설문23Y##'>●</span></td>
+						<td><span class='icon circle ##설문23N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문24Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">10.</td>
+                        <td class="txt-left">주위사람들의 시선이 신경 쓰여 불편하다.</td>
+                        <td><span class='icon circle ##설문24N##'>●</span></td>
+						<td><span class='icon circle ##설문25Y##'>●</span></td>
+						<td><span class='icon circle ##설문25N##'>●</span></td>
+						<td><span class='icon circle ##설문26Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문26N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">11.</td>
+                        <td class="txt-left">자녀들에게 경제적으로 부담을 주고 있다.</td>
+                        <td><span class='icon circle ##설문27Y##'>●</span></td>
+						<td><span class='icon circle ##설문27N##'>●</span></td>
+						<td><span class='icon circle ##설문28Y##'>●</span></td>
+						<td><span class='icon circle ##설문28N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문29Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">12.</td>
+                        <td class="txt-left">집안일을 배우자 몫까지 내가 해야만 하는 것이 힘들다.</td>
+                        <td><span class='icon circle ##설문29N##'>●</span></td>
+						<td><span class='icon circle ##설문30Y##'>●</span></td>
+						<td><span class='icon circle ##설문30N##'>●</span></td>
+						<td><span class='icon circle ##설문31Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문31N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">13.</td>
+                        <td class="txt-left">사랑을 주고받으며 살고 싶은 마음이 간절하다.</td>
+                        <td><span class='icon circle ##설문32Y##'>●</span></td>
+						<td><span class='icon circle ##설문32N##'>●</span></td>
+						<td><span class='icon circle ##설문33Y##'>●</span></td>
+						<td><span class='icon circle ##설문33N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문34Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">14.</td>
+                        <td class="txt-left">배우자가 없어서 사람들을 만나는 것이 꺼려진다.</td>
+                        <td><span class='icon circle ##설문34N##'>●</span></td>
+						<td><span class='icon circle ##설문35Y##'>●</span></td>
+						<td><span class='icon circle ##설문35N##'>●</span></td>
+						<td><span class='icon circle ##설문36Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문36N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">15.</td>
+                        <td class="txt-left">앞으로 살아가는데 경제적으로 더 어려울 것이다.</td>
+                        <td><span class='icon circle ##설문37Y##'>●</span></td>
+						<td><span class='icon circle ##설문37N##'>●</span></td>
+						<td><span class='icon circle ##설문38Y##'>●</span></td>
+						<td><span class='icon circle ##설문38N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문39Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">16.</td>
+                        <td class="txt-left">생활고 때문에 싫어도 돈을 벌어야 하는 것이 힘들다.</td>
+                        <td><span class='icon circle ##설문39N##'>●</span></td>
+						<td><span class='icon circle ##설문40Y##'>●</span></td>
+						<td><span class='icon circle ##설문40N##'>●</span></td>
+						<td><span class='icon circle ##설문41Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문41N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">17.</td>
+                        <td class="txt-left">혼자서 잠자리에 누웠을 때 배우자가 그립다.</td>
+                        <td><span class='icon circle ##설문42Y##'>●</span></td>
+						<td><span class='icon circle ##설문42N##'>●</span></td>
+						<td><span class='icon circle ##설문43Y##'>●</span></td>
+						<td><span class='icon circle ##설문43N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문44Y##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">18.</td>
+                        <td class="txt-left">주위의 유혹이 있을 때 힘이 든다.</td>
+                        <td><span class='icon circle ##설문44N##'>●</span></td>
+						<td><span class='icon circle ##설문45Y##'>●</span></td>
+						<td><span class='icon circle ##설문45N##'>●</span></td>
+						<td><span class='icon circle ##설문46Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문46N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">19.</td>
+                        <td class="txt-left">집안의 큰 행사가 있을 때 배우자의 빈자리가 느껴진다.</td>
+                        <td><span class='icon circle ##설문47Y##'>●</span></td>
+						<td><span class='icon circle ##설문47N##'>●</span></td>
+						<td><span class='icon circle ##설문48Y##'>●</span></td>
+						<td><span class='icon circle ##설문48N##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문49Y##'>●</span></td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+
+</body>
+</html>

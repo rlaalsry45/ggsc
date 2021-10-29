@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.comfCns.service.impl.HomepageComfCnsMapper">
+
+	<!-- 상담신청등록 -->
+	<insert id="insertComfCnsReg" parameterType="comfCnsVO">
+		INSERT INTO GS_CNS_ACPT
+			(
+				CASE_NO ,
+				USER_ID ,
+				CNS_REQ_GB ,
+				CNS_GB ,
+				CNS_DTL ,
+				OLDER_REL ,
+				MERR_STAT ,
+				LIVE_FORM ,
+				LOCAL_GB ,
+				HOUSE_FORM ,
+				LIVG_FORM ,
+				MAJOR_PROB ,
+				MAJOR_APPL_CD ,
+				RELG ,
+				EDU ,
+				ZONE_GB ,
+				CENTER_GB ,
+				CNS_DT ,
+				CNS_DT_STD_HOUR ,
+				CNS_DT_STD_MIN ,
+				CNS_DT_END_HOUR ,
+				CNS_DT_END_MIN ,
+				CNS_DT_TOT_MIN ,
+				BIRTH ,
+				ADDRESS ,
+				CNS_HIST_YN ,
+				CNS_CNTN ,
+				PSY_EXAM ,
+				SIGUN_CD ,
+				ACPT_GB
+				
+			) VALUES (
+				CAST(CONCAT(#{cnsGb}, #{zoneGb}, '9', #{centerGb}, (SELECT IFNULL(MAX(GCA.NUM), 0)+1 FROM GS_CNS_ACPT GCA)) AS UNSIGNED) ,
+				<!-- CAST(CONCAT(#{cnsGb}, #{zoneGb}, #{centerGb}, (SELECT IFNULL(MAX(GCA.NUM), 0)+1 FROM GS_CNS_ACPT GCA)) AS UNSIGNED) , -->
+				#{userId} ,
+				#{cnsReqGb} ,
+				#{cnsGb} ,
+				#{cnsDtl} ,
+				#{olderRel} ,
+				#{merrStat} ,
+				#{liveForm} ,
+				#{localGb} ,
+				#{houseForm} ,
+				#{livgForm} ,
+				#{majorProb} ,
+				#{majorApplCd} ,
+				#{relg} ,
+				#{edu} ,
+				#{zoneGb} ,
+				#{centerGb} ,
+				#{cnsDt} ,
+				#{cnsDtStdHour} ,
+				#{cnsDtStdMin} ,
+				#{cnsDtEndHour} ,
+				#{cnsDtEndMin} ,
+				#{cnsDtTotMin} ,
+				#{birth} ,
+				#{address} ,
+				#{cnsHistYn} ,
+				#{cnsCntn} ,
+				#{psyExam} ,
+				#{sigunCd} ,
+				'1'
+			)
+
+	</insert>
+	
+	<!-- 상담신청 파일업로드 -->
+	<insert id="insertComfCnsFileUpload" parameterType="comfCnsVO">
+		INSERT INTO GS_CNS_REQ_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE ,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT MAX(A.NUM) FROM GS_CNS_ACPT AS A WHERE A.USER_ID = #{cnsleId}) ,
+				#{cnsleId} ,
+				#{cnsleNm} ,
+				#{fileNm} ,
+				#{sysFileNm} ,
+				#{filePath} ,
+				#{fileSize} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 상담신청 등록(추가자료입력) -->
+	<insert id="insertAddComfCnsReg" parameterType="addComfCnsVO">
+		INSERT INTO GS_CNS_REQ_ADD
+			(
+	 			CASE_NO ,
+				CNS_GB ,
+				ZONE_GB ,
+				CENTER_GB ,
+				CNS_DTL ,
+				CNSLE_ID ,
+				CNSLE_NM ,
+				CNSR_NM , 
+				GENDER ,
+				BIRTH_DT ,
+				CNS_CNTN ,
+				CNS_DT ,
+				CNS_DT_STD_HOUR ,
+				CNS_DT_STD_MIN ,
+				CNS_DT_END_HOUR ,
+				CNS_DT_END_MIN ,
+				CNS_DT_TOT_MIN ,
+				PHONE ,
+				EMGCY_PHONE ,
+				RELATION ,
+				ADDRESS ,
+				EDU ,
+				RELG ,
+				LIVG_FORM ,
+				HOUSE_FORM ,
+				MERR_STAT ,
+				LIVE_FORM ,
+				MAJOR_PROB ,
+				PSY_EXAM ,
+				DB_INS_TM
+				
+			) VALUES (
+	 			'1001' ,
+				#{cnsGb} ,
+				#{zoneGb} ,
+				#{centerGb} ,
+				#{cnsDtl} ,
+				#{cnsleId} ,
+				#{cnsleNm} ,
+				#{cnsrNm} , 
+				#{gender} ,
+				#{birthDt} ,
+				#{cnsCntn} ,
+				#{cnsDt} ,
+				#{cnsDtStdHour} ,
+				#{cnsDtStdMin} ,
+				#{cnsDtEndHour} ,
+				#{cnsDtEndMin} ,
+				#{cnsDtTotMin} ,
+				#{phone} ,
+				#{emgcyPhone} ,
+				#{relation} ,
+				#{address} ,
+				#{edu} ,
+				#{relg} ,
+				#{livgForm} ,
+				#{houseForm} ,
+				#{merrStat} ,
+				#{liveForm} ,
+				#{majorProb} ,
+				#{psyExam} ,
+				NOW()
+			)
+	</insert>
+	
+</mapper>

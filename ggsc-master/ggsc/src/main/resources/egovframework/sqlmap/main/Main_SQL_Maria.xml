@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="GgscMain">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="CalendarVO" type="ggsc.main.service.CalendarVO"/>
+	
+	
+	<!-- main.do 예약현황 -->
+	<select id="MainDAO.getReservationList" resultClass="egovMap">
+		SELECT B.CNSLE_NM, A.CNS_RSVT_DT, B.CNS_STAT, C.MCLASS_NM   FROM gs_per_cns_dtl AS A
+		INNER JOIN gs_per_cns AS B ON a.CASE_NO = B.CASE_NO
+		INNER JOIN gs_m_class AS C ON B.CNS_STAT = C.ODR AND HCLASS_CD = 'G18'
+		WHERE CNS_RSVT_DT >= DATE_FORMAT(NOW(),'%Y-%m-%d')
+		ORDER BY CNS_RSVT_DT ASC 
+	</select>
+	
+	
+	
+	<!-- CALENDAR SELECT  -->
+	<select id="MainDAO.selectCalendar" resultClass="egovMap" parameterClass="CalendarVO">
+		SELECT A.*, B.USER_NM  FROM gs_calendar AS A 
+		INNER JOIN gs_user_m AS B ON A.USER_ID = B.USER_ID
+		WHERE C_STARTDATE BETWEEN DATE_ADD(#schDate#, INTERVAL -1 MONTH) AND DATE_ADD(#schDate#, INTERVAL 1 MONTH)
+		OR C_ENDDATE BETWEEN DATE_ADD(#schDate#, INTERVAL -1 MONTH) AND DATE_ADD(#schDate#, INTERVAL 1 MONTH)
+
+	</select>
+	
+	<select id="MainDAO.checkCalendar" resultClass="Integer" parameterClass="CalendarVO">
+		SELECT ( SELECT IF ( EXISTS ( SELECT * FROM gs_calendar WHERE 
+		C_STARTDATE = #c_startdate#  
+		AND C_ROOM = #c_room# 
+		AND NUM NOT IN ( #num# )
+		AND  ( C_STARTTIME BETWEEN #c_starttime# AND #c_endtime# OR C_ENDTIME BETWEEN #c_starttime# AND #c_endtime# ) ) , 1, 0 ) ) AS A
+	</select>
+	
+	
+	
+	<insert id="MainDAO.insertCalendar" parameterClass="CalendarVO">
+		INSERT INTO gs_calendar ( C_TITLE, C_CONTENT, C_STARTDATE, C_STARTTIME, C_ENDDATE, C_ENDTIME, C_COLOR, C_FLAG, USER_ID, regdate, c_room )  
+		VALUES ( #c_title# , #c_content#, #c_startdate#, #c_starttime#, #c_enddate#, #c_endtime#, #c_color#, #c_flag#, #user_id#, NOW(), #c_room# )
+	</insert>
+	<update id="MainDAO.updateCalendar" parameterClass="CalendarVO">
+		UPDATE gs_calendar SET
+			C_TITLE = #c_title#
+			, C_CONTENT = #c_content#
+			, C_STARTDATE = #c_startdate#
+			, C_STARTTIME = #c_starttime#
+			, C_ENDDATE = #c_enddate#
+			, C_ENDTIME = #c_endtime#
+			, C_COLOR = #c_color#
+			, C_FLAG = #c_flag#
+			, USER_ID = #user_id#
+			, REGDATE = NOW()
+			, C_ROOM = #c_room#
+		WHERE NUM = #num#
+	</update>
+	
+	<delete id="MainDAO.deleteCalendar" parameterClass="CalendarVO">
+		DELETE FROM gs_calendar WHERE NUM = #num#
+	</delete>
+	
+
+	
+
+</sqlMap>

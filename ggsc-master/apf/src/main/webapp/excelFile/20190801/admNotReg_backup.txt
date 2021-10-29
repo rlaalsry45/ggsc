@@ -1,0 +1,225 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ui"     uri="http://egovframework.gov/ctl/ui"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
+<%@ page import="java.net.URLEncoder"%>
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"  %>
+
+
+
+
+
+<link href="/editor/css/summernote_0.8.3.css" rel="stylesheet">
+<link href="/editor/css/bootstrap_3.3.5.css" rel="stylesheet">
+<script src="/editor/js/jquery_2.1.4.js"></script> 
+<script src="/editor/js/bootstrap_3.3.5.js"></script> 
+<script src="/editor/js/summernote_0.8.3.js"></script>
+<script src="/editor/lang/summernote-ko-KR.js"></script>
+
+
+
+<script type="text/javascript">
+	
+	
+	$(document).ready(function() {
+		$('#summernote').summernote({
+			  lang: 'ko-KR'
+			  ,height: 300                 // set editor height
+			  ,minHeight: null             // set minimum height of editor
+			  ,maxHeight: null             // set maximum height of editor
+			  ,focus: true                 // set focus to editable area after initializing summernote
+			 ,callbacks: {
+				    onImageUpload: function(files) {
+				      // upload image to server and create imgNode...
+					      	save_file(files);
+				    }
+			 }
+		});
+	});
+	function change(cont,edit){
+		var a=3;
+		a+=3;
+	}
+	function save(){
+		var data=new FormData($("#insForm")[0]);
+		var idx = $("#idx").val().trim();
+		if(idx!="" && (parseInt(idx) > 0 || parseInt(idx)<4)){
+			data.append("idx",$("#idx").val());
+		}
+		data.append("title",$("#title").val());
+		data.append("writer",$("#writer").val());
+	//	data.append("file",$("#file")[0].files[0]);
+	//		data.append("file_num",$("#tmp_file_num").val());
+		var cont = $('#summernote').summernote('code');
+		var trCont = cont.replace(/\/files\/tmp\//g,"/files/");
+		data.append("cont",trCont);
+	    $.ajax({
+	        data: data,
+	        type: "POST",
+	        url: "/adm/board/noti_save.do",
+	        cache: false,
+	        contentType: false,
+	        processData: false,
+	        dataType:"json",
+	        success: function(json) {
+	        	if(json.success=="true"){
+	        		alert("저장되었습니다.");
+	        		go_list();
+	        		$('#summernote').code(json.vo.cont);
+	        		
+	        	}
+	        }
+	    });
+	}
+	
+	
+	function save_file(files){
+		var data=new FormData();
+	    for(var i=0;i<files.length;i++){
+			data.append("file",files[i]);
+	    }
+	    if($("#tmp_file_num").val()!="" && parseInt($("#tmp_file_num").val())>0){
+			data.append("file_num",$("#tmp_file_num").val());
+	    }
+	    
+	    //alert("$(#tmp_file_num).val()  ====   "  + $("#tmp_file_num").val());
+	    
+	    $.ajax({
+	        data: data,
+	        type: "POST",
+	        url: "/admNot/upload_tmp_file.do",
+	        cache: false,
+	        contentType: false,
+	        processData: false,
+	        dataType:"json",	        
+	        success: function(json) {
+	        	alert("json.success =========== "+json.success);
+	        	if(json.success=="true"){
+	        		alert("111111");
+	        		$.each(json.urlList,function(i,e){
+	            		$('#summernote').summernote("insertImage", e.url);
+	        		});
+	        		
+	        		$("#tmp_file_num").val(json.file_num);
+	        	}else{
+	        		alert("임시파일 저장에 실패하였습니다.");
+	        	}
+	        	alert("333333");
+	        }
+	    });
+	}
+
+    
+    
+    // 공지사항 목록
+    function fn_list() {
+    	
+    	document.regFrm.action = "/admNotList.do";
+       	document.regFrm.submit();
+    }
+    
+    
+    
+    /* 등록화면으로 이동 */
+    function fn_Reg() {
+       	document.admNotFrm.action = "<c:url value='/admRegMove.do'/>";
+       	document.v.submit();
+    }
+	
+	
+</script>
+						
+
+	<!-- wrap --> 
+	<div class="wrap"> 
+		
+		<!-- container --> 
+		<div class="container">
+			<!-- snb -->  
+			<div class="snb">
+				<div class="left_title">
+					<h1>소통마당</h1>
+				</div>
+				<div class="nav-container">
+					<ul class="left_nav">
+						<li class="active">
+							<a href="/admNotList.do">공지사항관리</a>
+						</li>
+					</ul>
+				</div>
+			</div> 
+			<!-- //snb --> 
+			<!-- content --> 
+			<div class="content"> 
+				<div class="paT40 paB25">
+					<h1>공지사항 등록1</h1>
+				</div>
+				<!-- view  start -->
+				<div class="form_table">
+		<form id="insForm" method="post" action="/adm/board/noti_save.do" enctype="multipart/form-data">
+			<input type="hidden" id="tmp_file_num" name="file_num" value="${vo.file_num}"/>
+		</form>		
+		<input type="hidden" id="idx" name="idx" value="${vo.idx}"/>
+		
+		<form id="regFrm" name="regFrm" method="post" enctype="multipart/form-data">
+		
+		
+		
+				<table class="notice_view" border="1" cellspacing="0" summary=""> 
+					<caption>공지사항관리 내용입니다.</caption> 
+					<colgroup> 
+					<col width="150">
+					<col width="*">
+					</colgroup> 
+					<tbody> 
+					<input id="bd_id" name="bd_id" value="${admNotVO.bdId}" class="i_text wp95" type="hidden">
+					<tr> 
+						<th>제목</th> 
+						<td>
+							<div class="item">
+							<input id="bd_title" name="bd_title" value="" class="i_text wp95" type="text">
+							</div>
+						</td> 
+					</tr> 
+					<tr> 
+						<th>첨부파일</th> 
+						<td>
+							<div class="item">
+							<input type="file" id="uploadFile" name="uploadFile" value="" class="i_text wp95" >
+							</div>
+						</td> 
+					</tr> 
+					<tr> 
+						<td class="cont" colspan="2"> 
+							<div id="summernote">${map.cont}</div>
+						</td> 
+					</tr> 
+					</tbody> 
+				</table>
+		</form>
+				</div>
+				<div class="fl_R mgT10">
+					<a href="javascript:fn_reg();" class="btn_big"><strong>저장하기</strong></a>
+					<a href="javascript:fn_list();" class="btn_big"><strong>목록보기</strong></a>
+				</div>
+				<!-- view  end -->
+			</div> 
+			<!-- //content --> 
+		</div> 
+		<!-- //container -->
+		
+	</div>
+	<!-- /wrap --> 
+
+	
+	
+	
+	
+	<!-- footer --> 
+	<div class="footer"> 
+		<p>All Rights Reserved.</p>
+	</div> 
+	<!-- //footer --> 

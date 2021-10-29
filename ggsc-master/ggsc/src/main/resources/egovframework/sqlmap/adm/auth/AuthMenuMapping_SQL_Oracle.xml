@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="authMenu">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    <typeAlias  alias="authMenuMapgVO" type="ams.adm.auth.service.AuthMenuMapgVO"/>
+    <typeAlias  alias="authVO" type="ams.adm.auth.service.AuthVO"/>
+
+	<!-- <select id="authMenuMappingDAO.getAuthMenuInfo" parameterClass="java.lang.Integer" resultClass="egovMap">
+		authDAO.selectAuthGrpSelList
+		SELECT *
+		FROM 	AT_AUTH_MENU_MAPG
+		WHERE AM_MAPG_NUM = #amMapgNum#;
+	</select>
+
+	<select id="authMenuMappingDAO.getMaxAmMapgNum" parameterClass="authMenuMapgVO" resultClass="java.lang.Integer">
+		authDAO.selectAuthGrpSelList
+		SELECT IF(ISNULL(MAX(AM_MAPG_NUM)),1,MAX(AM_MAPG_NUM)+1) FROM AT_AUTH_MENU_MAPG
+	</select>
+
+	<delete id="authMenuMappingDAO.deleteAuthMenuInfo" parameterClass="authVO">
+			authMenuMappingDAO.deleteAuthMenuInfo
+			DELETE FROM AT_AUTH_MENU_MAPG
+			WHERE AUTH_CD = #authCd#
+	</delete> -->
+	<select id="authMenuMappingDAO.selectMenuList" parameterClass="authVO" resultClass="egovMap">
+		<!-- authDAO.selectAuthGrpSelList -->
+		SELECT *
+		FROM AT_MENU
+		WHERE USE_YN='Y'
+	</select>
+
+</sqlMap>

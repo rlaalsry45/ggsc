@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>불안 척도</title>
+<style>
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000; }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+</style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="doc-box mt20">
+            <div class="headName noto500">
+               Case No. (##caseNo##)
+            </div>
+            <div class="title">
+                불안 척도
+            </div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 12%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <td>##내담자명##</td>
+                        <th scope="col">연락처</th>
+                        <td>##설문1Y##</td>
+                        <th scope="col">검사일</th>
+                        <td>##날짜##</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                ※ 지난 한 주 동안의 느낌에 ‘√’표 하세요.
+            </div>
+            <table class="table-write">
+                <colgroup>
+                    <col style="width: 5%;" />
+                    <col style="width: 60%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">내용</th>
+                        <th scope="col">아니다</th>
+                        <th scope="col">때때로<br/>그렇다</th>
+                        <th scope="col">자주<br/>그렇다</th>
+                        <th scope="col" class="bRight-none">항상<br/>그렇다</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">1.</td>
+                        <td class="txt-left">나는 요즘 전보다 신경질적이고 불안하다.</td>
+                        <td><span class='icon circle ##설문2Y##'>●</span></td>
+                        <td><span class='icon circle ##설문2N##'>●</span></td>
+                        <td><span class='icon circle ##설문3Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문3N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">2.</td>
+                        <td class="txt-left">나는 공연히 두려워진다.</td>
+                        <td><span class='icon circle ##설문4Y##'>●</span></td>
+                        <td><span class='icon circle ##설문4N##'>●</span></td>
+                        <td><span class='icon circle ##설문5Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문5N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">3.</td>
+                        <td class="txt-left">나는 사소한 일에 당황하고 어쩔 줄 모른다.</td>
+                        <td><span class='icon circle ##설문6Y##'>●</span></td>
+                        <td><span class='icon circle ##설문6N##'>●</span></td>
+                        <td><span class='icon circle ##설문7Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문7N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">4.</td>
+                        <td class="txt-left">나는 신경이 극도로 약해져서 몸과 마음을 가눌 수 없다.</td>
+                        <td><span class='icon circle ##설문8Y##'>●</span></td>
+                        <td><span class='icon circle ##설문8N##'>●</span></td>
+                        <td><span class='icon circle ##설문9Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문9N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">5.</td>
+                        <td class="txt-left">나는 만사가 순조로운 것 같다.</td>
+                        <td><span class='icon circle ##설문10Y##'>●</span></td>
+                        <td><span class='icon circle ##설문10N##'>●</span></td>
+                        <td><span class='icon circle ##설문11Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문11N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">6.</td>
+                        <td class="txt-left">나는 손발이 떨리고 안절부절 못한다.</td>
+                        <td><span class='icon circle ##설문12Y##'>●</span></td>
+                        <td><span class='icon circle ##설문12N##'>●</span></td>
+                        <td><span class='icon circle ##설문13Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문13N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">7.</td>
+                        <td class="txt-left">나는 머리가 아프고 목덜미가 무겁거나 혹은 허리가 아프다.</td>
+                        <td><span class='icon circle ##설문14Y##'>●</span></td>
+                        <td><span class='icon circle ##설문14N##'>●</span></td>
+                        <td><span class='icon circle ##설문15Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문15N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">8.</td>
+                        <td class="txt-left">나는 이유 없이 몸이 약하고 피곤하다.</td>
+                        <td><span class='icon circle ##설문16Y##'>●</span></td>
+                        <td><span class='icon circle ##설문16N##'>●</span></td>
+                        <td><span class='icon circle ##설문17Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문17N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">9.</td>
+                        <td class="txt-left">나는 마음이 안정되고 편안하게 오래 앉아 있을 수 있다.</td>
+                        <td><span class='icon circle ##설문18Y##'>●</span></td>
+                        <td><span class='icon circle ##설문18N##'>●</span></td>
+                        <td><span class='icon circle ##설문19Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문19N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">10.</td>
+                        <td class="txt-left">나는 가슴이 두근거린다.</td>
+                        <td><span class='icon circle ##설문20Y##'>●</span></td>
+                        <td><span class='icon circle ##설문20N##'>●</span></td>
+                        <td><span class='icon circle ##설문21Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문21N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">11.</td>
+                        <td class="txt-left">나는 어지러워서 고생을 한다.</td>
+                        <td><span class='icon circle ##설문22Y##'>●</span></td>
+                        <td><span class='icon circle ##설문22N##'>●</span></td>
+                        <td><span class='icon circle ##설문23Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문23N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">12.</td>
+                        <td class="txt-left">나는 졸도하거나 졸도할 것 같이 느낄 때가 있다.</td>
+                        <td><span class='icon circle ##설문24Y##'>●</span></td>
+                        <td><span class='icon circle ##설문24N##'>●</span></td>
+                        <td><span class='icon circle ##설문25Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문25N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">13.</td>
+                        <td class="txt-left">나는 가슴이 답답하지 않다.</td>
+                        <td><span class='icon circle ##설문26Y##'>●</span></td>
+                        <td><span class='icon circle ##설문26N##'>●</span></td>
+                        <td><span class='icon circle ##설문27Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문27N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">14.</td>
+                        <td class="txt-left">나는 손에 쥐가 나거나 저려서 고생을 한다.</td>
+                        <td><span class='icon circle ##설문28Y##'>●</span></td>
+                        <td><span class='icon circle ##설문28N##'>●</span></td>
+                        <td><span class='icon circle ##설문29Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문29N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">15.</td>
+                        <td class="txt-left">나는 소화가 안 되어 고생한다.</td>
+                        <td><span class='icon circle ##설문30Y##'>●</span></td>
+                        <td><span class='icon circle ##설문30N##'>●</span></td>
+                        <td><span class='icon circle ##설문31Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문31N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">16.</td>
+                        <td class="txt-left">나는 소변을 자주 본다.</td>
+                        <td><span class='icon circle ##설문32Y##'>●</span></td>
+                        <td><span class='icon circle ##설문32N##'>●</span></td>
+                        <td><span class='icon circle ##설문33Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문33N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">17.</td>
+                        <td class="txt-left">내 손은 보통 덥고 땀이 나지 않는다.</td>
+                        <td><span class='icon circle ##설문34Y##'>●</span></td>
+                        <td><span class='icon circle ##설문34N##'>●</span></td>
+                        <td><span class='icon circle ##설문35Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문35N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">18.</td>
+                        <td class="txt-left">나는 얼굴이 쉽게 붉어지고 화끈거린다.</td>
+                        <td><span class='icon circle ##설문36Y##'>●</span></td>
+                        <td><span class='icon circle ##설문36N##'>●</span></td>
+                        <td><span class='icon circle ##설문37Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문37N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom2">
+                        <td class="bRight-none">19.</td>
+                        <td class="txt-left">나는 쉽게 잠이 들고 쉽게 잠을 잔다.</td>
+                        <td><span class='icon circle ##설문38Y##'>●</span></td>
+                        <td><span class='icon circle ##설문38N##'>●</span></td>
+                        <td><span class='icon circle ##설문39Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문39N##'>●</span></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">20.</td>
+                        <td class="txt-left">나는 꿈자리가 사납다.</td>
+                        <td><span class='icon circle ##설문40Y##'>●</span></td>
+                        <td><span class='icon circle ##설문40N##'>●</span></td>
+                        <td><span class='icon circle ##설문41Y##'>●</span></td>
+                        <td class="bRight-none"><span class='icon circle ##설문41N##'>●</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

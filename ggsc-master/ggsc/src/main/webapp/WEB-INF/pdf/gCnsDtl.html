@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>개인상담일지</title>
+<style>
+
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000;  }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { width: 60px;font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { width: 100px;font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+</style>
+</head>
+<body>
+	<div id="wrap">
+		<div class='title'>집단상담일지</div>
+		<br />
+	
+				<table class="table-write">
+					<colgroup>
+						<col width="5%"></col>
+						<col width="30%"></col> 
+						<col width="5%"></col>
+						<col width="20%"></col>
+						<col width="5%"></col>
+					</colgroup>
+					<!-- <tr>
+						<th>내담자ID <span style="color: red;">*</span></th>
+						<td colspan="2"><input type="text" id="cnsleId" name="cnsleId" style="width: 200px;" readonly="readonly" /></td>
+						<th>내담자명 <span style="color: red;">*</span></th>
+						<td><input type="text" id="cnsleNm" name="cnsleNm" style="width: 200px;" readonly /></td>
+					</tr> -->
+					<tr>
+						<th>상담구분</th>
+						<td>##상담구분##</td>
+						<th>센터구분</th>
+						<td colspan="2">##센터구분##</td>
+					</tr>
+					<tr>
+						<th>프로그램명</th>
+						<td>##프로그램명##<br/>##회기##회</td>
+						<th>활동일시</th>
+						<td colspan="2">
+							##활동일시##<br/>
+							(##시##시 ##분##분 ~
+							##시2##시 ##분2##분)
+							(총 ##총##분) 
+						</td>
+					</tr>
+					<tr>
+						<th>활동장소</th>
+						<td>##활동장소##</td>
+						<!-- <th>상담종류</th>
+						<td>
+							<input type="radio" id="cnsType1" name="cnsType" value="1" /><label for="cnsType1">사별애도</label>
+							<input type="radio" id="cnsType2" name="cnsType" value="2" /><label for="cnsType2">죽음준비</label>
+							<input type="radio" id="cnsType3" name="cnsType" value="3" /><label for="cnsType3">관계개선·의사소통</label>
+							<input type="radio" id="cnsType4" name="cnsType" value="4" /><label for="cnsType4">심리·정서</label>
+							<input type="radio" id="cnsType5" name="cnsType" value="5" /><label for="cnsType5">자아통합</label><br>
+							<input type="radio" id="cnsType6" name="cnsType" value="6" /><label for="cnsType6">치매예방</label>
+							<input type="radio" id="cnsType7" name="cnsType" value="7" /><label for="cnsType7">기타</label>
+						</td> -->
+						<th>내담자와의관계</th>
+						<td colspan="2">##내담자와의관계##</td>
+					</tr>
+					<tr>
+						<th>리더구분</th>
+						<td colspan="4">##리더구분##</td>
+					</tr>
+					<tr>
+						<th>진행자</th>
+						<td>##진행자##</td>
+						<th>작성자</th>
+						<td colspan="2">##작성자##</td>
+					</tr>
+					<tr>
+						<th>참석자</th>
+						<td>##참석자##명</td>
+						<th>참석자명</th>
+						<td colspan="2">##참석자명##</td>
+					</tr>
+					<tr>
+						<th>활동주제</th>
+						<td>##활동주제##</td>
+						<th>상담종류</th>
+						<td colspan="2">##상담종류##</td>
+					</tr>
+					<tr style="height: 100px;">
+						<th>활동목표</th>
+						<td colspan="4">##활동목표##</td>
+					</tr>
+					<tr style="height: 100px;">
+						<th>프로그램내용</th>
+						<td colspan="4">##프로그램내용##</td>
+					</tr>
+					<tr style="height: 100px;">
+						<th>평가</th>
+						<td colspan="4">##평가##</td>
+					</tr>
+					<tr style="height: 100px;">
+						<th>향후계획</th>
+						<td colspan="4">##향후계획##</td>
+					</tr>
+					<tr style="height: 100px;">
+						<th>비고</th>
+						<td colspan="4">##비고##</td>
+					</tr>
+				</table>
+		</div>
+</body>
+</html>

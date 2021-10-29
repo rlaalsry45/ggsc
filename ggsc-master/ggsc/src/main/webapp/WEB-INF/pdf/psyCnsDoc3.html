@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>죽음·학대 질문지</title>
+<style>
+
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000; }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#eee; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    
+</style>
+</head>
+<body>
+    <div class="wrap">
+        <div style="margin-top: 20px;">
+			
+            <div class="headName noto500 mt80">
+                Case No. (##caseNo##)
+            </div>
+            <div class="title"> 죽음·학대 질문지</div>
+            <table class="table-write">
+                <!-- <caption>DUKE-AD</caption> -->
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 12%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <td>##내담자명##</td>
+                        <th scope="col">성별</th>
+                        <td>##설문1Y##</td>
+                        <th scope="col">검사일</th>
+                        <td>##날짜##</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">나이</th>
+                        <td>##설문1N##</td>
+                        <th scope="col">연 락 처</th>
+                        <td colspan="3">##설문2Y##</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                ※ 다음은 당신의 건강과 느낌에 대한 질문입니다. 각 문항을 자세히 읽고 당신이 느끼는 가장 적합한 곳에 ‘√’표 해 주십시오.<br/>
+                다음 문항에 맞거나 틀린 답은 없습니다.
+            </div>
+            <table class="table-write">
+                <!-- <caption>죽음·학대 질문지</caption> -->
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 60%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 10%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">내용</th>
+                        <th scope="col">그렇다</th>
+                        <th scope="col" class="bRight-none">아니다</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bRight-none">1.</td>
+                        <td class="txt-left">나는 살 가치가 없다.</td>
+                        <td><div class='icon circle ##설문3Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문3N##'>●</div></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">2.</td>
+                        <td class="txt-left">더 이상 살고 싶지 않다.</td>
+                        <td><div class='icon circle ##설문4Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문4N##'>●</div></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">3.</td>
+                        <td class="txt-left">자살은 아니지만 죽을 수 있다면 죽고 싶다.</td>
+                        <td><div class='icon circle ##설문5Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문5N##'>●</div></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">4.</td>
+                        <td class="txt-left">상황이 나빠지면 자살할 수도 있다.</td>
+                        <td><div class='icon circle ##설문6Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문6N##'>●</div></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">5.</td>
+                        <td class="txt-left">아무도 관심을 갖지 않아, 방치되어 있다.</td>
+                        <td><div class='icon circle ##설문7Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문7N##'>●</div></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">6.</td>
+                        <td class="txt-left">가끔 무시당하거나 두려움을 느끼는 상황에 처한다.</td>
+                        <td><div class='icon circle ##설문8Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문8N##'>●</div></td>
+                    </tr>
+                    <tr>
+                        <td class="bRight-none">7.</td>
+                        <td class="txt-left">경제적인 학대를 경험하고 있다.</td>
+                        <td><div class='icon circle ##설문9Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문9N##'>●</div></td>
+                    </tr>
+                    <tr class="bBottom">
+                        <td class="bRight-none">8.</td>
+                        <td class="txt-left">신체적인 학대를 경험하고 있다.</td>
+                        <td><div class='icon circle ##설문10Y##'>●</div></td>
+                        <td class="bRight-none"><div class='icon circle ##설문10N##'>●</div></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-write">
+                <!-- <caption>죽음·학대 질문지</caption> -->
+                <colgroup>
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 10%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th scope="col">2단계 질문지 해당여부</th>
+                        <td>##설문11Y##</td>
+                        <th scope="col">다음상담 예약일</th>
+                        <td>##설문11N##</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

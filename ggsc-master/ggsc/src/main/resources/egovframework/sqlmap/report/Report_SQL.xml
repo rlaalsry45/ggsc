@@ -1,0 +1,1553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Report">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="cnsEndVO" type="ggsc.report.service.CnsEndVO"/>
+	<typeAlias  alias="cnsBookVO" type="ggsc.report.service.CnsBookVO"/>	
+	<typeAlias  alias="linkOrgRptVO" type="ggsc.report.service.LinkOrgRptVO"/>	
+	<typeAlias  alias="ntwkMeetRptVO" type="ggsc.report.service.NtwkMeetRptVO"/>	
+	<typeAlias  alias="eduAtvyRptVO" type="ggsc.report.service.EduAtvyRptVO"/>	
+	<typeAlias  alias="prAtvyRptVO" type="ggsc.report.service.PrAtvyRptVO"/>
+	<typeAlias  alias="mindSharingVO" type="ggsc.report.service.mindSharingVO"/>
+	<typeAlias  alias="ExcelVO" type="ggsc.support.service.ExcelVO"/>
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 수정 -->
+	<update id="reportDao.updateMindSharing" parameterClass="mindSharingVO">
+		UPDATE gs_report_board
+		SET 
+			CnsGb = #cnsGb#,
+			CENTER_GB  = #centerGb#,
+			B_DATE = #bDate#,
+			B_CONTENT = #bContent#,
+			VOLUNT_GB = #voluntGb#,
+			VOLUNT_NM = #voluntNm#,
+			<isNotEmpty property="fileName" > 
+				FILE_NM = #fileName#,
+				SYS_FILE_NAME = #sysFileName#,
+				FILE_PATH = #filePath#,
+				FILE_SIZE = #fileSize#,
+			</isNotEmpty>
+			<isEqual property="fDel" compareValue="Y">
+				FILE_NM = null,
+				SYS_FILE_NAME = null,
+				FILE_PATH = null,
+				FILE_SIZE = 0,
+			</isEqual>
+			
+			<isEqual property="delYn" compareValue="Y">
+				DEL_YN = 'Y', 
+			</isEqual>
+			
+			DB_INS_NAME = now()
+			<!-- USER_NUM = #userNum# -->
+		WHERE 
+			NUM = #num# AND B_GUBUN = #bGubun#
+	</update>
+	
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 삭제 -->
+	<update id="reportDao.deleteMindSharing" parameterClass="mindSharingVO">
+		DELETE FROM
+			gs_report_board
+		WHERE 
+			NUM = #num# AND B_GUBUN = #bGubun#
+	</update>
+	
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 등록 -->
+	<insert id="reportDao.insertMindSharing" parameterClass="mindSharingVO">
+		INSERT INTO gs_report_board 
+			(
+			   CnsGb
+			   ,CENTER_GB
+			   ,B_GUBUN
+			   ,B_DATE
+			   ,B_CONTENT
+			   ,FILE_NM
+			   ,SYS_FILE_NAME
+			   ,FILE_PATH
+			   ,FILE_SIZE
+			   ,DB_INS_NAME
+			   ,USER_NUM
+			   ,DEL_YN
+			   ,VOLUNT_GB
+			   ,VOLUNT_NM
+			   ,DB_INS_TM
+			   ,CNSR_ID
+			)
+		VALUES
+			(
+			 #cnsGb#,
+			 #centerGb#,
+			 #bGubun#,
+			 #bDate#,
+			 #bContent#,
+			 #fileName#,
+			 #sysFileName#,
+			 #filePath#,
+			 #fileSize#,
+			 now(),
+			 #userNum#,
+			 'N',
+			 #voluntGb#,
+			 #voluntNm#,
+			 now(),
+			 #cnsrId#
+		)
+	</insert>
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 목록 -->
+	<select id="reportDao.getMindSharingList" parameterClass="mindSharingVO" resultClass="egovMap">
+		SELECT * FROM
+		(
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY A.NUM DESC) AS RNUM
+				,A.*
+				,B.CENTER_NM CENTER_NM
+				,C.MCLASS_NM AS CNS_NM
+			FROM gs_report_board AS A
+			INNER JOIN gs_center_m AS B ON A.center_gb = B.NUM
+			INNER JOIN gs_m_class AS C ON A.cnsGb = C.ODR AND C.HCLASS_CD = 'G15'
+			WHERE B_GUBUN = #bGubun# AND A.DEL_YN != 'Y' 
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				A.cnsGb = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				A.center_gb = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schDateGb" prepend="AND"> 
+				REPLACE(REPLACE(A.B_DATE,'-',''),'.','') = REPLACE(REPLACE(#schDateGb#,'-',''),'.','')
+			</isNotEmpty>
+			<isNotEmpty property="schText" prepend="AND"> 
+				A.B_CONTENT LIKE CONCAT('%', #schText#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(A.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(A.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			
+		) AS X
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 디테일 -->
+	<select id="reportDao.getgetMindSharingDtl" parameterClass="mindSharingVO" resultClass="egovMap">
+		SELECT * FROM gs_report_board WHERE NUM = #num#
+	</select>
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 엑셀 -->
+	<select id="reportDao.getMindSharingListExcel" parameterClass="ExcelVO" resultClass="egovMap">
+		SELECT 
+				ROW_NUMBER() OVER(ORDER BY A.NUM DESC) AS RNUM
+				,A.*
+				,B.CENTER_NM CENTER_NM
+				,C.MCLASS_NM AS CNS_NM
+			FROM gs_report_board AS A
+			INNER JOIN gs_center_m AS B ON A.center_gb = B.NUM
+			INNER JOIN gs_m_class AS C ON A.cnsGb = C.ODR AND C.HCLASS_CD = 'G15'
+			WHERE B_GUBUN = #schGubun# AND A.DEL_YN != 'Y' 
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				A.cnsGb = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				A.center_gb = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schDateGb" prepend="AND"> 
+				REPLACE(REPLACE(A.B_DATE,'-',''),'.','') = REPLACE(REPLACE(#schDateGb#,'-',''),'.','')
+			</isNotEmpty>
+			<isNotEmpty property="schText" prepend="AND"> 
+				A.B_CONTENT LIKE CONCAT('%', #schText#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(A.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(A.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			ORDER BY RNUM ASC
+	</select>
+	
+	
+	<!-- 마음나눔봉사단 / 성인식개선사업 갯수-->
+	<select id="reportDao.getMindSharingCnt" parameterClass="mindSharingVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM gs_report_board AS A
+		INNER JOIN gs_center_m AS B ON A.center_gb = B.NUM
+		INNER JOIN gs_m_class AS C ON A.cnsGb = C.ODR AND C.HCLASS_CD = 'G15'
+		WHERE B_GUBUN = #bGubun# AND A.DEL_YN != 'Y' 
+		<isNotEmpty property="schCnsGb" prepend="AND"> 
+			A.cnsGb = #schCnsGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			A.center_gb = #schCenterGb#
+		</isNotEmpty>
+		<isNotEmpty property="schDateGb" prepend="AND"> 
+			REPLACE(REPLACE(A.B_DATE,'-',''),'.','') = REPLACE(REPLACE(#schDateGb#,'-',''),'.','')
+		</isNotEmpty>
+		<isNotEmpty property="schText" prepend="AND"> 
+			A.B_CONTENT LIKE CONCAT('%', #schText#, '%') 
+		</isNotEmpty>
+		<!-- 기간별 검색 -->
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(A.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(A.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+	</select>
+	
+	
+	
+	
+	<!-- 상담사례종결서 목록 -->
+	<select id="reportDao.getCnsEndList" parameterClass="cnsEndVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY gce.CASE_NO DESC) AS RNUM
+					, gce.*
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G23' AND ODR = gce.CNS_END_RESN) AS CNS_END_RESN_NM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = gce.CNS_GB) AS CNS_GB_NM
+					, CASE CNS_END_METHD WHEN 1 THEN '면접' WHEN 2 THEN '전화' WHEN 3 THEN '기타' ELSE '알 수 없음' END AS CNS_END_METHD_NM 
+					, ( SELECT CENTER_NM FROM gs_center_m WHERE NUM = gce.CENTER_GB ) CENTER_NM
+					, CONCAT(gce.CNS_DT_S, '~', gce.CNS_DT_E) AS CNS_PERIOD
+					, gcef.FILE_NM
+					, gcef.SYS_FILE_NM
+					, gcef.FILE_PATH
+			FROM GS_CNS_END gce
+			LEFT JOIN GS_CNS_END_FILE gcef 
+			ON gce.CASE_NO = gcef.CASE_NO
+			WHERE 1=1
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				gce.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gce.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsleNm" prepend="AND"> 
+				gce.CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 상담사례종결서 갯수-->
+	<select id="reportDao.getCnsEndListTotCnt" parameterClass="cnsEndVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_CNS_END gce
+		WHERE 1=1
+		 <isNotEmpty property="schCnsGb" prepend="AND"> 
+			gce.CNS_GB = #schCnsGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			gce.CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsleNm" prepend="AND"> 
+			gce.CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+		</isNotEmpty>
+		<!-- 기간별 검색 -->
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 상담사례종결서 엑셀 다운 -->
+	<select id="reportDao.getCnsEndListExcel" parameterClass="ExcelVO" resultClass="egovMap">
+			SELECT ROW_NUMBER() OVER(ORDER BY gce.CASE_NO DESC) AS RNUM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = gce.CNS_GB) AS CNS_GB_NM
+					, ( SELECT CENTER_NM FROM gs_center_m WHERE NUM = gce.CENTER_GB ) AS CENTER_NM
+					, gce.CNSLE_NM
+					, gce.CNSR_NM
+					, CASE CNS_END_METHD WHEN 1 THEN '면접' WHEN 2 THEN '전화' WHEN 3 THEN '기타' ELSE '알 수 없음' END AS CNS_END_METHD_NM 
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G23' AND ODR = gce.CNS_END_RESN) AS CNS_END_RESN_NM
+					, CONCAT(gce.CNS_DT_S, '~', gce.CNS_DT_E) AS CNS_PERIOD
+			FROM GS_CNS_END gce
+			WHERE 1=1
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				gce.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gce.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsleNm" prepend="AND"> 
+				gce.CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			ORDER BY RNUM DESC
+	</select>
+	
+	<!-- 상담사례종결서 상세 -->
+	<select id="reportDao.getCnsEndDtl" parameterClass="cnsEndVO" resultClass="egovMap">
+		SELECT 	gce.*
+			 , (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = gce.CNS_GB) AS CNS_GB_NM
+			 , CONCAT(gce.CNS_DT_S, '~', gce.CNS_DT_E) AS CNS_PERIOD
+		FROM 
+			GS_CNS_END gce
+		WHERE 
+			gce.CASE_NO = #caseNo#
+			AND gce.NUM = #num#
+	</select>
+	
+	<!-- 상담사례종결서 수정 -->
+	<update id="reportDao.updateCnsEnd" parameterClass="cnsEndVO">
+		UPDATE 
+			GS_CNS_END
+		SET 
+			CLIENT_NM = #clientNm#,
+			CNSLE_NM  = #cnsleNm#,
+			BIRTH_DT = #birthDt#, 
+			TEL = #tel#,
+			MOBILE = #mobile#,
+			ADDR = #addr#,
+			CNS_DT_S = #cnsDtS#,
+			CNS_DT_E = #cnsDtE#,
+			CNS_CNT = #cnsCnt#,
+			CNS_END_METHD = #cnsEndMethd#,
+			CNS_STFT = #cnsStft#,
+			HELP_CNTN = #helpCntn#,
+			CNS_END_RESN = #cnsEndResn#,
+			CNTN = #cntn#,
+			VLTR_CNTN = #vltrCntn#
+		WHERE 
+			NUM = #num#
+	</update>
+	
+	<!-- 상담대상자관리대장 목록 -->
+	<select id="reportDao.getCnsBookList" parameterClass="cnsBookVO" resultClass="egovMap">
+		SELECT *
+		FROM(
+			SELECT *
+				, ROW_NUMBER() OVER(ORDER BY CASE_NO DESC) AS RNUM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G58' AND ODR = A.MAJOR_APPL_CD) AS MAJOR_APPL_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS  WHERE HCLASS_CD = 'G21' AND ODR = A.CNS_DTL) AS CNS_DTL_NM
+			FROM
+				(SELECT gpcd.CASE_NO
+							, gpcd.CNS_GB
+							, gpcd.ZONE_GB
+							, gpcd.LOCAL_GB
+							, gpcd.CENTER_GB
+							, gpcd.CNS_CNT
+							, gpcd.CNS_DT
+							, gpcd.MAJOR_APPL_CD
+							, gecd.CNSLE_NM
+							, gecd.CNS_DTL
+							, gecd.BIRTH_DT
+							, CASE gecd.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE gecd.GENDER END AS GENDER
+							, gecd.ADDR
+							, gecd.MOBILE
+							, gpcd.DB_INS_TM
+							<!-- , IFNULL((SELECT CASE WHEN NUM IS NULL THEN 'N' WHEN NUM IS NOT NULL THEN 'Y' END FROM GS_LINK_REQ_M WHERE CASE_NO = gpcd.CASE_NO), 'N') AS LINK_REQ --> 
+				FROM GS_PER_CNS_DTL gpcd, GS_EALY_CNS_DOC gecd
+				WHERE 1=1
+				AND gpcd.CASE_NO = gecd.CASE_NO
+				AND gpcd.CNS_GB = gecd.CNS_GB
+				UNION ALL
+				SELECT ggd.CASE_NO
+						, ggd.CNS_GB
+						, ggd.ZONE_GB
+						, ggd.LOCAL_GB
+						, ggd.CENTER_GB
+						, ggd.CNS_CNT
+						, ggd.ATVY_DT AS CNS_DT
+						, ggd.MAJOR_APPL_CD
+						, gecd.CNSLE_NM
+						, gecd.CNS_DTL
+						, gecd.BIRTH_DT
+						, CASE gecd.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE gecd.GENDER END AS GENDER 
+						, gecd.ADDR
+						, gecd.MOBILE
+						, ggd.DB_INS_TM
+						<!-- , IFNULL((SELECT CASE WHEN NUM IS NULL THEN 'N' WHEN NUM IS NOT NULL THEN 'Y' END  FROM GS_LINK_REQ_M WHERE CASE_NO = ggd.CASE_NO), 'N') AS LINK_REQ --> 
+				FROM GS_GCNS_DTL ggd, GS_EALY_CNS_DOC gecd
+				WHERE 1=1
+				AND ggd.CASE_NO = gecd.CASE_NO
+				AND ggd.CNS_GB = gecd.CNS_GB
+				) A
+				
+				WHERE 1=1
+				
+				<isNotEmpty property="schCnsGb" prepend="AND"> 
+					CNS_GB = #schCnsGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCenterGb" prepend="AND"> 
+					CENTER_GB = #schCenterGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCnsleNm" prepend="AND"> 
+					CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+				</isNotEmpty>
+				<!-- 기간별 검색 -->
+				<isNotEmpty property="schStartDate" prepend="AND">
+					DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+				</isNotEmpty>
+				<isNotEmpty property="schEndDate" prepend="AND">
+					DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+				</isNotEmpty>
+			)B
+			
+			
+		
+				
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+ 	
+	</select>
+	
+	<!-- 상담대상자관리대장 갯수-->
+	<select id="reportDao.getCnsBookListTotCnt" parameterClass="cnsBookVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM
+			(SELECT gpcd.CASE_NO
+						, gpcd.CNS_GB
+						, gpcd.ZONE_GB
+						, gpcd.LOCAL_GB
+						, gpcd.CENTER_GB
+						, gpcd.CNS_CNT
+						, gpcd.CNS_DT
+						, gpcd.MAJOR_APPL_CD
+						, gecd.CNSLE_NM
+						, gecd.CNS_DTL
+						, gecd.BIRTH_DT
+						, CASE gecd.GENDER WHEN 'M' THEN '남'
+							WHEN 'F' THEN '여'
+							ELSE gecd.GENDER END AS GENDER
+						, gecd.ADDR
+						, gecd.MOBILE
+						, gpcd.DB_INS_TM
+			FROM GS_PER_CNS_DTL gpcd, GS_EALY_CNS_DOC gecd
+			WHERE 1=1
+			AND gpcd.CASE_NO = gecd.CASE_NO
+			AND gpcd.CNS_GB = gecd.CNS_GB
+			UNION ALL
+			SELECT ggd.CASE_NO
+					, ggd.CNS_GB
+					, ggd.ZONE_GB
+					, ggd.LOCAL_GB
+					, ggd.CENTER_GB
+					, ggd.CNS_CNT
+					, ggd.ATVY_DT
+					, ggd.MAJOR_APPL_CD
+					, gecd.CNSLE_NM
+					, gecd.CNS_DTL
+					, gecd.BIRTH_DT
+					, CASE gecd.GENDER WHEN 'M' THEN '남'
+							WHEN 'F' THEN '여'
+							ELSE gecd.GENDER END AS GENDER
+					, gecd.ADDR
+					, gecd.MOBILE
+					, ggd.DB_INS_TM
+			FROM GS_GCNS_DTL ggd, GS_EALY_CNS_DOC gecd
+			WHERE 1=1
+			AND ggd.CASE_NO = gecd.CASE_NO
+			AND ggd.CNS_GB = gecd.CNS_GB
+			) A
+		
+			WHERE 1=1
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsleNm" prepend="AND"> 
+				CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+		
+	</select>
+	
+		
+	<!-- 상담대상자 관리대장 엑셀 다운 -->
+	<select id="reportDao.getCnsBookListExcel" resultClass="egovMap">
+		<!-- SELECT *
+				, ROW_NUMBER() OVER(ORDER BY CASE_NO DESC) AS RNUM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G58' AND ODR = A.MAJOR_APPL_CD) AS MAJOR_APPL_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS  WHERE HCLASS_CD = 'G14' AND ODR = A.CNS_DTL) AS CNS_DTL_NM
+			FROM
+				(SELECT gpcd.CASE_NO
+							, gpcd.CNS_GB
+							, gpcd.ZONE_GB
+							, gpcd.LOCAL_GB
+							, gpcd.CENTER_GB
+							, gpcd.CNS_CNT
+							, gpcd.CNS_DT
+							, gpcd.MAJOR_APPL_CD
+							, gecd.CNSLE_NM
+							, gecd.CNS_DTL
+							, gecd.BIRTH_DT
+							, CASE gecd.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE gecd.GENDER END AS GENDER
+							, gecd.ADDR
+							, gecd.MOBILE
+							, IFNULL((SELECT CASE WHEN NUM IS NULL THEN 'N' WHEN NUM IS NOT NULL THEN 'Y' END FROM GS_LINK_REQ_M WHERE CASE_NO = gpcd.CASE_NO), 'N') AS LINK_REQ 
+				FROM GS_PER_CNS_DTL gpcd, GS_EALY_CNS_DOC gecd
+				WHERE 1=1
+				AND gpcd.CASE_NO = gecd.CASE_NO
+				AND gpcd.CNS_GB = gecd.CNS_GB
+				UNION ALL
+				SELECT ggd.CASE_NO
+						, ggd.CNS_GB
+						, ggd.ZONE_GB
+						, ggd.LOCAL_GB
+						, ggd.CENTER_GB
+						, ggd.CNS_CNT
+						, ggd.ATVY_DT AS CNS_DT
+						, ggd.MAJOR_APPL_CD
+						, gecd.CNSLE_NM
+						, gecd.CNS_DTL
+						, gecd.BIRTH_DT
+						, CASE gecd.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE gecd.GENDER END AS GENDER 
+						, gecd.ADDR
+						, gecd.MOBILE
+						, IFNULL((SELECT CASE WHEN NUM IS NULL THEN 'N' WHEN NUM IS NOT NULL THEN 'Y' END  FROM GS_LINK_REQ_M WHERE CASE_NO = ggd.CASE_NO), 'N') AS LINK_REQ 
+				FROM GS_GCNS_DTL ggd, GS_EALY_CNS_DOC gecd
+				WHERE 1=1
+				AND ggd.CASE_NO = gecd.CASE_NO
+				AND ggd.CNS_GB = gecd.CNS_GB
+				) A
+				
+				WHERE 1=1
+				
+				<isNotEmpty property="schCnsGb" prepend="AND"> 
+					CNS_GB = #schCnsGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCenterGb" prepend="AND"> 
+					CENTER_GB = #schCenterGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCnsleNm" prepend="AND"> 
+					CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+				</isNotEmpty>
+				
+				ORDER BY RNUM -->
+			SELECT *
+		FROM(
+			SELECT *
+				, ROW_NUMBER() OVER(ORDER BY CASE_NO DESC) AS RNUM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G58' AND ODR = A.MAJOR_APPL_CD) AS MAJOR_APPL_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS  WHERE HCLASS_CD = 'G14' AND ODR = A.CNS_DTL) AS CNS_DTL_NM
+			FROM
+				(SELECT gpcd.CASE_NO
+							, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = gpcd.CNS_GB) AS cnsGbNm
+							, gpcd.ZONE_GB
+							, gpcd.LOCAL_GB
+							, (SELECT CENTER_NM FROM gs_center_m WHERE NUM = gpcd.CENTER_GB ) AS centerGbNm 
+							, gpcd.CNS_CNT
+							, gpcd.CNS_DT
+							, gpcd.MAJOR_APPL_CD
+							, gecd.CNSLE_NM
+							, gecd.CNS_DTL
+							, gecd.BIRTH_DT
+							, CASE gecd.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE gecd.GENDER END AS GENDER
+							, gecd.ADDR
+							, gecd.MOBILE
+						 	, gpcd.DB_INS_TM
+						 	, gpcd.CNS_GB
+						 	, gpcd.CENTER_GB
+				FROM GS_PER_CNS_DTL gpcd, GS_EALY_CNS_DOC gecd
+				WHERE 1=1
+				AND gpcd.CASE_NO = gecd.CASE_NO
+				AND gpcd.CNS_GB = gecd.CNS_GB
+				UNION ALL
+				SELECT ggd.CASE_NO
+						, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = ggd.CNS_GB) AS cnsGbNm
+						, ggd.ZONE_GB
+						, ggd.LOCAL_GB
+						, (SELECT CENTER_NM FROM gs_center_m WHERE NUM = ggd.CENTER_GB ) AS centerGbNm 
+						, ggd.CNS_CNT
+						, ggd.ATVY_DT AS CNS_DT
+						, ggd.MAJOR_APPL_CD
+						, gecd.CNSLE_NM
+						, gecd.CNS_DTL
+						, gecd.BIRTH_DT
+						, CASE gecd.GENDER WHEN 'M' THEN '남' WHEN 'F' THEN '여' ELSE gecd.GENDER END AS GENDER 
+						, gecd.ADDR
+						, gecd.MOBILE
+						, ggd.DB_INS_TM
+						, ggd.CNS_GB
+						, ggd.CENTER_GB
+				FROM GS_GCNS_DTL ggd, GS_EALY_CNS_DOC gecd
+				WHERE 1=1
+				AND ggd.CASE_NO = gecd.CASE_NO
+				AND ggd.CNS_GB = gecd.CNS_GB
+				) A
+				
+				WHERE 1=1
+				
+				<isNotEmpty property="schCnsGb" prepend="AND"> 
+					CNS_GB = #schCnsGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCenterGb" prepend="AND"> 
+					CENTER_GB = #schCenterGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCnsleNm" prepend="AND"> 
+					CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+				</isNotEmpty>
+				<!-- 기간별 검색 -->
+				<isNotEmpty property="schStartDate" prepend="AND">
+					DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+				</isNotEmpty>
+				<isNotEmpty property="schEndDate" prepend="AND">
+					DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+				</isNotEmpty>
+			)B
+			
+				ORDER BY RNUM DESC
+	</select>
+	
+	<!-- 상담종결관리대장 목록 -->
+	<select id="reportDao.getCnsEndBookList" parameterClass="cnsEndVO" resultClass="egovMap">
+		SELECT *
+		FROM(
+			SELECT gce.*
+					, ROW_NUMBER() OVER(ORDER BY CASE_NO DESC) AS RNUM
+					, CASE gecd.GENDER WHEN 'M' THEN '남'
+												WHEN 'F' THEN '여'
+												ELSE gecd.GENDER
+												END AS GENDER
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G23' AND ODR = gce.CNS_END_RESN) AS CNS_END_RESN_NM
+			FROM GS_CNS_END gce, GS_EALY_CNS_DOC gecd
+			WHERE 1=1
+			AND gce.CASE_NO = gecd.CASE_NO
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				gce.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gce.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsleNm" prepend="AND"> 
+				gce.CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			
+			)A
+		
+			
+				
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+ 	
+	</select>
+	
+	<!-- 상담종결관리대장 갯수-->
+	<select id="reportDao.getCnsEndBookListTotCnt" parameterClass="cnsEndVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_CNS_END
+		
+		WHERE 1=1
+		 <isNotEmpty property="schCnsGb" prepend="AND"> 
+			CNS_GB = #schCnsGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsleNm" prepend="AND"> 
+			CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+		</isNotEmpty>
+		<!-- 기간별 검색 -->
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+	</select>
+	
+		
+	<!-- 상담종결 관리대장 엑셀 다운 -->
+	<select id="reportDao.getCnsEndBookListExcel" resultClass="egovMap">
+		SELECT gce.*
+					, ROW_NUMBER() OVER(ORDER BY CASE_NO DESC) AS RNUM
+					, CASE gecd.GENDER WHEN 'M' THEN '남'
+												WHEN 'F' THEN '여'
+												ELSE gecd.GENDER
+												END AS GENDER
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G23' AND ODR = gce.CNS_END_RESN) AS CNS_END_RESN_NM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = gce.CNS_GB) AS cnsGbNm
+					, (SELECT CENTER_NM FROM gs_center_m WHERE NUM = gce.CENTER_GB ) AS centerGbNm
+			FROM GS_CNS_END gce, GS_EALY_CNS_DOC gecd
+			WHERE 1=1
+			AND gce.CASE_NO = gecd.CASE_NO
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				gce.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gce.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsleNm" prepend="AND"> 
+				gce.CNSLE_NM LIKE CONCAT('%', #schCnsleNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gce.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			ORDER BY RNUM ASC
+	</select>
+	
+	<!-- 연계기관방문보고서 목록 -->
+	<select id="reportDao.getLinkOrgRptList" parameterClass="linkOrgRptVO" resultClass="egovMap">
+		SELECT A.*
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY glor.LINK_ORG_NO) AS RNUM
+					, glor.*
+					, (SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G089' and odr = glor.sigun_cd) AS sigunCdNm 
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = glor.LOCAL_GB) AS LOCAL_GB_NM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G74' AND ODR = glor.VISIT_ORG_GB) AS VISIT_ORG_GB_NM
+			FROM GS_LINK_ORG_RPT glor
+			WHERE 1=1
+			<isNotEmpty property="schVisitOrgGb" prepend="AND"> 
+				glor.VISIT_ORG_GB = #schVisitOrgGb#
+			</isNotEmpty>
+			<!-- <isNotEmpty property="schCenterGb" prepend="AND"> 
+				glor.CENTER_GB = #schCenterGb#
+			</isNotEmpty> -->
+			<isNotEmpty property="schSigunNm" prepend="AND"> 
+				glor.SIGUN_CD = #schSigunNm#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				glor.VISITR LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(glor.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(glor.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM DESC
+ 		]]>
+	</select>
+	
+	<!-- 연계기관방문보고서 갯수-->
+	<select id="reportDao.getLinkOrgRptListTotCnt" parameterClass="linkOrgRptVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_LINK_ORG_RPT glor
+		WHERE 1=1
+		<isNotEmpty property="schVisitOrgGb" prepend="AND"> 
+			glor.VISIT_ORG_GB = #schVisitOrgGb#
+		</isNotEmpty>
+		<!-- <isNotEmpty property="schCenterGb" prepend="AND"> 
+			glor.CENTER_GB = #schCenterGb#
+		</isNotEmpty> -->
+		<isNotEmpty property="schSigunNm" prepend="AND"> 
+			glor.SIGUN_CD = #schSigunNm#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsrNm" prepend="AND"> 
+			glor.VISITR LIKE CONCAT('%', #schCnsrNm#, '%') 
+		</isNotEmpty>
+		<!-- 기간별 검색 -->
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(glor.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(glor.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+		
+	</select>
+	
+	<!-- 연계기관방문보고서 엑셀 다운 -->
+	<select id="reportDao.getLinkOrgRptListExcel" parameterClass="ExcelVO" resultClass="egovMap">
+		
+			SELECT A.*
+			FROM(SELECT ROW_NUMBER() OVER(ORDER BY glor.LINK_ORG_NO) AS RNUM
+						, (SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G089' and odr = glor.sigun_cd) AS sigunCdNm 
+						, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G74' AND ODR = glor.VISIT_ORG_GB) AS VISIT_ORG_GB_NM
+						, glor.VISIT_ORG_NM
+						, glor.input_nm
+						, glor.visit_Man_Cnt
+						, glor.visitr
+						, glor.visit_dt
+						, glor.VISIT_CNTN
+						, date_format(glor.db_ins_tm,'%Y년 %m월 %d일') AS dbInsTm
+				FROM 
+					GS_LINK_ORG_RPT glor
+				WHERE 
+					1=1
+				<isNotEmpty property="schVisitOrgGb" prepend="AND"> 
+					glor.VISIT_ORG_GB = #schVisitOrgGb#
+				</isNotEmpty>
+				<!-- <isNotEmpty property="schCenterGb" prepend="AND"> 
+					glor.CENTER_GB = #schCenterGb#
+				</isNotEmpty> -->
+				<isNotEmpty property="schSigunNm" prepend="AND"> 
+					glor.SIGUN_CD = #schSigunNm#
+				</isNotEmpty>
+				<isNotEmpty property="schCnsrNm" prepend="AND"> 
+					glor.VISITR LIKE CONCAT('%', #schCnsrNm#, '%') 
+				</isNotEmpty>
+				<!-- 기간별 검색 -->
+				<isNotEmpty property="schStartDate" prepend="AND">
+					DATE_FORMAT(glor.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+				</isNotEmpty>
+				<isNotEmpty property="schEndDate" prepend="AND">
+					DATE_FORMAT(glor.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+				</isNotEmpty>
+			) A
+ 			ORDER BY RNUM DESC
+	</select>
+	
+	<!-- 연계기관방문보고서 상세 	-->
+	<select id="reportDao.getLinkOrgRptDtl" parameterClass="LinkOrgRptVO" resultClass="egovMap">
+		SELECT 	*
+		FROM GS_LINK_ORG_RPT
+		WHERE LINK_ORG_NO = #linkOrgNo#
+	</select>
+
+	<!-- 연계기관방문보고서 등록 -->
+	<insert id="reportDao.insertLinkOrgRpt" parameterClass="linkOrgRptVO">
+		INSERT INTO GS_LINK_ORG_RPT 
+			(
+			   CASE_NO
+			 , SIGUN_CD
+			 , CNS_GB
+			 , ZONE_GB
+			 , LOCAL_GB
+			 , CENTER_GB
+			 , VISIT_ORG_NM
+			 , VISIT_ORG_GB
+			 , VISIT_DT
+			 , VISIT_MAN_CNT
+			 , VISITR
+			 , FILE_NM
+			 , SYS_FILE_NM
+			 , FILE_PATH
+			 , FILE_SIZE
+			 , VISIT_CNTN
+			 , INPUT_NM
+			 , WRITE_DT
+			 , DB_INS_TM	
+			 , CNSR_ID
+			)
+		VALUES
+			(
+			   0
+			 , #sigunCd#
+			 , #cnsGb#
+			 , #zoneGb#
+			 , #localGb#
+			 , #centerGb#
+			 , #visitOrgNm#
+			 , #visitOrgGb#
+			 , #visitDt#
+			 , #visitManCnt#
+			 , #visitr#
+			 , #fileNm#
+			 , #sysFileNm#
+			 , #filePath#
+			 , #fileSize#
+			 , #visitCntn#
+			 , #inputNm#
+			 , #writeDt#
+			 , NOW()
+			 , #cnsrId#
+			)
+	</insert>
+	<!-- 연계기관방문보고서 수정	-->
+	<update id="reportDao.updateLinkOrgRpt" parameterClass="linkOrgRptVO">
+		UPDATE GS_LINK_ORG_RPT
+		SET 
+			<isNotEmpty property="fileNm" > 
+				FILE_NM = #fileNm#,
+				SYS_FILE_NM = #sysFileNm#,
+				FILE_PATH = #filePath#,
+				FILE_SIZE = #fileSize#,
+			</isNotEmpty>
+			<isEqual property="fDel" compareValue="Y">
+				FILE_NM = null,
+				SYS_FILE_NM = null,
+				FILE_PATH = null,
+				FILE_SIZE = 0,
+			</isEqual>
+			VISIT_ORG_NM = #visitOrgNm#,
+			VISIT_ORG_GB  = #visitOrgGb#,
+			VISIT_DT = #visitDt#, 
+			VISIT_MAN_CNT = #visitManCnt#,
+			VISIT_CNTN = #visitCntn#,
+			LOCAL_GB = #localGb#
+		WHERE LINK_ORG_NO = #linkOrgNo#
+	</update>
+
+	<!-- 연계기관방문보고서 삭제 -->
+	<update id="reportDao.deleteLinkOrgRpt" parameterClass="linkOrgRptVO">
+		DELETE FROM 
+			GS_LINK_ORG_RPT
+		WHERE 
+			LINK_ORG_NO = #linkOrgNo#
+	</update>
+	 
+	<!-- 네트워크구축회의보고서 목록 -->
+	<select id="reportDao.getNtwkMeetRptList" parameterClass="ntwkMeetRptVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY gnmr.NTWK_MEET_NO DESC) AS RNUM
+					, gnmr.*
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = gnmr.LOCAL_GB) AS LOCAL_GB_NM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G39' AND ODR = gnmr.JOIN_ORG_CD) AS JOIN_ORG_CD_NM
+			FROM GS_NTWK_MEET_RPT gnmr
+			
+			WHERE 1=1
+			<isNotEmpty property="schJoinOrgCd" prepend="AND"> 
+				gnmr.JOIN_ORG_CD = #schJoinOrgCd#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gnmr.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				gnmr.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gnmr.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gnmr.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 네트워크구축회의보고서 갯수-->
+	<select id="reportDao.getNtwkMeetRptListTotCnt" parameterClass="ntwkMeetRptVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_NTWK_MEET_RPT gnmr
+		WHERE 1=1
+		<isNotEmpty property="schJoinOrgCd" prepend="AND"> 
+			gnmr.JOIN_ORG_CD = #schJoinOrgCd#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			gnmr.CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsrNm" prepend="AND"> 
+			gnmr.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+		</isNotEmpty>
+		<!-- 기간별 검색 -->
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(gnmr.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(gnmr.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 네트워크구축회의보고서 엑셀 다운 -->
+	<select id="reportDao.getNtwkMeetRptListExcel" resultClass="egovMap">
+		SELECT 
+			ROW_NUMBER() OVER(ORDER BY gnmr.NTWK_MEET_NO DESC) AS RNUM ,
+			(SELECT CENTER_NM FROM gs_center_m WHERE NUM = gnmr.CENTER_GB ) AS centerGb ,
+			(SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G39' AND odr = gnmr.join_org_cd) AS joinOrgCd ,
+			date_format(str_to_date(gnmr.MEET_DT,'%Y.%m.%d'),'%Y년 %m월 %d일') as meetDt ,
+			gnmr.join_man ,
+			gnmr.join_place ,
+			gnmr.join_cntn ,
+			gnmr.input_nm ,
+			DATE_FORMAT(gnmr.db_ins_tm,'%Y년 %m월 %d일') AS dbInsTm
+		FROM 
+			GS_NTWK_MEET_RPT gnmr
+		WHERE 
+			1=1
+			
+			<isNotEmpty property="schJoinOrgCd" prepend="AND"> 
+				gnmr.JOIN_ORG_CD = #schJoinOrgCd#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gnmr.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				gnmr.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gnmr.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gnmr.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			ORDER BY RNUM DESC
+	</select>
+	
+	<!-- 네트워크구축회의보고서 상세 -->
+	<select id="reportDao.getNtwkMeetRptDtl" parameterClass="ntwkMeetRptVO" resultClass="egovMap">
+		SELECT 	*
+		FROM GS_NTWK_MEET_RPT
+		WHERE NTWK_MEET_NO = #ntwkMeetNo#
+	</select>
+	
+	<!-- 네트워크구축회의보고서 등록 -->
+	<insert id="reportDao.insertNtwkMeetRpt" parameterClass="ntwkMeetRptVO">
+		INSERT INTO GS_NTWK_MEET_RPT 
+			(
+			   CNS_GB
+			 , ZONE_GB
+			 , LOCAL_GB
+			 , CENTER_GB
+			 , JOIN_ORG_CD
+			 , MEET_DT
+			 , JOIN_MAN
+			 , JOIN_PLACE
+			 , JOIN_CNTN
+			 , FILE_NM
+			 , SYS_FILE_NM
+			 , FILE_PATH
+			 , FILE_SIZE
+			 , INPUT_NM
+			 , CNSR_ID
+			 , DB_INS_TM	
+			)
+		VALUES
+			(
+			   #cnsGb#
+			 , #zoneGb#
+			 , #localGb#
+			 , #centerGb#
+			 , #joinOrgCd#
+			 , #meetDt#
+			 , #joinMan#
+			 , #joinPlace#
+			 , #joinCntn#
+			 , #fileName#
+			 , #sysFileName#
+			 , #filePath#
+			 , #fileSize#
+			 , #inputNm#
+			 , #cnsrId#
+			 , NOW()
+			)
+	</insert>
+
+	<!-- 네트워크구축회의보고서 수정 -->
+	<update id="reportDao.updateNtwkMeetRpt" parameterClass="ntwkMeetRptVO">
+		UPDATE GS_NTWK_MEET_RPT
+		SET 
+			<isNotEmpty property="fileName" > 
+				FILE_NM = #fileName#,
+				SYS_FILE_NM = #sysFileName#,
+				FILE_PATH = #filePath#,
+				FILE_SIZE = #fileSize#,
+			</isNotEmpty>
+			<isEqual property="fDel" compareValue="Y">
+				FILE_NM = null,
+				SYS_FILE_NM = null,
+				FILE_PATH = null,
+				FILE_SIZE = 0,
+			</isEqual>
+			LOCAL_GB = #localGb#,
+			JOIN_ORG_CD = #joinOrgCd#,
+			MEET_DT  = #meetDt#,
+			JOIN_MAN = #joinMan#, 
+			JOIN_PLACE = #joinPlace#,
+			JOIN_CNTN = #joinCntn#
+		WHERE NTWK_MEET_NO = #ntwkMeetNo#
+	</update>
+	
+	<!-- 네트워크구축회의보고서 삭제 -->
+	<update id="reportDao.deleteNtwkMeetRpt" parameterClass="ntwkMeetRptVO">
+		DELETE FROM 
+			GS_NTWK_MEET_RPT
+		WHERE 
+			NTWK_MEET_NO = #ntwkMeetNo#
+	</update>
+	
+	
+	
+	<!-- 네트워크구축회의보고서 pdf -->
+	<insert id="reportDao.insertNtwkMeetRptUpload" parameterClass="ntwkMeetRptVO">
+	
+		INSERT INTO  GS_NTWK_MEET_RPT_PDF
+		(
+		INPUT_NM ,
+		LOCAL_GB ,
+		JOIN_ORG_CD ,
+		MEET_DT ,
+		JOIN_MAN ,
+		JOIN_PLACE ,
+		JOIN_CNTN 
+		) VALUES (
+		#inputNm# ,
+		#localGb# ,
+		#joinOrgCd# ,
+		#meetDt# ,
+		#joinMan# ,
+		#joinPlace# ,
+		#joinCntn# ,
+	</insert>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	 
+	<!-- 교육활동보고서 목록 -->
+	<select id="reportDao.getEduAtvyRptList" parameterClass="eduAtvyRptVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY gear.EDU_ATVY_NO DESC) AS RNUM
+					, gear.*
+					, ( SELECT CENTER_NM FROM gs_center_m WHERE NUM = gear.CENTER_GB ) CENTER_NM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G75' AND ODR = gear.EDU_GB_CD) AS EDU_GB_NM2
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G78' AND ODR = gear.EDU_MAN) AS EDU_MAN_NM
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G76' AND ODR = gear.EDU_TITLE) AS EDU_TITLE_NM
+					 
+			FROM GS_EDU_ATVY_RPT gear
+			
+			WHERE 1=1
+			<isNotEmpty property="schEduManGb" prepend="AND"> 
+				gear.EDU_MAN = #schEduManGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gear.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				gear.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gear.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gear.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			 
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 교육활동보고서 갯수-->
+	<select id="reportDao.getEduAtvyRptListTotCnt" parameterClass="eduAtvyRptVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_EDU_ATVY_RPT gear
+		WHERE 1=1
+		<isNotEmpty property="schEduManGb" prepend="AND"> 
+				gear.EDU_MAN = #schEduManGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gear.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				gear.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gear.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gear.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+	</select>
+	
+	<!-- 교육활동보고서 엑셀 다운 -->
+	<select id="reportDao.getEduAtvyRptListExcel" resultClass="egovMap">
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY gear.EDU_ATVY_NO DESC) AS RNUM ,
+				(SELECT CENTER_NM FROM gs_center_m WHERE NUM = gear.CENTER_GB ) CENTER_NM ,
+				gear.input_nm ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G75' AND ODR = gear.EDU_GB_CD) AS EDU_GB_NM2 ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G78' AND ODR = gear.EDU_MAN) AS EDU_MAN_NM ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G76' AND ODR = gear.EDU_TITLE) AS EDU_TITLE_NM ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G91' AND ODR = gear.host_Gb) AS hostGb ,
+				gear.major_cntn ,
+				gear.edu_people ,
+				date_format(STR_TO_DATE(gear.edu_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS eduDt ,
+				(SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G77' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.edu_way, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  GS_EDU_ATVY_RPT AS B ON CHAR_LENGTH(B.edu_way)-CHAR_LENGTH(REPLACE(B.edu_way, ',', ''))>=numbers.n-1 WHERE B.EDU_ATVY_NO = gear.EDU_ATVY_NO ) ) AS eduWay ,
+				date_format(gear.DB_INS_TM,'%Y년 %m월 %d일') AS dbInsTm
+			FROM 
+				GS_EDU_ATVY_RPT gear
+			WHERE 
+				1=1
+				<isNotEmpty property="schEduManGb" prepend="AND"> 
+					gear.EDU_MAN = #schEduManGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCenterGb" prepend="AND"> 
+					gear.CENTER_GB = #schCenterGb#
+				</isNotEmpty>
+				<isNotEmpty property="schCnsrNm" prepend="AND"> 
+					gear.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+				</isNotEmpty>
+				<!-- 기간별 검색 -->
+				<isNotEmpty property="schStartDate" prepend="AND">
+					DATE_FORMAT(gear.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+				</isNotEmpty>
+				<isNotEmpty property="schEndDate" prepend="AND">
+					DATE_FORMAT(gear.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+				</isNotEmpty>
+			ORDER BY RNUM DESC
+	</select>
+	
+	<!-- 교육활동보고서 상세 	-->
+	<select id="reportDao.getEduAtvyRptDtl" parameterClass="eduAtvyRptVO" resultClass="egovMap">
+		SELECT *
+		FROM GS_EDU_ATVY_RPT
+		WHERE EDU_ATVY_NO = #eduAtvyNo#
+	</select>
+
+	
+	<!-- 교육활동보고서 등록 -->
+	<insert id="reportDao.insertEduAtvyRpt" parameterClass="eduAtvyRptVO">
+		INSERT INTO GS_EDU_ATVY_RPT 
+			(
+			   CNS_GB
+			 , ZONE_GB
+			 , LOCAL_GB
+			 , HOST_GB
+			 , EDU_PEOPLE
+			 , CENTER_GB
+			 , EDU_GB_CD
+			 , EDU_GB_NM
+			 , EDU_TITLE
+			 , EDU_WAY
+			 , EDU_MAN
+			 , PSYC_EXAM_CNTN
+			 , MAJOR_CNTN
+			 , INPUT_NM
+			 , EDU_DT
+			 , EDU_STT_HOUR
+			 , EDU_STT_MIN
+			 , EDU_END_HOUR
+			 , EDU_END_MIN
+			 , DB_INS_TM
+			 , FILE_NM
+			 , SYS_FILE_NM
+			 , FILE_PATH
+			 , FILE_SIZE 
+			 , CNSR_ID
+			)
+		VALUES
+			(
+			   #cnsGb#
+			 , #zoneGb#
+			 , #localGb#
+			 , #hostGb#
+			 , #eduPeople#
+			 , #centerGb#
+			 , #eduGbCd#
+			 , ''
+			 , #eduTitle#
+			 , #eduWay#
+			 , #eduMan#
+			 , #psycExamCntn#
+			 , #majorCntn#
+			 , #inputNm#
+			 , #eduDt#
+			 , #eduSttHour#
+			 , #eduSttMin#
+			 , #eduEndHour#
+			 , #eduEndMin#
+			 , NOW()
+			 , #fileName#
+			 , #sysFileName#
+			 , #filePath#
+			 , #fileSize#
+			 , #cnsrId#
+			)
+	</insert>
+	
+	<!-- 교육활동보고서 수정	-->
+	<update id="reportDao.updateEduAtvyRpt" parameterClass="eduAtvyRptVO">
+		UPDATE GS_EDU_ATVY_RPT
+		SET 
+			<isNotEmpty property="fileName" > 
+				FILE_NM = #fileName#,
+				SYS_FILE_NM = #sysFileName#,
+				FILE_PATH = #filePath#,
+				FILE_SIZE = #fileSize#,
+			</isNotEmpty>
+			<isEqual property="fDel" compareValue="Y">
+				FILE_NM = null,
+				SYS_FILE_NM = null,
+				FILE_PATH = null,
+				FILE_SIZE = 0,
+			</isEqual>
+			EDU_GB_CD = #eduGbCd#,
+			EDU_DT  = #eduDt#,
+			EDU_STT_HOUR = #eduSttHour#, 
+			EDU_STT_MIN = #eduSttMin#,
+			EDU_END_HOUR = #eduEndHour#,
+			EDU_END_MIN = #eduEndMin#,
+			EDU_TITLE = #eduTitle#,
+			EDU_WAY = #eduWay#,
+			EDU_MAN = #eduMan#,
+			EDU_PEOPLE = #eduPeople#,
+			HOST_GB = #hostGb#,
+			PSYC_EXAM_CNTN = #psycExamCntn#,
+			MAJOR_CNTN = #majorCntn#
+			<!-- INPUT_NM = #inputNm# -->
+		WHERE EDU_ATVY_NO = #eduAtvyNo#
+	</update>
+	
+	<!-- 네트워크구축회의보고서 삭제 -->
+	<update id="reportDao.deleteEduAtvyRpt" parameterClass="eduAtvyRptVO">
+		DELETE FROM 
+			GS_EDU_ATVY_RPT
+		WHERE 
+			EDU_ATVY_NO = #eduAtvyNo#
+	</update>
+
+	 
+	<!-- 홍보활동보고서 목록 -->
+	<select id="reportDao.getPrAtvyRptList" parameterClass="prAtvyRptVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT 
+					ROW_NUMBER() OVER(ORDER BY gpar.PR_ATVY_NO) AS RNUM
+					<!-- , (SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM GS_M_CLASS WHERE HCLASS_CD = 'G79') AS PR_LIST -->
+					, gpar.pr_atvy_no
+					, gpar.pr_atvy_dt
+					, gpar.pr_atvy_rcpt
+					, gpar.pr_atvy_man
+					, gpar.input_nm
+					, gpar.db_ins_tm
+					, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G78' AND ODR = gpar.PR_ATVY_RCPT) AS PR_ATVY_RCPT_NM
+					, ( SELECT GROUP_CONCAT(MCLASS_NM SEPARATOR ',') FROM gs_m_class WHERE HCLASS_CD = ( SELECT HCLASS_CD FROM gs_h_class WHERE HCLASS_CD = 'G79' ) AND ODR IN ( SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(B.PR_ATVY_AREA, ',', numbers.n), ',', -1) CD  FROM numbers INNER JOIN  GS_PR_ATVY_RPT AS B ON CHAR_LENGTH(B.PR_ATVY_AREA)-CHAR_LENGTH(REPLACE(B.PR_ATVY_AREA, ',', ''))>=numbers.n-1 WHERE B.PR_ATVY_NO = gpar.PR_ATVY_NO ) ) AS PR_LIST 
+					, (SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G42' AND odr = gpar.promotion) AS promotionNm
+			FROM GS_PR_ATVY_RPT gpar
+
+			WHERE 1=1
+			<isNotEmpty property="schPromotionGb" prepend="AND"> 
+				gpar.promotion = #schPromotionGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gpar.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				gpar.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gpar.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gpar.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+
+			) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 홍보활동보고서 갯수-->
+	<select id="reportDao.getPrAtvyRptListTotCnt" parameterClass="prAtvyRptVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_PR_ATVY_RPT gpar
+		WHERE 1=1
+		<isNotEmpty property="schPromotionGb" prepend="AND"> 
+			gpar.promotion = #schPromotionGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			gpar.CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsrNm" prepend="AND"> 
+			gpar.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+		</isNotEmpty>
+		<!-- 기간별 검색 -->
+		<isNotEmpty property="schStartDate" prepend="AND">
+			DATE_FORMAT(gpar.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+		</isNotEmpty>
+		<isNotEmpty property="schEndDate" prepend="AND">
+			DATE_FORMAT(gpar.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 홍보활동보고서 엑셀 다운 	-->
+	<select id="reportDao.getPrAtvyRptListExcel" resultClass="egovMap">
+		SELECT *
+		FROM(
+			select
+				row_number() over(ORDER BY gpar.pr_atvy_no DESC) AS rnum ,
+				(SELECT CENTER_NM FROM gs_center_m WHERE NUM = gpar.CENTER_GB ) AS centerGb ,
+				(SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G42' AND odr = gpar.promotion) AS promotion ,
+				(SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G79' AND odr = gpar.pr_atvy_area) AS prAtvyArea ,
+				(SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G78' AND odr = gpar.pr_atvy_rcpt) AS prAtvyRcpt ,
+				(SELECT mclass_nm FROM gs_m_class WHERE hclass_cd = 'G92' AND odr = gpar.pr_Atvy_Ptct_Gb) AS prAtvyPtctGb ,
+				gpar.pr_atvy_man ,
+				gpar.pr_atvy_place ,
+				gpar.pr_atvy_cntn ,
+				gpar.input_nm ,
+				gpar.sigun_cd ,
+				gpar.pr_atvy_ptct ,
+				DATE_FORMAT(gpar.db_ins_tm,'%Y년 %m월 %d일') AS dbInsTm ,
+				date_format(str_to_date(gpar.pr_atvy_dt,'%Y.%m.%d'),'%Y년 %m월 %d일') AS prAtvyDt 
+			from
+				GS_PR_ATVY_RPT as gpar
+			where
+				1=1
+			<isNotEmpty property="schPromotionGb" prepend="AND"> 
+				gpar.promotion = #schPromotionGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				gpar.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				gpar.INPUT_NM LIKE CONCAT('%', #schCnsrNm#, '%') 
+			</isNotEmpty>
+			<!-- 기간별 검색 -->
+			<isNotEmpty property="schStartDate" prepend="AND">
+				DATE_FORMAT(gpar.DB_INS_TM, '%Y.%m.%d') <![CDATA[ >= ]]> #schStartDate#
+			</isNotEmpty>
+			<isNotEmpty property="schEndDate" prepend="AND">
+				DATE_FORMAT(gpar.DB_INS_TM, '%Y.%m.%d') <![CDATA[ <= ]]> #schEndDate#
+			</isNotEmpty>
+			)A
+		ORDER BY A.RNUM DESC
+	</select>
+
+	<!-- 홍보활동보고서 상세 -->
+	<select id="reportDao.getPrAtvyRptDtl" parameterClass="prAtvyRptVO" resultClass="egovMap">
+		SELECT 	*
+		FROM GS_PR_ATVY_RPT
+		WHERE PR_ATVY_NO = #prAtvyNo#
+	</select>
+	
+	<!-- 홍보활동보고서 등록 -->
+	<insert id="reportDao.insertPrAtvyRpt" parameterClass="prAtvyRptVO">
+		INSERT INTO GS_PR_ATVY_RPT 
+			(
+			   CNS_GB
+			 , PR_ATVY_PTCT_GB
+			 , LOCAL_GB
+			 , CENTER_GB
+			 , PROMOTION
+			 , PR_ATVY_AREA
+			 , PR_ATVY_PTCT
+			 , PR_ATVY_RCPT
+			 , PR_ATVY_MAN
+			 , PR_ATVY_PLACE
+			 , PSYC_EXAM
+			 , PR_ATVY_CNTN
+			 , INPUT_NM
+			 , PR_ATVY_DT
+			 , PR_STT_HOUR
+			 , PR_STT_MIN
+			 , PR_END_HOUR
+			 , PR_END_MIN
+			 , DB_INS_TM
+			 , FILE_NM
+			 , SYS_FILE_NM
+			 , FILE_PATH
+			 , FILE_SIZE
+			 , CNSR_ID
+			
+			)
+		VALUES
+			(
+			   #cnsGb#
+			 , #prAtvyPtctGb#
+			 , #localGb#
+			 , #centerGb#
+			 , #promotion#
+			 , #prAtvyArea#
+			 , #prAtvyPtct#
+			 , #prAtvyRcpt#
+			 , #prAtvyMan#
+			 , #prAtvyPlace#
+			 , #psycExam#
+			 , #prAtvyCntn#
+			 , #inputNm#
+			 , #prAtvyDt#
+			 , #prSttHour#
+			 , #prSttMin#
+			 , #prEndHour#
+			 , #prEndMin#
+			 , NOW()
+			 , #fileNm#
+			 , #sysFileNm#
+			 , #filePath#
+			 , #fileSize#
+			 , #cnsrId#
+			)
+	</insert>
+	
+	<!-- 홍보활동보고서 수정  -->
+	<update id="reportDao.updatePrAtvyRpt" parameterClass="prAtvyRptVO">
+		UPDATE GS_PR_ATVY_RPT
+		SET 
+			<isNotEmpty property="fileNm" > 
+				FILE_NM = #fileNm#,
+				SYS_FILE_NM = #sysFileNm#,
+				FILE_PATH = #filePath#,
+				FILE_SIZE = #fileSize#,
+			</isNotEmpty>
+			<isEqual property="fDel" compareValue="Y">
+				FILE_NM = null,
+				SYS_FILE_NM = null,
+				FILE_PATH = null,
+				FILE_SIZE = 0,
+			</isEqual>
+			PR_ATVY_PTCT_GB = #prAtvyPtctGb#,
+			PROMOTION = #promotion#,
+			PR_ATVY_DT = #prAtvyDt#,
+			PR_STT_HOUR  = #prSttHour#,
+			PR_STT_MIN = #prSttMin#, 
+			PR_END_HOUR = #prEndHour#,
+			PR_END_MIN = #prEndMin#,
+			PR_ATVY_AREA = #prAtvyArea#,
+			PR_ATVY_PTCT = #prAtvyPtct#,
+			PR_ATVY_RCPT = #prAtvyRcpt#,
+			PR_ATVY_MAN = #prAtvyMan#,
+			PR_ATVY_PLACE = #prAtvyPlace#,
+			PSYC_EXAM = #psycExam#,
+			PR_ATVY_CNTN = #prAtvyCntn#
+			<!-- INPUT_NM = #inputNm# -->
+		WHERE PR_ATVY_NO = #prAtvyNo#
+	</update>
+	
+	<!-- 홍보활동보고서 삭제  -->
+	<update id="reportDao.deletePrAtvyRpt" parameterClass="prAtvyRptVO">
+		DELETE FROM
+			GS_PR_ATVY_RPT
+		WHERE 
+			PR_ATVY_NO = #prAtvyNo#
+	</update>
+</sqlMap>

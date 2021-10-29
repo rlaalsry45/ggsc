@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CmmMng">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="memberMngVO" type="ggsc.cmmmng.service.MemberMngVO"/>
+	<typeAlias  alias="authMngVO" type="ggsc.cmmmng.service.AuthMngVO"/>
+	<typeAlias  alias="authorityMngVO" type="ggsc.cmmmng.service.AuthorityMngVO"/>
+	
+	
+	<!-- 회원관리 목록 -->
+	<select id="commonMngDao.getMemberMngList" parameterClass="memberMngVO" resultClass="egovMap">
+		SELECT *
+		FROM (
+			SELECT 
+					 ROW_NUMBER() OVER(ORDER BY USER_ID DESC) AS RNUM
+				   , USER_ID
+				   , USER_NM
+				   , DATE_FORMAT(BIRTH_DT, '%Y.%m.%d') AS BIRTH_DT
+				   , (select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G81' AND ODR = AUTH_CD) AS authCd
+		  	  FROM 
+		  	  	GS_USER_M
+		  	  WHERE 
+		  	  	1=1
+		  	  <isEqual property="schType" compareValue="schId">
+				AND USER_ID LIKE CONCAT('%', #schText#, '%') 
+			  </isEqual>
+			  <isEqual property="schType" compareValue="schNm">
+				AND USER_NM LIKE CONCAT('%', #schText#, '%') 
+			  </isEqual>
+			  <isEqual property="schType" compareValue="schAuth">
+			  		<isEqual property="schText" compareValue="슈퍼관리자">
+			  			AND AUTH_CD = '1' 
+			  		</isEqual>
+			  		<isEqual property="schText" compareValue="일반관리자">
+			  			AND AUTH_CD = '2' 
+			  		</isEqual>
+			  		<isEqual property="schText" compareValue="상담사">
+			  			AND AUTH_CD = '3' 
+			  		</isEqual>
+			  </isEqual>
+			) A
+	<![CDATA[
+ 		WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 		ORDER BY RNUM
+ 	]]>
+	</select>
+	
+	<!-- 회원관리 목록 갯수-->
+	<select id="commonMngDao.getMemberMngListTotCnt" parameterClass="memberMngVO" resultClass="Integer">
+		SELECT COUNT(USER_ID)
+		FROM GS_USER_M
+		WHERE 1=1
+		  <isEqual property="schType" compareValue="schId">
+			AND USER_ID LIKE CONCAT('%', #schText#, '%') 
+		  </isEqual>
+		  <isEqual property="schType" compareValue="schNm">
+			AND USER_NM LIKE CONCAT('%', #schText#, '%') 
+		  </isEqual>
+		  <isEqual property="schType" compareValue="schAuth">
+		  		<isEqual property="schText" compareValue="슈퍼관리자">
+		  			AND AUTH_CD = '1' 
+		  		</isEqual>
+		  		<isEqual property="schText" compareValue="일반관리자">
+		  			AND AUTH_CD = '2' 
+		  		</isEqual>
+		  		<isEqual property="schText" compareValue="상담사">
+		  			AND AUTH_CD = '3' 
+		  		</isEqual>
+		  </isEqual>
+	</select>
+	
+	<!-- 회원관리 상세-->
+	<select id="commonMngDao.getMemberMngDtl" parameterClass="String" resultClass="egovMap">
+		SELECT USER_ID
+			 , USER_NM
+			 , TEL
+			 , MOBILE
+			 , DATE_FORMAT(BIRTH_DT, '%Y.%m.%d') AS BIRTH_DT
+			 , GENDER
+			 , ADDR
+			 , ADDR_DTL
+			 , AUTH_CD
+			 , USE_YN
+			 , DATE_FORMAT(ACPT_DT, '%Y.%m.%d') AS ACPT_DT
+			 , DATE_FORMAT(OUT_DT, '%Y.%m.%d') AS OUT_DT
+		FROM GS_USER_M
+		WHERE USER_ID = #userId#
+	</select>
+	
+	<!-- 회원관리 수정 user table-->
+	<update id="commonMngDao.updateMemberMng" parameterClass="memberMngVO">
+		UPDATE GS_USER_M
+		SET	TEL = #tel#
+		  , MOBILE = #mobile#
+		  , BIRTH_DT = #birthDt#
+		  , GENDER = #gender#
+		  , ADDR = #addr#
+		  , ADDR_DTL = #addrDtl#
+		  , AUTH_CD = #authCd#
+		  , USE_YN = #useYn#
+		  , ACPT_DT = #acptDt#
+		  , OUT_DT = #outDt#
+		  , DB_UPD_TM = NOW()
+		WHERE USER_ID = #userId#
+	</update>
+	
+	<!-- 회원관리 수정 cnsr table -->
+	<update id="commonMngDao.updateMemberMng2" parameterClass="memberMngVO">
+		UPDATE 
+			GS_CNSR_M
+		SET	
+		  AUTH_CD = #authCd# ,
+		  CNSR_GB = #authCd# ,
+		  DB_UPD_TM = NOW()
+		WHERE 
+			USER_ID = #userId#
+	</update>
+	
+	<!-- 권한관리 목록 -->
+	<select id="commonMngDao.getAuthMngList" parameterClass="authMngVO" resultClass="egovMap">
+		SELECT *
+		FROM (SELECT *
+				   , ROW_NUMBER() OVER(ORDER BY AUTH_CD) AS RNUM
+		  	  FROM GS_AUTH
+		  	  WHERE 1=1
+		  	  <isEqual property="schType" compareValue="schCd">
+				AND AUTH_CD LIKE CONCAT('%', #schText#, '%') 
+			  </isEqual>
+			  <isEqual property="schType" compareValue="schNm">
+				AND AUTH_NM LIKE CONCAT('%', #schText#, '%') 
+			  </isEqual>
+			) A
+	<![CDATA[
+ 		WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 		ORDER BY RNUM
+ 	]]>
+	</select>
+	
+	<!-- 권한관리 목록 갯수-->
+	<select id="commonMngDao.getAuthMngListTotCnt" parameterClass="authMngVO" resultClass="Integer">
+		SELECT COUNT(AUTH_NO)
+		FROM GS_AUTH
+		WHERE 1=1
+		<isEqual property="schType" compareValue="schCd">
+			AND AUTH_CD LIKE CONCAT('%', #schText#, '%') 
+		  </isEqual>
+		  <isEqual property="schType" compareValue="schNm">
+			AND AUTH_NM LIKE CONCAT('%', #schText#, '%') 
+		  </isEqual>
+	</select>
+	
+	<!-- 회원관리 상세-->
+	<select id="commonMngDao.getAuthMngDtl" parameterClass="Integer" resultClass="egovMap">
+		SELECT *
+		FROM GS_AUTH
+		WHERE AUTH_NO = #authNo#
+	</select>
+	
+	<!-- 권한관리 코드중복체크 -->
+ 	<select id="commonMngDao.authMngCodeCheck" parameterClass="String" resultClass="int">
+		SELECT COUNT(AUTH_CD)
+		FROM GS_AUTH
+		WHERE AUTH_CD = #authCd#
+	</select>
+	
+	<!-- 권한관리 등록 -->
+	<insert id="commonMngDao.insertAuthMng" parameterClass="authMngVO">
+		INSERT INTO GS_AUTH(
+			  AUTH_CD
+			, AUTH_GRP_CD
+			, AUTH_NM
+			, CNTN
+			, ODR
+			, USE_YN
+			, REG_ID
+			, DB_UPD_TM
+			, DB_INS_TM
+		)
+		VALUE(
+			  #authCd#
+			, #authGrpCd#
+			, #authNm#
+			, #cntn#
+			, #odr#
+			, #useYn#
+			, #regId#
+			, NOW()
+			, NOW()
+		)
+	</insert>
+	
+	<!-- 권한관리 수정 -->
+	<update id="commonMngDao.updateAuthMng" parameterClass="authMngVO">
+		UPDATE GS_AUTH
+		SET	AUTH_CD = #authCd#
+		  , AUTH_NM = #authNm#
+		  , AUTH_GRP_CD = #authGrpCd#
+		  , CNTN = #cntn#
+		  , ODR = #odr#
+		  , USE_YN = #useYn#
+		  , DB_UPD_TM = NOW()
+		WHERE AUTH_NO = #authNo#
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 회원관리 목록 -->
+	<select id="commonMngDao.getAuthorityMngList" parameterClass="authorityMngVO" resultClass="egovMap">
+		SELECT *
+		FROM (
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM ,
+				AUTH_NM ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G81' AND ODR = AUTH_GRP_GB) AS authGrpGb ,
+				CNTN ,
+				USE_YN ,
+				REG_ID ,
+				DATE_FORMAT(DB_INS_DT , '%Y.%m.%d') AS dbInsDt
+			FROM
+				GS_AUTHORITY
+			WHERE
+				1=1
+			<isNotEmpty property="schAuthNm" prepend="AND"> 
+				AUTH_NM LIKE CONCAT('%', #schAuthNm#, '%')
+			</isNotEmpty>
+		) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 권한관리 목록 갯수-->
+	<select id="commonMngDao.getAuthorityMngListTotCnt" parameterClass="authorityMngVO" resultClass="Integer">
+		SELECT 
+			COUNT(NUM)
+		FROM 
+			GS_AUTHORITY
+		WHERE 
+			1=1
+		<isNotEmpty property="schAuthNm" prepend="AND"> 
+			AUTH_NM LIKE CONCAT('%', #schAuthNm#, '%')
+		</isNotEmpty>
+	</select>
+	
+	<!-- 권한관리 상세보기 -->
+	<select id="commonMngDao.getAuthorityMngDtl" parameterClass="Integer" resultClass="egovMap">
+		SELECT
+			NUM ,
+			AUTH_NM ,
+			AUTH_GRP_GB ,
+			CNTN ,
+			ODR ,
+			USE_YN
+		FROM
+			GS_AUTHORITY
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<!-- 권한관리 중복화인 -->
+	<select id="commonMngDao.authMngCheck" parameterClass="String" resultClass="Integer">
+		SELECT 
+			COUNT(NUM)
+		FROM 
+			GS_AUTHORITY
+		WHERE 
+			AUTH_NM = #authNm#
+	</select>
+	<!-- 권한관리 등록 -->
+	<insert id="commonMngDao.insertAuthMngReg" parameterClass="authorityMngVO">
+		INSERT INTO GS_AUTHORITY
+			(
+				NUM ,
+				AUTH_NM ,
+				AUTH_GRP_GB ,
+				CNTN ,
+				USE_YN ,
+				REG_ID ,
+				ODR ,
+				DB_INS_DT
+			) values (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_AUTHORITY AS A) ,
+				#authNm# ,
+				#authGrpGb# ,
+				#cntn# ,
+				#useYn# ,
+				#regId# ,
+				'1' ,
+				now()
+			)
+	</insert>
+	<!-- 권한관리 수정 --><!-- 권한관리 수정 -->
+	<update id="commonMngDao.updateAuthMngReg" parameterClass="authorityMngVO">
+		UPDATE GS_AUTHORITY
+			SET	
+			AUTH_NM = #authNm# ,
+			AUTH_GRP_GB = #authGrpGb#,
+			CNTN = #cntn# ,
+			USE_YN = #useYn# ,
+		    DB_UPD_DT = NOW()
+		WHERE 
+			num = #num#
+	</update>
+	
+	<!-- 회원 비밀번호 초기화 -->
+	<update id="commonMngDao.memberPwClear" parameterClass="memberMngVO">
+		UPDATE GS_USER_M
+			SET
+			PW = SCP.ENC_B64('KEY1','s12341234')
+		WHERE
+			USER_ID = #userId#
+	</update>
+	
+</sqlMap>

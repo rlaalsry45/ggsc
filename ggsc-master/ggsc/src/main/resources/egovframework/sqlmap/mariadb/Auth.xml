@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Auth">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="authVO" type="ams.adm.auth.AuthVO"/>
+
+
+
+
+
+	<select id="authDAO.authListCombo" parameterClass="authVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY B.AUTH_NO DESC) AS RNUM,
+					B.AUTH_NO, 
+					B.AUTH_CD, 
+					B.AUTH_NM, 
+					B.CNTN,
+					B.ODR,
+					B.USE_YN
+        	 FROM GS_AUTH B
+        	  ) A
+    </select>
+
+
+	<select id="authDAO.authGrpListCombo" parameterClass="authVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY B.AUTH_GRP_NO DESC) AS RNUM,
+					B.AUTH_GRP_NO, 
+					B.AUTH_GRP_CD, 
+					B.AUTH_GRP_NM,
+					B.CNTN,
+					B.ODR,
+					B.USE_YN
+        	 FROM GS_AUTH_GRP B
+        	  ) A
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<select id="authDAO.authList" parameterClass="authVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY B.AUTH_NO DESC) AS RNUM,
+					B.AUTH_NO, 
+					B.AUTH_CD, 
+					(SELECT C.AUTH_GRP_NM FROM GS_AUTH_GRP C WHERE C.AUTH_GRP_CD = B.AUTH_GRP_CD ) AS AUTH_GRP_NM,
+					B.AUTH_NM, 
+					B.CNTN,
+					B.ODR,
+					B.USE_YN
+        	 FROM GS_AUTH B
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND AUTH_CD LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="2">
+					AND AUTH_NM LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+				
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+
+	<select id="authDAO.authListCnt" parameterClass="authVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_AUTH
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND AUTH_CD LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="2">
+					AND AUTH_NM LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+	</select>
+	
+	<select id="authDAO.authDtl" parameterClass="authVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY AUTH_NO DESC) AS RNUM, 
+					AUTH_NO,
+					AUTH_CD,
+					AUTH_GRP_CD,
+					AUTH_NM,
+					CNTN,
+					ODR,
+					USE_YN
+        	 FROM GS_AUTH
+        	 WHERE AUTH_NO = #authNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="authDAO.delAuth" parameterClass="authVO">
+		DELETE FROM GS_AUTH
+        WHERE AUTH_NO = #authNo#
+	</delete>
+	
+	<update id="authDAO.updAuth" parameterClass="authVO">
+		UPDATE GS_AUTH
+		   SET
+				AUTH_CD=#authCd#,
+				AUTH_GRP_CD=#authGrpCd#,
+				AUTH_NM=#authNm#,
+				CNTN=#cntn#,
+				ODR=#odr#,
+				USE_YN=#useYn#,
+				DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+        WHERE AUTH_NO = #authNo#
+	</update>
+
+
+	<insert id="authDAO.insAuth" parameterClass="authVO">
+		INSERT INTO GS_AUTH(
+			AUTH_CD,
+			AUTH_GRP_CD,
+			AUTH_NM,
+			CNTN,
+			ODR,
+			USE_YN,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#authCd#,
+			#authGrpCd#,
+			#authNm#,
+			#cntn#,
+			#odr#,
+			#useYn#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d') ,
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<select id="authDAO.authGrpList" parameterClass="authVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY B.AUTH_GRP_NO DESC) AS RNUM,
+					B.AUTH_GRP_NO, 
+					B.AUTH_GRP_CD, 
+					B.AUTH_GRP_NM,
+					B.CNTN,
+					B.ODR,
+					B.USE_YN
+        	 FROM GS_AUTH_GRP B
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND AUTH_GRP_CD LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="2">
+					AND AUTH_GRP_NM LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+				
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+
+	<select id="authDAO.authGrpListCnt" parameterClass="authVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_AUTH_GRP
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND AUTH_GRP_CD LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="2">
+					AND AUTH_GRP_NM LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+	</select>
+	
+	<select id="authDAO.authGrpDtl" parameterClass="authVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY AUTH_GRP_NO DESC) AS RNUM, 
+					AUTH_GRP_NO,
+					AUTH_GRP_CD,
+					AUTH_GRP_NM,
+					CNTN,
+					ODR,
+					USE_YN
+        	 FROM GS_AUTH_GRP
+        	 WHERE AUTH_GRP_NO = #authGrpNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="authDAO.delAuthGrp" parameterClass="authVO">
+		DELETE FROM GS_AUTH_GRP
+        WHERE AUTH_GRP_NO = #authGrpNo#
+	</delete>
+	
+	<update id="authDAO.updAuthGrp" parameterClass="authVO">
+		UPDATE GS_AUTH_GRP
+		   SET
+				AUTH_GRP_CD=#authGrpCd#,
+				AUTH_GRP_NM=#authGrpNm#,
+				CNTN=#cntn#,
+				ODR=#odr#,
+				USE_YN=#useYn#,
+				DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+        WHERE AUTH_GRP_NO = #authGrpNo#
+	</update>
+
+
+	<insert id="authDAO.insAuthGrp" parameterClass="authVO">
+		INSERT INTO GS_AUTH_GRP(
+			AUTH_GRP_CD,
+			AUTH_GRP_NM,
+			CNTN,
+			ODR,
+			USE_YN,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#authGrpCd#,
+			#authGrpNm#,
+			#cntn#,
+			#odr#,
+			#useYn#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d') ,
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+
+
+
+
+
+
+</sqlMap>

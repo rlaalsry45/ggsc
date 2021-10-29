@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>상담 사전·사후 기록지</title>
+<style>
+
+    
+
+body { font-family:'NanumGothic'; color:#777; padding:0; margin:0; box-sizing:border-box; }
+h1,h2 { color:#444; }
+
+h2 { font-size:14pt; }
+
+.title { font-size:16pt; color:#444; text-align:center; padding-bottom:20px;   } 
+.small { font-size:9pt; color:#777;}
+
+.sub-title { color:#666; padding:5px 0;font-size:11pt; }
+.sub-text  { letter-spacing:-1pt; font-size:10pt; color:#777; padding:10px 0;  }
+
+.agree-line { background-color:#eee; text-align:center; padding:5px 0; }
+.circle { display:inline-block; color:#fff; }
+.circle.active { color:#000;  }
+
+.center { text-align:center; }
+.pt10 { font-size:10pt; }
+
+.sign { margin:10px 0; }
+.sign > div { display:inline-block;}
+.sign > .left { width:200px; text-align:left; }
+.sign > .right { width:200px; text-align:right; } 
+
+.last-right { padding:0; margin:0; text-align:right; margin-top:15px;  }
+.line { height:1px; background-color:#000; width:100%; margin-top:10px; }
+th { font-size:10pt; color:#666; text-align:center; background-color:#F3DBDB; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; }
+.th-first { border-left:1px solid #e0e0e0; }
+.tr-last th { border-bottom:1px solid #e0e0e0; }
+
+
+td { font-size:10pt; padding:10px 0; border-top:1px solid #e0e0e0; border-right:1px solid #e0e0e0; text-align:left; text-indent:10px;  }
+.td-first { border-left:1px solid #e0e0e0; }
+.tr-last td { border-bottom:1px solid #e0e0e0; }
+table { width:100%; }
+.bgwhite { background-color:#fff !important}
+
+.max-hidden { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    
+</style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="title">상담 사전 · 사후 기록지</div>
+            <table class="table-write">
+                <!-- <caption>상담사전·사후기록지</caption> -->
+                <colgroup>
+                    <col style="width: 10%;" />
+                    <col style="width: 20%;" />
+                    <col style="width: 10%;" />
+                    <col style="width: 20%;" />
+                </colgroup>
+                <tr>
+                    <th rowspan="2" scope="col">내담자</th>
+                    <td rowspan="2">##내담자명##</td>
+                    <th rowspan="2" scope="col">실시일자</th>
+                    <td>시작 : ##날짜##</td>
+                </tr>
+                <tr>
+                    <td>종결 : ##날짜2##</td>
+                </tr>
+                <tr>
+                    <th scope="col">주호소문제</th>
+                    <td colspan="3">
+                        1. ##설문1Y##
+                        2. ##설문1N##
+                        3. ##설문2Y##
+                        4. ##설문2N##
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <div style="margin-top: 5px;">
+                    ✿ 상담 전과 상담 후의 변화된 점을 적어주세요.
+                </div>
+                <div style="margin-top: 40px;">
+                    <div>1. 현재의 어려움 및 불편함은 어느 정도입니까? ○표해 주세요.<br/>
+                        (0 가장 만족상태, 10 가장 어려운 상태)</div>
+                    <div style="margin-top: 10px;">|-------------------------------------------------------------------------------------------------------------------|</div>
+                    <div style="margin-top: 5px; text-align: center;"><span>##설문3Y##</span></div>
+                    <div style="margin-top: 40px;">2. 상담 후 문제의 대응정도 및 불편감은 어느 정도입니까? ○표해 주세요.</div>
+                    <div style="margin-top: 10px;">|-------------------------------------------------------------------------------------------------------------------|</div>
+                    
+                    <div style="margin-top: 5px; text-align: center;"><span>##설문3N##</span></div>
+                    <div style="margin-top: 40px;">3. 주호소 문제 검사 : ##설문4Y##점→ ##설문4N##점</div>
+                    <div style="margin-top: 40px;">4. 기본 검사 : S-GDS ##설문5Y##점→ ##설문5N##점<br/> GDS-KR ##설문6Y##점→ ##설문6N##점
+                    </div>
+                    <div style="margin-top: 40px;">5. 상담 후 변화된 점은 무엇입니까?</div>
+                    <table class="table-write">
+                        <!-- <caption>상담표</caption> -->
+                        <colgroup>
+                            <col style="width: 50%;" />
+                            <col style="width: 50%;" />
+                        </colgroup>
+                        <tbody>
+                        	<tr>
+                        		<th>상담 전</th>
+                            	<th>상담 후</th>
+                        	</tr>
+                            <tr>
+                                <td>
+                                    ##설문7Y##
+                                </td>
+                                <td>
+                                    ##설문7N##
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 40px;">6. 상담에 대한 기타 건의 사항</div>
+                    <textarea>##설문8Y##</textarea>
+                    <div style="margin-top: 40px;">
+                        주호소문제<br/>
+                        <span>① 심리정서② 대인관계③ 치매④ 중독⑤ 정신건강·장애⑥ 건강⑦ 경제⑧ 생활⑨ 성⑩ 부부⑪ 가족⑫ 학대 ⑬ 노년생애준비⑭ 기타</span>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+</body>
+</html>

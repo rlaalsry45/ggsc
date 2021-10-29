@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.cmSpace.service.impl.HomepageCmSpaceMapper">
+	
+	<!-- 공지사항 목록 -->
+	<select id="getNoticeList" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.VIEW_COUNT ,
+			A.TITLE ,
+			A.WRITER ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_NOTICE_A AS A
+		LEFT JOIN GS_NOTICE_A_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		where
+			1=1 
+			
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+			
+		ORDER BY NUM DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 공지사항 목록 갯수 -->
+	<select id="getNoticeTotal" parameterType="cmSpaceVO" resultType="Integer">
+		SELECT
+			count(NUM)
+		FROM
+			GS_NOTICE_A
+		where
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+	</select>
+	
+	<!-- 공지사항 등록 -->
+	<insert id="insertNoticeReg" parameterType="cmSpaceVO">
+		INSERT INTO GS_NOTICE_A
+			(
+				TITLE ,
+				WRITER ,
+				CNTN ,
+				REG_ID ,
+				DB_INS_TM
+			) VALUES (
+				#{title} ,
+				#{writer} ,
+				#{cntn} ,
+				#{regId} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 공지사항 파일업로드 등록 -->
+	<insert id="insertNoticeFileUpload" parameterType="cmSpaceVO">
+		INSERT INTO GS_NOTICE_A_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE ,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT MAX(A.NUM) FROM GS_NOTICE_A AS A WHERE A.WRITER = #{writer}) ,
+				#{regId} ,
+				#{writer} ,
+				#{fileNm} ,
+				#{sysFileNm} ,
+				#{filePath} ,
+				#{fileSize} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 공지사항 상세 -->
+	<select id="getNoticeDtl" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			CAST(A.CNTN AS CHAR CHARACTER SET UTF8) AS CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_NOTICE_A AS A
+		LEFT JOIN GS_NOTICE_A_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="prevYn != null">
+	 		<if test="prevYn == 'Y'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM < #{num} ORDER BY A.NUM DESC LIMIT 1
+	 			]]>
+	 		</if>
+	 		<if test="prevYn == 'N'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM > #{num} ORDER BY A.NUM ASC LIMIT 1
+	 			]]>
+	 		</if>
+	 	</if> 
+ 		<if test="prevYn == null">
+ 			AND A.NUM = #{num}
+ 		</if>
+			
+	</select>
+	
+	<!-- 공지사항 조회수 증가 -->
+	<update id="updateNoticeViewCount" parameterType="Integer">
+		UPDATE GS_NOTICE_A
+			SET
+				VIEW_COUNT = VIEW_COUNT+1
+			WHERE
+				NUM = #{num}
+	</update>
+	
+	<!-- 센터소식 목록 -->
+	<select id="getCenterNewsList" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			A.VIEW_COUNT ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_CENTER_NEWS AS A
+		LEFT JOIN GS_CENTER_NEWS_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1 
+			
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+			
+		ORDER BY NUM DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 메인화면 센터소식(보여질 목록 3개) -->
+	<select id="getCenterNewsListM" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			NUM ,
+			TITLE,
+			CNTN ,
+			DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+		FROM
+			GS_CENTER_NEWS
+		WHERE
+			1=1
+		ORDER BY NUM DESC
+			LIMIT 3
+	</select>
+	
+	<!-- 센터목록 갯수 -->
+	<select id="getCenterNewsTotal" parameterType="cmSpaceVO" resultType="Integer">
+		SELECT
+			count(NUM)
+		FROM
+			GS_CENTER_NEWS
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+	</select>
+	
+	<!-- 센터소식 상세 -->
+	<select id="getCenterNewsDtl" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_CENTER_NEWS AS A
+		LEFT JOIN GS_CENTER_NEWS_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="prevYn != null">
+	 		<if test="prevYn == 'Y'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM < #{num} ORDER BY A.NUM DESC LIMIT 1
+	 			]]>
+	 		</if>
+	 		<if test="prevYn == 'N'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM > #{num} ORDER BY A.NUM ASC LIMIT 1
+	 			]]>
+	 		</if>
+	 	</if> 
+ 		<if test="prevYn == null">
+ 			AND A.NUM = #{num}
+ 		</if>
+			
+	</select>
+	
+	<!-- 센터소식 조회수 증가 -->
+	<update id="updateCenterNewsViewCount" parameterType="Integer">
+		UPDATE GS_CENTER_NEWS
+			SET
+				VIEW_COUNT = VIEW_COUNT+1
+			WHERE
+				NUM = #{num}
+	</update>
+	
+	<!-- 문서자료실 목록 -->
+	<select id="getDocLibraryList" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			A.VIEW_COUNT ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_LIBRARY AS A
+		LEFT JOIN GS_LIBRARY_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+			
+		ORDER BY NUM DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 메인화면 문서자료실(보여질 목록 4개) -->
+	<select id="getDocLibraryListM" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			ROW_NUMBER() OVER(ORDER BY num DESC) AS rnum ,
+			TITLE ,
+			DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+		FROM
+			GS_LIBRARY
+		LIMIT 4
+	</select>
+	
+	<!-- 문서자료실 목록 갯수 -->
+	<select id="getDocLibraryTotal" parameterType="cmSpaceVO" resultType="Integer">
+		SELECT
+			count(NUM)
+		FROM
+			GS_LIBRARY
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+	</select>
+
+	<!-- 문서자료실 상세 -->
+	<select id="getDocLibraryDtl" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_LIBRARY AS A
+		LEFT JOIN GS_LIBRARY_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="prevYn != null">
+	 		<if test="prevYn == 'Y'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM < #{num} ORDER BY A.NUM DESC LIMIT 1
+	 			]]>
+	 		</if>
+	 		<if test="prevYn == 'N'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM > #{num} ORDER BY A.NUM ASC LIMIT 1
+	 			]]>
+	 		</if>
+	 	</if> 
+ 		<if test="prevYn == null">
+ 			AND A.NUM = #{num}
+ 		</if>
+			
+	</select>
+	
+	<!-- 문서자료실 조회수 증가 -->
+	<update id="updateDocLibraryViewCount" parameterType="Integer">
+		UPDATE GS_LIBRARY
+			SET
+				VIEW_COUNT = VIEW_COUNT+1
+			WHERE
+				NUM = #{num}
+	</update>
+	
+	<!-- 자유게시판 목록 -->
+	<select id="getFreeBoardList" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			A.VIEW_COUNT ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_FREE_BOARD AS A
+		LEFT JOIN GS_FREE_BOARD_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+			
+		ORDER BY NUM DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 메인화면 자유게시판(보여질 목록 4개) -->
+	<select id="getFreeBoardListM" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			ROW_NUMBER() OVER(ORDER BY NUM DESC) AS rnum ,
+			TITLE,
+			DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+		FROM
+			GS_FREE_BOARD
+		LIMIT 4
+	</select>
+	
+	<!-- 자유게시판 목록 갯수 -->
+	<select id="getFreeBoardTotal" parameterType="cmSpaceVO" resultType="Integer">
+		SELECT
+			count(NUM)
+		FROM
+			GS_FREE_BOARD
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+	</select>
+	
+	<!-- 자유게시판 등록 -->
+	<insert id="insertFreeBoardReg" parameterType="cmSpaceVO">
+		INSERT INTO GS_FREE_BOARD
+			(
+				NUM ,
+				TITLE ,
+				WRITER ,
+				CNTN ,
+				REG_ID ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_FREE_BOARD AS A) ,
+				#{title} ,
+				#{writer} ,
+				#{cntn} ,
+				#{regId} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 자유게시판 파일업로드 등록 -->
+	<insert id="insertFreeBoardFileUpload" parameterType="cmSpaceVO">
+		INSERT INTO GS_FREE_BOARD_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE ,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT MAX(A.NUM) FROM GS_FREE_BOARD AS A WHERE A.REG_ID = #{regId}) ,
+				#{regId} ,
+				#{writer} ,
+				#{fileNm} ,
+				#{sysFileNm} ,
+				#{filePath} ,
+				#{fileSize} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 자유게시판 상세 -->
+	<select id="getFreeBoardDtl" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_FREE_BOARD AS A
+		LEFT JOIN GS_FREE_BOARD_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="prevYn != null">
+	 		<if test="prevYn == 'Y'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM < #{num} ORDER BY A.NUM DESC LIMIT 1
+	 			]]>
+	 		</if>
+	 		<if test="prevYn == 'N'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM > #{num} ORDER BY A.NUM ASC LIMIT 1
+	 			]]>
+	 		</if>
+	 	</if> 
+ 		<if test="prevYn == null">
+ 			AND A.NUM = #{num}
+ 		</if>
+			
+	</select>
+	
+	<!-- 자유게시판 조회수 증가 -->
+	<update id="updateFreeBoardViewCount" parameterType="Integer">
+		UPDATE GS_FREE_BOARD
+			SET
+				VIEW_COUNT = VIEW_COUNT+1
+			WHERE
+				NUM = #{num}
+	</update>
+	
+	<!-- 온라인상담 목록 -->
+	<select id="getOnlineCnsList" parameterType="cmSpaceVO" resultType="egovMap">
+		SELECT
+			NUM ,
+			TITLE ,
+			WRITER ,
+			OPEN_STAT_YN ,
+			ANSWER_YN ,
+			DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+		FROM
+			GS_CNS_ASK
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+			
+		ORDER BY NUM DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 온라인상담 목록 갯수 -->
+	<select id="getOnlineCnsTotal" parameterType="cmSpaceVO" resultType="Integer">
+		SELECT
+			count(NUM)
+		FROM
+			GS_CNS_ASK
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if> 
+	</select>
+	
+	<!-- 온라인상담 등록 -->
+	<insert id="insertOnlineCnsReg" parameterType="cmSpaceVO">
+		INSERT INTO GS_CNS_ASK
+			(
+				PW ,
+				TITLE ,
+				WRITER ,
+				CNTN ,
+				CNSLE_ID ,
+				OPEN_STAT_YN ,
+				DB_INS_TM 
+			) VALUES (
+				#{pw} ,
+				#{title} ,
+				#{writer} ,
+				#{cntn} ,
+				#{regId} ,
+				#{openStatYn} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 온라인상담 파일업로드 등록 -->
+	<insert id="insertOnlineCnsFileUpload" parameterType="cmSpaceVO">
+		INSERT INTO GS_CNS_ASK_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE ,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT MAX(A.NUM) FROM GS_CNS_ASK AS A WHERE A.REG_ID = #{regId}) ,
+				#{regId} ,
+				#{writer} ,
+				#{fileNm} ,
+				#{sysFileNm} ,
+				#{filePath} ,
+				#{fileSize} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 온라인상담 상세 -->
+	<select id="getOnlineCnsDtl" parameterType="cmSpaceVO" resultType="egovMap">
+				
+		SELECT
+			A.NUM ,
+			A.PW ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			A.OPEN_STAT_YN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			ANS.ANS_TITLE ,
+			ANS.ANS_CNTN ,
+			ANS.CNSR_NM ,
+			DATE_FORMAT(ANS.ANS_DB_INS_TM , '%Y-%M-%D') AS ANSDBINSTM ,
+			ANSF.FILE_NM ,
+			ANSF.SYS_FILE_NM ,
+			ANSF.FILE_PATH
+		FROM
+			GS_CNS_ASK AS A
+		LEFT JOIN GS_CNS_ASK_ANS AS ANS
+			ON A.NUM = ANS.NUM
+		LEFT JOIN GS_CNS_ASK_FILE AS ANSF
+			ON A.NUM = ANSF.FILE_NUM
+		WHERE
+			1=1
+		<if test="prevYn != null">
+	 		<if test="prevYn == 'Y'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM < #{num} ORDER BY A.NUM DESC LIMIT 1
+	 			]]>
+	 		</if>
+	 		<if test="prevYn == 'N'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM > #{num} ORDER BY A.NUM ASC LIMIT 1
+	 			]]>
+	 		</if>
+	 	</if> 
+ 		<if test="prevYn == null">
+ 			AND A.NUM = #{num}
+ 		</if>
+	</select>
+
+</mapper>

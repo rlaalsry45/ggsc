@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CodMng">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    <typeAlias  alias="codeVO" type="ams.adm.code.service.CodeVO"/>
+
+	<select id="codDAO.selectComCodList" parameterClass="codeVO" resultClass="egovMap">
+		  SELECT /**  코드 목록 조회  codDAO.selectComCodList */ *
+		    FROM (SELECT ROWNUM AS RNUM
+		               , A.*
+		            FROM (SELECT A.COM_SER
+		                       , A.COM_CD
+		                       , A.COM_NM
+		                       , A.CNTN
+		                       , A.COM_GRP
+		                       , A.COM_GRP_NM
+		                       , A.ODR
+		                       , A.USE_YN
+		                       , A.REG_ID
+		                       , TO_CHAR(A.DB_INS_TM, 'YYYY-MM-DD') AS DB_INS_TM
+		                       , TO_CHAR(A.DB_UPD_TM, 'YYYY-MM-DD') AS DB_UPD_TM
+
+		                    FROM AT_COM_CD_M A
+		                   WHERE 1 = 1
+					    <isNotEmpty property="schCodeNm">
+						   		AND A.COM_NM LIKE '%' || #schCodeNm# || '%'
+						</isNotEmpty>
+					    <isNotEmpty property="schCodeGrp">
+						   		AND A.COM_GRP = #schCodeGrp#
+						</isNotEmpty>
+						ORDER BY A.COM_CD DESC) A)
+	<![CDATA[
+		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+			ORDER BY RNUM
+	]]>
+	</select>
+
+	<select id="codDAO.selectComCodListTotalCnt" parameterClass="codeVO" resultClass="java.lang.Integer">
+		SELECT /** 코드 목록 조회 총 건수 codDAO.selectComCodList */ COUNT(*) NUM_CNT
+		  FROM (SELECT A.*
+				  FROM AT_COM_CD_M A
+		 		 WHERE 1 = 1
+					    <isNotEmpty property="schCodeNm">
+						   		AND A.COM_NM LIKE '%' || #schCodeNm# || '%'
+						</isNotEmpty>
+					    <isNotEmpty property="schCodeGrp">
+						   		AND A.COM_GRP_NM LIKE '%' || #schCodeGrp# || '%'
+						</isNotEmpty>
+		)
+	</select>
+
+	<select id="codDAO.selectComCodInfo" parameterClass="codeVO" resultClass="egovMap">
+		SELECT /** 코드 상세정보 codDAO.selectComCodInfo */ COM_SER
+		     , COM_NM
+		     , COM_CD
+		     , CNTN
+		     , ODR
+		     , USE_YN
+		     , TO_CHAR(DB_INS_TM, 'YYYY-MM-DD') AS DB_INS_TM
+		     , REG_ID
+		     , COM_GRP
+		     , COM_GRP_NM
+		  FROM AT_COM_CD_M
+		 WHERE COM_SER = #comSer#
+	</select>
+
+	<insert id="codDAO.insertComCodInfo" parameterClass="codeVO">
+		INSERT /** 코드 등록 codDAO.insertComCodInfo */ INTO AT_COM_CD_M(
+					 COM_SER
+                   , COM_CD
+                   , COM_NM
+                   , COM_GRP
+                   , COM_GRP_NM
+                   , CNTN
+                   , ODR
+                   , USE_YN
+                   , REG_ID
+                   , DB_INS_TM
+		     )VALUES (
+		     		(SELECT NVL(MAX(COM_SER), 0) + 1 FROM AT_COM_CD_M)
+		           , #comCd#
+		           , #comNm#
+		           , #comGrp#
+		           , #comGrpNm#
+		           , #cntn#
+		           , (SELECT NVL(MAX(ODR), 0) + 1 FROM AT_COM_CD_M WHERE COM_GRP = #comGrp#
+						<isNotEmpty property="comGrp">
+			  				AND COM_GRP = #comGrp#
+			  			</isNotEmpty>
+			  			<isEmpty property="comGrp">
+			  				AND COM_GRP IS NULL
+			  			</isEmpty>)
+		           , #useYn#
+		           , #regId#
+		           , SYSDATE
+		     )
+	</insert>
+
+	<update id="codDAO.updateComCodInfo" parameterClass="codeVO">
+		UPDATE /** 코드 수정 codDAO.updateComCodInfo */ AT_COM_CD_M
+		   SET COM_NM = #comNm#
+		   	 , COM_GRP_NM = #comGrpNm#
+		     , CNTN = #cntn#
+		     , USE_YN = #useYn#
+		     , DB_UPD_TM = SYSDATE
+		 WHERE COM_SER = #comSer#
+	</update>
+
+	<select id="codeDAO.codeCheck" parameterClass="codeVO" resultClass="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM AT_COM_CD_M
+		 WHERE 1 = 1
+		   AND COM_CD = #comCd#
+	</select>
+
+</sqlMap>

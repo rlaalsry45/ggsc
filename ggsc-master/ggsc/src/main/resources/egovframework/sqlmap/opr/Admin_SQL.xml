@@ -1,0 +1,992 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdminManageDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="AdminVO" type="ggsc.cnsr.service.AdminVO"/>
+	<typeAlias alias="CenterVO" type="ggsc.cnsr.service.CenterVO"/>
+	<typeAlias alias="GroupVO" type="ggsc.cnsr.service.GroupVO"/>
+	<typeAlias alias="CnsrVO" type="ggsc.join.service.CnsrVO"/>
+	<typeAlias alias="UsermVO" type="ggsc.join.service.UsermVO"/>
+	<typeAlias alias="SecurityVO" type="ggsc.cnsr.service.SecurityVO"/>
+	<typeAlias  alias="ExcelVO" type="ggsc.support.service.ExcelVO"/>
+	
+	
+	
+	
+	<!--  상담사 등록 -->
+	<insert id="AdminManageDAO.insertCnsrMng" parameterClass="AdminVO">
+		INSERT INTO GS_CNSR_M (
+				CNSR_CD ,
+				CENTER_GB ,
+				CNSR_NM ,
+				BIRTH_DT ,
+				EMPL_TYPE ,
+				CONT_TERM_STD ,
+				CONT_TERM_END ,
+				EDU ,
+				MAJOR ,
+				PDSR_YN ,
+				ACPT_PAYSTEP ,
+				MTNC_STND_RIGT ,
+				JOIN_DT ,
+				ONE_ORG_CAREER ,
+				SOCIAL_WORK_PROV ,
+				CNS_PROV ,
+				EMPL_DT ,
+				DB_INS_TM ,
+				USER_ID
+			) values (
+				#cnsrCd# ,
+				#centerGb# ,
+				#cnsrNm# ,
+				#birthDt# ,
+				#emplType# ,
+				#contTermStd# ,
+				#contTermEnd# ,
+				#edu# ,
+				#major# ,
+				#pdsrYn# ,
+				#acptPaystep# ,
+				#mtncStndRigt# ,
+				#joinDt# ,
+				#oneOrgCareer# ,
+				#socialWorkProv# ,
+				#cnsProv# ,
+				#emplDt# ,
+				now() ,
+				'TEST11'
+			) ON DUPLICATE KEY
+			UPDATE 
+				CENTER_GB = #centerGb# ,
+				CNSR_NM = #cnsrNm# ,
+				BIRTH_DT = #birthDt# ,
+				EMPL_TYPE = #emplType# ,
+				CONT_TERM_STD = #contTermStd# ,
+				CONT_TERM_END = #contTermEnd# , 
+				EDU = #edu# ,
+				MAJOR = #major# ,
+				PDSR_YN = #pdsrYn# ,
+				ACPT_PAYSTEP = #acptPaystep# ,
+				MTNC_STND_RIGT = #mtncStndRigt# ,
+				JOIN_DT = #joinDt# ,
+				ONE_ORG_CAREER = #oneOrgCareer# ,
+				SOCIAL_WORK_PROV = #socialWorkProv# ,
+				CNS_PROV = #cnsProv# ,
+				EMPL_DT = #emplDt# ,
+				DB_INS_TM = now() ,
+				USER_ID = 'TEST101'
+	</insert>
+	
+	<!-- 상담사관리 목록 조회  -->
+	<select id="AdminManageDAO.getAdminManageList" parameterClass="AdminVO" resultClass="egovMap">
+		SELECT *
+		FROM(
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY A.CNSR_CD DESC) AS RNUM,
+				A.CNSR_CD ,
+				A.CNS_GB ,
+				B.MCLASS_NM CNS_GB_NM,
+				A.CENTER_GB,
+				C.CENTER_NM,
+				A.CNSR_NM,
+				A.USER_ID,
+				A.APPRV_YN,
+				A.CNSR_GB ,
+				A.ZONE_GB ,
+				A.LOCAL_GB ,
+				A.USE_YN ,
+				(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G19' AND ODR = A.CNSR_GB) AS CNSR_GB_NM ,
+				CASE WHEN NOW() BETWEEN D.WRITE_DT AND D.EXPIR_DT THEN 'Y' ELSE 'N' END AS securityYn ,
+				D.CNSLE_ID AS securityCk
+			FROM
+				GS_CNSR_M AS A
+				INNER JOIN gs_m_class AS B ON A.CNS_GB = B.ODR AND HCLASS_CD ='G15' 
+				INNER JOIN gs_center_m AS C ON A.CENTER_GB = C.NUM 
+				LEFT JOIN gs_ccrt_plgr AS D ON A.USER_ID = D.CNSLE_ID
+			WHERE
+				1=1
+				
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				A.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrGb" prepend="AND"> 
+				A.CNSR_GB = #schCnsrGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				A.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				A.CNSR_NM LIKE CONCAT('%', #schCnsrNm#, '%')
+			</isNotEmpty>
+			<isNotEmpty property="schUserId" prepend="AND">
+				A.USER_ID LIKE CONCAT('%', #schUserId#, '%')
+			</isNotEmpty>
+			
+			<isNotEqual property="authCd" compareValue="1">
+	            AND A.USER_ID = #userId# 
+			</isNotEqual>
+
+		) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 상담사관리 목록 갯수 -->
+	<select id="AdminManageDAO.getAdminMngTotalCnt" parameterClass="AdminVO" resultClass="Integer">
+		SELECT
+			COUNT(A.CNSR_CD)
+		FROM
+			GS_CNSR_M AS A 
+			INNER JOIN gs_m_class AS B ON A.CNS_GB = B.ODR AND HCLASS_CD ='G15' 
+			INNER JOIN gs_center_m AS C ON A.CENTER_GB = C.NUM 
+		WHERE
+			1=1
+		<isNotEmpty property="schCnsGb" prepend="AND"> 
+			A.CNS_GB = #schCnsGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsrGb" prepend="AND"> 
+			A.CNSR_GB = #schCnsrGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCenterGb" prepend="AND"> 
+			A.CENTER_GB = #schCenterGb#
+		</isNotEmpty>
+		<isNotEmpty property="schCnsrNm" prepend="AND"> 
+			A.CNSR_NM LIKE CONCAT('%', #schCnsrNm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="schUserId" prepend="AND">
+			A.USER_ID LIKE CONCAT('%', #schUserId#, '%')
+		</isNotEmpty>
+		
+		<!-- <isNotEqual property="authCd" compareValue="1">
+            AND A.USER_ID = #userId# 
+		</isNotEqual> -->
+		<isEqual property="authCd" compareValue="2">
+			AND A.CENTER_GB = #schCenterGb#
+		</isEqual>
+		<isEqual property="authCd" compareValue="3">
+			AND A.USER_ID = #userId#
+		</isEqual>
+	</select>
+	
+	<!-- 상담사 상세보기  -->
+	<select id="AdminManageDAO.getAdminManageDetail" parameterClass="java.lang.String" resultClass="egovMap">
+		
+		SELECT
+			U.USER_ID ,
+			U.USER_NM ,
+			U.PW ,
+			U.GENDER ,
+			U.MOBILE ,
+			U.EMAIL ,
+			C.CNS_GB ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = C.CNS_GB) AS CNS_GB_NM ,
+			C.CENTER_GB ,
+			(SELECT CENTER_NM FROM GS_CENTER_M WHERE NUM = C.CENTER_GB) AS CENTER_GB_NM ,
+			C.CNSR_GB ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G19' AND ODR = C.CNSR_GB) AS CNSR_GB_NM ,
+			(SELECT FLOOR((TO_DAYS(NOW()) - (TO_DAYS(C.BIRTH_DT)))/365)) AS AGE ,
+			(SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G88' AND ODR = C.EDU) AS EDU_NM ,
+			C.EDU ,
+			C.MAJOR ,
+			C.SOCIAL_WORK_PROV ,
+			C.CNS_PROV ,
+			C.APPRV_YN ,
+			C.USE_YN
+		FROM
+			GS_CNSR_M AS C
+		INNER JOIN GS_USER_M AS U
+			ON C.USER_ID = U.USER_ID
+		WHERE
+			C.USER_ID = #userId#
+	</select>
+	
+	<!-- 상담사 table 회원탈퇴 -->
+	<update id="AdminManageDAO.updateAdminCnsrWithdrawal" parameterClass="java.lang.String">
+		UPDATE GS_CNSR_M
+			SET
+				USE_YN = 'N' ,
+				DB_OUT_TM = NOW()
+			WHERE
+				USER_ID = #userId#
+	</update>
+	
+	<!-- 유저 table 회원탈퇴 -->
+	<update id="AdminManageDAO.updateAdminUserWithdrawal" parameterClass="java.lang.String">
+		UPDATE GS_USER_M
+			SET
+				USE_YN = 'N' ,
+				DB_OUT_TM = NOW()
+			WHERE
+				USER_ID = #userId#
+	</update>
+	
+	<!-- 상담사 table 회원탈퇴취소 -->
+	<update id="AdminManageDAO.updateAdminCnsrReturn" parameterClass="java.lang.String">
+		UPDATE GS_CNSR_M
+			SET
+				USE_YN = 'Y' ,
+				DB_UPD_TM = NOW()
+			WHERE
+				USER_ID = #userId#
+	</update>
+	
+	<!-- 유저 table 회원탈퇴취소 -->
+	<update id="AdminManageDAO.updateAdminUserReturn" parameterClass="java.lang.String">
+		UPDATE GS_USER_M
+			SET
+				USE_YN = 'Y' ,
+				DB_UPD_TM = NOW()
+			WHERE
+				USER_ID = #userId#
+	</update>
+	
+	<!--  상담사 정보 수정(상담사 테이블) -->
+	<update id="AdminManageDAO.updateCnsrMng" parameterClass="CnsrVO">
+		UPDATE GS_CNSR_M 
+			SET 
+				 CNS_GB = #cnsGb# , 
+				 CENTER_GB = #centerGb# ,
+				 <isNotEmpty property="cnsrGb">
+				     CNSR_GB = #cnsrGb# , 
+				     AUTH_CD = #cnsrGb# , 
+				 </isNotEmpty>
+				 CNSR_NM = #userNm# ,
+				 POSI = #posi# ,
+				 MAJOR = #major# ,
+				 EDU = #edu# ,
+				 SOCIAL_WORK_PROV = #socialWorkProv# ,
+				 CNS_PROV = #cnsProv# ,
+				 AGE = #age# ,
+				 DB_INS_TM = now()
+			WHERE 
+				USER_ID = #userId#
+	</update>
+	
+	<!--  상담사 정보 수정(사용자 테이블) -->
+	<update id="AdminManageDAO.updateUserM" parameterClass="UsermVO">
+		UPDATE GS_USER_M
+			SET
+				USER_NM = #userNm# ,
+				PW = #pw# ,
+				GENDER = #gender# ,
+				MOBILE = #mobile# ,
+				EMAIL = #email# ,
+				<isNotEmpty property="cnsrGb">
+				     AUTH_CD = #cnsrGb# , 
+				 </isNotEmpty>
+				ACPT_DT = now()
+			WHERE
+				USER_ID = #userId#
+	</update>
+		
+	<!-- 상담사 승인,승인취소(상담사 테이블) -->
+	<update id="AdminManageDAO.updateCnsrApprv" parameterClass="CnsrVO">
+		UPDATE GS_CNSR_M 
+			SET 
+				USE_YN = #apprvYn# ,
+				APPRV_YN = #apprvYn# ,
+				CONT_TERM_STD = now()
+			WHERE 
+				USER_ID = #userId#
+	</update>
+	<!-- 상담사 승인,승인취소(사용자 테이블) -->
+	<update id="AdminManageDAO.updateUserApprv" parameterClass="UsermVO">
+		UPDATE GS_USER_M
+			SET
+				USE_YN = #apprvYn#
+			WHERE
+				USER_ID = #userId#
+	</update>
+	
+	<!-- 상담사 삭제(상담사 테이블) -->
+	<delete id="AdminManageDAO.deleteCnsrMng" parameterClass="CnsrVO">
+		DELETE
+			FROM GS_CNSR_M
+		WHERE 
+			USER_ID = #userId#
+			
+	</delete>
+	
+	<!-- 상담사 삭제(사용자 테이블) -->
+	<delete id="AdminManageDAO.deleteUserM" parameterClass="UsermVO">
+		DELETE
+			FROM GS_USER_M
+		WHERE 
+			USER_ID = #userId#
+	</delete>
+	
+	<!-- 보안서약서 삭제 -->
+	<delete id="AdminManageDAO.deleteSecurity" parameterClass="SecurityVO">
+		DELETE
+			FROM GS_CCRT_PLGR
+		WHERE 
+			CNSLE_ID = #cnsleId#
+	</delete>
+	
+	
+	<!-- 상담사 CnsrCd 조회  -->
+	<select id="AdminManageDAO.getCnsrMngCnsrCd" resultClass="java.lang.String">
+		SELECT 
+			IFNULL(MAX(CAST(CNSR_CD AS SIGNED)),0)+1  
+		FROM 
+			GS_CNSR_M
+	</select>
+	
+	<!-- 상담사 엑셀다운 -->
+	<select id="AdminManageDAO.getCnsrListExcel" parameterClass="ExcelVO" resultClass="egovMap">
+		SELECT 
+				ROW_NUMBER() OVER(ORDER BY A.CNSR_CD DESC) AS RNUM,
+				A.CNSR_CD ,
+				A.CNS_GB ,
+				B.MCLASS_NM CNS_GB_NM,
+				A.CENTER_GB,
+				C.CENTER_NM,
+				A.CNSR_NM,
+				A.USER_ID,
+				A.APPRV_YN,
+				A.USER_ID,
+				case A.use_yn when 'Y' then '승인' when 'N' then '미승인' ELSE '' END AS useYn
+
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G15' AND ODR = A.LOCAL_GB) AS CNS_GB_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G71' AND ODR = A.LOCAL_GB) AS ZONE_GB_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G72' AND ODR = A.LOCAL_GB) AS LOCAL_GB_NM
+				, (SELECT MCLASS_NM FROM GS_M_CLASS WHERE HCLASS_CD = 'G19' AND ODR = A.CNSR_GB) AS CNSR_GB_NM 
+			FROM
+				GS_CNSR_M AS A
+				INNER JOIN gs_m_class AS B ON A.CNS_GB = B.ODR AND HCLASS_CD ='G15' 
+				INNER JOIN gs_center_m AS C ON A.CENTER_GB = C.NUM 
+
+			WHERE
+				1=1
+				
+			<isNotEmpty property="schCnsGb" prepend="AND"> 
+				A.CNS_GB = #schCnsGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrGb" prepend="AND"> 
+				A.CNSR_GB = #schCnsrGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb" prepend="AND"> 
+				A.CENTER_GB = #schCenterGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCnsrNm" prepend="AND"> 
+				A.CNSR_NM LIKE CONCAT('%', #schCnsrNm#, '%')
+			</isNotEmpty>
+			<isNotEmpty property="schUserId" prepend="AND">
+				A.USER_ID LIKE CONCAT('%', #schUserId#, '%')
+			</isNotEmpty>
+			ORDER BY RNUM ASC
+	</select>
+	
+	<!-- 센터관리 목록 조회(select 코드용)  -->
+	<select id="AdminManageDAO.getCenterManageList" parameterClass="CenterVO" resultClass="egovMap">
+		SELECT *
+		FROM (
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM ,
+				NUM ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G71' AND ODR = zone_gb) AS zoneGb ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G72' AND ODR = local_gb) AS localNm ,
+				SIGUN_CD ,
+				LOCAL_GB ,
+				SIGUN_NM ,
+				CENTER_NM ,
+				CENTER_GB ,
+				ADDR ,
+				ADDR_DTL ,
+				ZIP_CD ,
+				HOMEPAGE ,
+				TEL ,
+				USE_YN ,
+				REG_ID ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+			FROM
+				GS_CENTER_M
+			WHERE
+				1=1
+			<isNotEmpty property="schZoneGb">
+				AND ZONE_GB = #schZoneGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb">
+				AND CENTER_NM LIKE CONCAT('%', #schCenterGb#, '%')
+			</isNotEmpty>
+			<isNotEmpty property="schSigunNm">
+				AND LOCAL_GB = #schSigunNm#
+			</isNotEmpty>
+		
+		) A
+		
+	</select>
+	
+	<!-- 센터관리 목록 조회(화면 목록) -->
+	<select id="AdminManageDAO.getCenterMngList" parameterClass="CenterVO" resultClass="egovMap">
+		SELECT *
+		FROM (
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM ,
+				NUM ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G71' AND ODR = zone_gb) AS zoneGb ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G72' AND ODR = local_gb) AS localNm ,
+				SIGUN_CD ,
+				LOCAL_GB ,
+				SIGUN_NM ,
+				CENTER_NM ,
+				ADDR ,
+				ADDR_DTL ,
+				EMAIL ,
+				FAX ,
+				ZIP_CD ,
+				HOMEPAGE ,
+				TEL ,
+				USE_YN ,
+				REG_ID ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+			FROM
+				GS_CENTER_M
+			WHERE
+				1=1
+			<isNotEmpty property="schZoneGb">
+				AND ZONE_GB = #schZoneGb#
+			</isNotEmpty>
+			<isEqual property="authCd" compareValue="1">
+				<isNotEmpty property="schCenterGb">
+					AND CENTER_NM LIKE CONCAT('%', #schCenterGb#, '%')
+				</isNotEmpty>
+			</isEqual>
+			
+			<isNotEmpty property="schSigunNm">
+				AND LOCAL_GB = #schSigunNm#
+			</isNotEmpty>
+			
+			<isNotEqual property="authCd" compareValue="1">
+	            AND CENTER_NM = #schCenterGb#
+			</isNotEqual>
+			
+		) A
+		<![CDATA[
+ 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+ 			ORDER BY RNUM
+ 		]]>
+	</select>
+	
+	<!-- 센터관리 센터명 중복확인 -->
+	<select id="AdminManageDAO.centerCheck" parameterClass="String" resultClass="Integer">
+		SELECT 
+			COUNT(CENTER_NM)
+		FROM 
+			GS_CENTER_M
+		WHERE 
+			CENTER_NM = #centerNm#
+	</select>
+	
+	<!-- 센터관리 목록 갯수  -->
+	<select id="AdminManageDAO.getCenterMngTotalCnt" parameterClass="CenterVO" resultClass="Integer">
+		SELECT
+			COUNT(NUM)
+		FROM
+			GS_CENTER_M
+		WHERE
+			1=1
+		<isNotEmpty property="schZoneGb">
+			AND ZONE_GB = #schZoneGb#
+		</isNotEmpty>
+		<isEqual property="authCd" compareValue="1">
+			<isNotEmpty property="schCenterGb">
+				AND CENTER_NM LIKE CONCAT('%', #schCenterGb#, '%')
+			</isNotEmpty>
+		</isEqual>
+		<isNotEmpty property="schSigunNm">
+			AND LOCAL_GB = #schSigunNm#
+		</isNotEmpty>
+		
+		<isNotEqual property="authCd" compareValue="1">
+            AND CENTER_NM = #schCenterGb# 
+		</isNotEqual>
+	</select>
+	
+	<!-- 센터관리 상세보기  -->
+	<select id="AdminManageDAO.getCenterManageDetail" parameterClass="java.lang.Integer" resultClass="egovMap">
+		SELECT
+			ZONE_GB ,
+			LOCAL_GB ,
+			CENTER_NM ,
+			ADDR ,
+			EMAIL ,
+			FAX ,
+			HOMEPAGE ,
+			TEL ,
+			CT_DESC ,
+			USE_YN ,
+			ETC
+		FROM
+			GS_CENTER_M
+		WHERE
+			NUM = #num#
+	</select>
+	
+	<!-- 센터관리 - 권역구분 검색 리스트  -->
+	<select id="AdminManageDAO.getZoneGbList" parameterClass="CenterVO" resultClass="egovMap">
+		SELECT
+			ZONE_GB ,
+			SIGUN_NM
+		FROM
+			GS_CENTER_M
+		where
+			1=1
+		<isNotEmpty property="schZoneGb">
+			AND ZONE_GB LIKE CONCAT('%', #schZoneGb#, '%')
+		</isNotEmpty>
+		<!-- <isNotEmpty property="schSigunNm">
+			AND SIGUN_NM LIKE CONCAT('%', #schSigunNm#, '%')
+		</isNotEmpty> -->
+	</select>
+	
+	<!-- 센터정보등록  -->
+	<insert id="AdminManageDAO.insertCenterMng" parameterClass="CenterVO">
+				
+			INSERT INTO GS_CENTER_M (
+				NUM ,
+				LOCAL_GB ,
+				ZONE_GB ,
+				CT_DESC ,
+				ETC ,
+				CENTER_NM ,
+				CENTER_GB ,
+				ADDR ,
+				EMAIL ,
+				FAX ,
+				HOMEPAGE ,
+				TEL ,
+				USE_YN ,
+				DB_INS_TM
+			) VALUES (
+				(SELECT IFNULL(MAX(A.NUM),0)+1 FROM GS_CENTER_M AS A) ,
+				#localGb# ,
+				#zoneGb# ,
+				#ctDesc# ,
+				#etc# ,
+				#centerNm# ,
+				#centerNm# ,
+				#addr# ,
+				#email# ,
+				#fax# ,
+				#homepage# ,
+				#tel# ,
+				#useYn# ,
+				now()
+			)
+	</insert>
+	<!-- 센터정보 수정 -->
+	<update id="AdminManageDAO.updateCenterMng" parameterClass="CenterVO">
+		UPDATE GS_CENTER_M 
+			SET 
+				ZONE_GB = #zoneGb# ,
+				LOCAL_GB = #localGb# ,
+				CENTER_NM = #centerNm# ,
+				ADDR = #addr# ,
+				EMAIL = #email# ,
+				FAX = #fax# ,
+				HOMEPAGE = #homepage# ,
+				TEL = #tel# ,
+				CT_DESC = #ctDesc# ,
+				ETC = #etc# ,
+				USE_YN = #useYn# ,
+				DB_INS_TM = now()
+			WHERE 
+				NUM = #num#
+	</update>
+	
+	<!-- 센터관리 엑셀다운  -->
+	<select id="AdminManageDAO.getCenterListExcel" parameterClass="ExcelVO" resultClass="egovMap">
+		SELECT 
+				ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM ,
+				NUM ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G71' AND ODR = zone_gb) AS zoneGb ,
+				(select MCLASS_NM FROM gs_m_class WHERE HCLASS_CD = 'G72' AND ODR = local_gb) AS localNm ,
+				SIGUN_CD ,
+				LOCAL_GB ,
+				SIGUN_NM ,
+				CENTER_NM ,
+				ADDR ,
+				ADDR_DTL ,
+				ZIP_CD ,
+				HOMEPAGE ,
+				TEL ,
+				USE_YN ,
+				REG_ID ,
+				DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+			FROM
+				GS_CENTER_M
+			WHERE
+				1=1
+			<isNotEmpty property="schZoneGb">
+				AND ZONE_GB = #schZoneGb#
+			</isNotEmpty>
+			<isNotEmpty property="schCenterGb">
+				AND CENTER_NM LIKE CONCAT('%', #schCenterGb#, '%')
+			</isNotEmpty>
+			<isNotEmpty property="schSigunNm">
+				AND LOCAL_GB = #schSigunNm#
+			</isNotEmpty>
+			ORDER BY RNUM ASC
+	</select>
+	
+	<!-- 분류관리 목록 조회  -->
+	<select id="AdminManageDAO.getGroupManageList" parameterClass="GroupVO" resultClass="egovMap">
+			SELECT
+				A.*
+			FROM (
+				SELECT
+					ROW_NUMBER() OVER(ORDER BY M.HCLASS_CD, M.MCLASS_CD, S.SCLASS_CD) AS RNUM ,
+					H.HCLASS_CD,
+					H.HCLASS_NM ,
+					M.MCLASS_CD ,
+					M.MCLASS_NM ,
+					S.SCLASS_CD,
+					S.SCLASS_NM,
+					S.ODR ,
+					S.USE_YN ,
+					S.CD_DESC ,
+					DATE_FORMAT(S.DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+				FROM
+					GS_H_CLASS AS H
+				INNER JOIN GS_M_CLASS AS M
+					ON H.HCLASS_CD = M.HCLASS_CD
+				LEFT  JOIN GS_S_CLASS AS S 
+					ON M.MCLASS_CD = S.MCLASS_CD
+				
+				WHERE 1=1
+					<isNotEmpty property="schHclassNm" prepend="AND"> 
+						H.HCLASS_NM LIKE CONCAT('%', #schHclassNm#, '%')
+					</isNotEmpty>
+					
+					<isNotEmpty property="schMclassNm" prepend="AND"> 
+						M.MCLASS_NM LIKE CONCAT('%', #schMclassNm#, '%') 
+					</isNotEmpty>
+					
+					<isNotEmpty property="schSclassNm" prepend="AND"> 
+						S.SCLASS_NM LIKE CONCAT('%', #schSclassNm#, '%')
+					</isNotEmpty>
+				
+				 ) A 
+			 <![CDATA[
+	 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+	 		]]>
+	 		
+	 		
+	 		
+	 		<!-- <![CDATA[
+	 		   	WHERE RNUM > #firstIndex# AND RNUM <= #lastIndex#
+					ORDER BY A.MCLASS_CD ASC
+	 		]]> -->
+	</select>
+	
+	<!-- 분류관리 목록 갯수  -->
+	<select id="AdminManageDAO.getGroupMngTotalCnt" parameterClass="GroupVO" resultClass="java.lang.Integer">
+		SELECT
+			COUNT(M.MCLASS_NM)
+		FROM
+			GS_H_CLASS AS H
+		INNER JOIN GS_M_CLASS AS M
+			ON H.HCLASS_CD = M.HCLASS_CD
+		LEFT  JOIN GS_S_CLASS AS S 
+			ON M.MCLASS_CD = S.MCLASS_CD	
+			
+		WHERE 1=1
+		<isNotEmpty property="schHclassNm" prepend="AND"> 
+			H.HCLASS_NM LIKE CONCAT('%', #schHclassNm#, '%')
+		</isNotEmpty>
+		
+		<isNotEmpty property="schMclassNm" prepend="AND"> 
+			M.MCLASS_NM LIKE CONCAT('%', #schMclassNm#, '%') 
+		</isNotEmpty>
+		
+		<isNotEmpty property="schSclassNm" prepend="AND"> 
+			S.SCLASS_NM LIKE CONCAT('%', #schSclassNm#, '%')
+		</isNotEmpty>
+	</select>
+	
+	<!-- 분류관리 등록 무결성 검사  -->
+	<select id="AdminManageDAO.getGroupMngInsertTest" parameterClass="GroupVO" resultClass="java.lang.Integer">
+	
+		<isEqual property="firstIndex" compareValue="1">
+			SELECT COUNT(*) FROM GS_H_CLASS WHERE HCLASS_NM = #schHclassNm#
+		</isEqual>
+		<isEqual property="firstIndex" compareValue="2">
+			SELECT COUNT(*) FROM GS_H_CLASS AS A
+				INNER JOIN GS_M_CLASS AS B ON A.HCLASS_CD = B.HCLASS_CD
+				AND A.HCLASS_CD = #schHclassNm# AND MCLASS_NM = #schMclassNm#
+		</isEqual>
+		<isEqual property="firstIndex" compareValue="3">
+			SELECT COUNT(*) FROM GS_M_CLASS AS A
+				INNER JOIN GS_S_CLASS AS B ON A.MCLASS_CD = B.MCLASS_CD
+				AND A.MCLASS_CD = #schMclassNm# AND SCLASS_NM =  #schSclassNm#
+		</isEqual>
+	
+	</select>
+	
+	<!-- 분류관리 상세보기(대분류)  -->
+	<select id="AdminManageDAO.getGroupMngDtlHList" parameterClass="GroupVO" resultClass="egovMap">
+		SELECT
+			HCLASS_CD ,
+			HCLASS_NM ,
+			ODR
+		FROM
+			GS_H_CLASS
+		WHERE
+			1=1
+		<isNotEmpty property="schHclassNm">
+			AND HCLASS_NM LIKE CONCAT('%', #schHclassNm#, '%')
+		</isNotEmpty>
+	</select>
+	
+	
+	
+	<!-- 분류관리 상세보기(중분류)  -->
+	<select id="AdminManageDAO.getGroupMngDtlMList" parameterClass="GroupVO" resultClass="egovMap">
+		SELECT
+			M.MCLASS_CD ,
+			M.MCLASS_NM ,
+			M.ODR ,
+			H.HCLASS_CD
+		FROM
+			GS_H_CLASS AS H
+		INNER JOIN GS_M_CLASS AS M
+			ON H.HCLASS_CD = M.HCLASS_CD
+		WHERE
+			H.HCLASS_CD = #hclassCd#
+			AND M.USE_YN = 'Y' 
+		ORDER BY M.MCLASS_CD ASC
+	</select>
+	
+	<!-- 분류관리 상세보기(소분류)  -->
+	<select id="AdminManageDAO.getGroupMngDtlSList" parameterClass="GroupVO" resultClass="egovMap">
+		SELECT
+			gsc.SCLASS_CD ,
+			gsc.SCLASS_NM ,
+			gsc.ODR ,
+			gmc.MCLASS_CD
+		FROM
+			GS_M_CLASS gmc
+		INNER JOIN GS_S_CLASS gsc
+			ON gmc.MCLASS_CD = gsc.MCLASS_CD
+		WHERE
+			gmc.MCLASS_CD = #mclassCd#
+			and gmc.HCLASS_CD = #hclassCd#
+		ORDER BY gsc.SCLASS_CD ASC
+	</select>
+	
+	<!-- 분류관리 대분류 등록  -->
+	<insert id="AdminManageDAO.insertGroupMngHcd" parameterClass="GroupVO">
+	<!-- 
+		INSERT INTO GS_H_CLASS (
+				HCLASS_CD ,
+				HCLASS_NM ,
+				CD_DESC ,
+				ODR ,
+				USE_YN ,
+				REG_ID ,
+				DB_INS_TM
+			) values (
+				(SELECT CONCAT('G',COUNT(HCLASS_CD)+1) FROM GS_H_CLASS AS A) ,
+				#hclassNm# ,
+				#hclassNm# ,
+				'1' ,
+				'Y' ,
+				'admin' ,
+				now()
+			)
+		 -->	
+		 INSERT INTO GS_H_CLASS (
+				HCLASS_CD ,
+				HCLASS_NM ,
+				CD_DESC ,
+				ODR ,
+				USE_YN ,
+				REG_ID ,
+				DB_INS_TM
+			) values (
+				(SELECT CONCAT('G', LPAD(COUNT(HCLASS_CD)+1, 3, '0')) FROM GS_H_CLASS AS A) ,
+				#hclassNm# ,
+				#hclassNm# ,
+				1 ,
+				'Y' ,
+				#regId# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 분류관리 중분류 등록  -->
+	<insert id="AdminManageDAO.insertGroupMngMcd" parameterClass="GroupVO">
+	<!-- 
+		INSERT INTO GS_M_CLASS (
+				MCLASS_CD ,
+				HCLASS_CD ,
+				MCLASS_NM ,
+				CD_DESC ,
+				ODR ,
+				USE_YN ,
+				REG_ID ,
+				DB_INS_TM
+			) values (
+				(SELECT CONCAT('G10',COUNT(M.MCLASS_CD)+1) FROM GS_H_CLASS AS H INNER JOIN GS_M_CLASS AS M ON H.HCLASS_CD = M.HCLASS_CD WHERE H.HCLASS_CD = #hclassCd#) ,
+				#hclassCd# ,
+				#mclassNm# ,
+				#mclassNm# ,
+				(SELECT IFNULL(MAX(M.ODR),0)+1  FROM GS_H_CLASS AS H INNER JOIN GS_M_CLASS AS M ON H.HCLASS_CD = M.HCLASS_CD WHERE H.HCLASS_CD = #hclassCd#) ,
+				'Y' ,
+				'admin' ,
+				now()
+			)
+	 -->
+	 	INSERT INTO GS_M_CLASS (
+				MCLASS_CD ,
+				HCLASS_CD ,
+				MCLASS_NM ,
+				CD_DESC ,
+				ODR ,
+				USE_YN ,
+				REG_ID ,
+				DB_INS_TM
+			) values (
+				(SELECT CONCAT(#hclassCd#, LPAD(COUNT(M.MCLASS_CD)+1, 3, '0')) FROM GS_M_CLASS AS M WHERE M.HCLASS_CD = #hclassCd#) ,
+				#hclassCd# ,
+				#mclassNm# ,
+				#mclassNm# ,
+				(SELECT IFNULL(MAX(M.ODR),0)+1  FROM GS_H_CLASS AS H INNER JOIN GS_M_CLASS AS M ON H.HCLASS_CD = M.HCLASS_CD WHERE H.HCLASS_CD = #hclassCd#) ,
+				'Y' ,
+				'admin' ,
+				now()
+			)
+	</insert>
+	
+		<!-- 분류관리 소분류 등록  -->
+	<insert id="AdminManageDAO.insertGroupMngScd" parameterClass="GroupVO">
+		INSERT INTO GS_S_CLASS (
+				SCLASS_CD ,
+				MCLASS_CD ,
+				SCLASS_NM ,
+				CD_DESC ,
+				ODR ,
+				USE_YN ,
+				REG_ID ,
+				DB_INS_TM
+			) values (
+				(SELECT CONCAT(#mclassCd#, LPAD(COUNT(S.SCLASS_CD)+1, 3, '0')) FROM GS_S_CLASS AS S WHERE S.MCLASS_CD = #mclassCd#) ,
+				#mclassCd# ,
+				#sclassNm# ,
+				#sclassNm# ,
+				(SELECT IFNULL(MAX(S.ODR),0)+1 FROM GS_S_CLASS AS S WHERE S.MCLASS_CD = #mclassCd#) ,
+				'Y' ,
+				#regId# ,
+				now()
+			)
+	</insert>
+	
+	<!-- 분류관리 엑셀다운  -->
+	<select id="AdminManageDAO.getGroupingListExcel" resultClass="egovMap">
+			SELECT
+				CAST(ROW_NUMBER() OVER(ORDER BY M.MCLASS_CD DESC) AS CHAR(10)) AS RNUM ,
+				H.HCLASS_NM ,
+				M.MCLASS_NM ,
+				CAST(ROW_NUMBER() OVER(ORDER BY M.ODR DESC) AS CHAR(10)) AS ODR ,
+				M.USE_YN ,
+				M.CD_DESC ,
+				DATE_FORMAT(M.DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+			FROM
+				GS_H_CLASS AS H
+			INNER JOIN GS_M_CLASS AS M
+				ON H.HCLASS_CD = M.HCLASS_CD
+	</select>
+	
+	<select id="AdminManageDAO.getAdminUserInfo" parameterClass="AdminVO" resultClass="egovMap">
+		SELECT
+			CNS_GB ,
+			ZONE_GB ,
+			LOCAL_GB ,
+			USER_ID ,
+			CNSR_NM ,
+			CENTER_GB
+		FROM
+			GS_CNSR_M
+		WHERE
+			USER_ID = #userId#
+	</select>
+	
+	<select id="AdminManageDAO.getSecurityInfo" parameterClass="SecurityVO" resultClass="egovMap">
+		SELECT
+			*
+		FROM
+			gs_ccrt_plgr
+		WHERE
+			CNSLE_ID = #userId#
+	</select>
+	
+	<insert id="AdminManageDAO.insertSecurity" parameterClass="SecurityVO">
+		INSERT INTO
+			GS_CCRT_PLGR
+		(
+			  CNS_GB
+			, DOC_GB
+			, ZONE_GB
+			, LOCAL_GB
+			, CENTER_GB
+			, CNSLE_ID
+			, CNSLE_NM
+			, WRITE_YN
+			, WRITE_DT
+			, EXPIR_DT
+			, RANK
+			, SEPL_NAME
+			, YEAR
+			, MONTH
+			, DAY
+			, JUMIN1
+			, JUMIN2
+			, SEPL_SIGN
+			, DB_INS_TM
+		) VALUES (
+			  #cnsGb#
+			, #docGb#
+			, #zoneGb#
+			, #localGb#
+			, #centerGb#
+			, #cnsleId#
+			, #cnsleNm#
+			, 'Y'
+			, CONCAT(#year#, #month#, #day#)
+			, CONCAT(#year2#, #month#, #day#)
+			, #rank#
+			, #seplName#
+			, #year#
+			, #month#
+			, #day#
+			, #jumin1#
+			, #jumin2#
+			, ''
+			, NOW()
+		)
+	</insert>
+	
+	<update id="AdminManageDAO.updateSecurity" parameterClass="SecurityVO">
+		UPDATE GS_CCRT_PLGR
+			SET
+				WRITE_DT = CONCAT(#year#, #month#, #day#) ,
+			 	EXPIR_DT = CONCAT(#year2#, #month#, #day#) ,
+				RANK	 = #rank# ,
+			    SEPL_NAME = #seplName# ,
+			    YEAR	 = #year# ,
+			    MONTH	 = #month# ,
+			    DAY		 = #day# ,
+			    JUMIN1   = #jumin1# ,
+			    JUMIN2   = #jumin2# ,
+			    SEPL_SIGN = '' ,
+			    DB_INS_TM = NOW()
+			WHERE
+				CNSLE_ID = #cnsleId#
+	</update>
+	
+</sqlMap>

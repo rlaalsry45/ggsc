@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdmMenu">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    <typeAlias  alias="menuVO" type="ams.main.mnu.service.MenuVO"/>
+	<typeAlias  alias="comDefaultVO" type="egovframework.com.cmm.ComDefaultVO"/>
+
+
+	<select id="menuManageDAO.selectMenuLeft" resultClass="egovMap">
+	
+		<![CDATA[
+			SELECT 	   MNU_NUM 		AS menuNum
+			      	 , MNU_CD  		AS menuCd
+				  	 , MNU_NM 		AS menuNm
+				  	 , MNU_PATH		AS menuPath
+				 	 , H_MNU_CD	AS upMenuCd
+				 	 , ODR
+
+			FROM 	 GS_MENU
+			WHERE	 USE_YN='Y'
+			ORDER BY ODR ASC
+		]]>
+	</select>
+
+	<select id="menuManageDAO.selectMenuList" resultClass="egovMap">
+		SELECT MNU_NUM ,
+		       MNU_CD ,
+		       MNU_NM ,
+		       MNU_PATH ,
+		       H_MNU_CD ,
+		       (SELECT COUNT(MNU_CD)
+		         FROM GS_MENU
+		        WHERE H_MNU_CD = A.MNU_CD
+		       ) SUB_CNT ,
+		       ODR
+		  FROM GS_MENU A
+		 WHERE USE_YN='Y'
+		   AND (H_MNU_CD IS NULL OR TRIM(H_MNU_CD) = '')
+		ORDER BY ODR ASC
+	</select>
+	<select id="menuManageDAO.selectMenuListByStep2" resultClass="egovMap">
+		<![CDATA[
+			SELECT MNU_CD,H_MNU_CD,MNU_NM,ODR,USE_YN
+			FROM (
+				SELECT MNU_CD,H_MNU_CD,ODR,MNU_NM, USE_YN, LEVEL S
+				FROM GS_MENU
+				START WITH H_MNU_CD IS NULL
+				CONNECT BY PRIOR MNU_CD = H_MNU_CD
+			)
+			WHERE S= 2 AND USE_YN = 'Y'
+			ORDER BY H_MNU_CD, MNU_CD
+		]]>
+	</select>
+	<select id="menuManageDAO.selectMenuLeftByUser" parameterClass="menuVO" resultClass="egovMap">
+		<![CDATA[
+			SELECT 	   B.MNU_NUM
+					 , A.MNU_CD
+					 , B.MNU_NM
+					 , B.MNU_PATH
+					 , B.H_MNU_CD
+                	 , A.AUTH_CD
+			FROM	 AT_AUTH_MNU_MAPG A
+			    LEFT JOIN GS_MENU B
+				   ON A.MNU_CD = B.MNU_CD
+			WHERE	A.AUTH_CD = #authCd# AND B.USE_YN='Y'
+			ORDER BY B.MNU_CD ASC
+
+		]]>
+	</select>
+
+	<select id="menuManageDAO.getMenuInfo" parameterClass="menuVO" resultClass="egovMap">
+		<![CDATA[
+			SELECT 	 *
+			FROM GS_MENU
+			WHERE	MNU_CD = #mnuCd#
+		]]>
+	</select>
+
+	<select id="menuManageDAO.selectMenuForUser" resultClass="egovMap">
+		<![CDATA[
+			SELECT 	   A.MNU_NUM
+			      	 , A.MNU_CD
+				  	 , A.MNU_NM
+				  	 , A.MNU_PATH
+				 	 , A.H_MNU_CD
+                 	 , B.AUTH_CD
+                 	 , A.LOW_DEPTH_GB
+                 	 , B.AM_MAPG_NUM
+			FROM GS_MENU A
+				LEFT JOIN AT_AUTH_MNU_MAPG B
+			  		ON A.MENU_CD = B.MNU_CD
+			  		AND B.AUTH_CD = #authCd#
+			WHERE A.USE_YN='Y'
+			ORDER BY A.MNU_CD ASC		]]>
+	</select>
+
+	<select id="menuManageDAO.selectSubMenu" resultClass="egovMap" parameterClass="java.lang.String">
+		SELECT MNU_NUM ,
+		       MNU_CD ,
+		       MNU_NM ,
+		       MNU_PATH ,
+		       H_MNU_CD ,
+		       ODR
+		  FROM GS_MENU A
+		 WHERE USE_YN='Y'
+		   AND H_MNU_CD = #hMnuCd#
+		ORDER BY ODR ASC
+	</select>
+
+	<select id="menuManageDAO.selectUserParentMenu" resultClass="egovMap" parameterClass="menuVO">
+		SELECT B.MNU_CD
+		     , B.MNU_NM
+		     , A.SUB_CNT
+		  FROM
+		       (SELECT /** 사용자 권한별 대메뉴 조회 menuManageDAO.selectUserParentMenu */
+		              SUBSTR(B.MNU_CD, 1, 3) AS PAR_MENU
+		            , COUNT(B.MNU_CD) AS SUB_CNT
+		         FROM AT_USER A
+		            , (SELECT MNU_CD
+		                    , AUTH_CD
+		                    , TYPE
+		                    , USER_ID
+		                  FROM
+		                    (
+		                    SELECT IFNULL(A.MNU_CD, B.MNU_CD) AS MNU_CD
+		                         , IFNULL(TYPE, 'MAIN') AS TYPE
+		                         , IFNULL (A.AUTH_CD, #authCd#) AS AUTH_CD
+		                         , B.USER_ID
+		                      FROM (SELECT MNU_CD
+		                                   , AUTH_CD
+		                                FROM GS_MENU_MAP
+		                               WHERE AUTH_CD = #authCd#) A
+		                     FULL OUTER JOIN
+		                            (SELECT MNU_CD, TYPE, USER_ID
+		                               FROM GS_MENU_USER_MAP
+		                              WHERE USER_ID = #userId#) B
+		                       ON A.MNU_CD = B.MNU_CD
+		                    )
+		                    WHERE TYPE != 'DEL'
+		                ) B
+		            , GS_MENU C
+		            , AT_AUTH D
+		        WHERE 1 = 1
+		          AND A.STATUS != '4'
+		          AND B.MNU_CD = C.MNU_CD
+		          AND B.AUTH_CD = D.AUTH_CD
+		          AND C.MNU_LVL > 1
+		          AND C.USE_YN = 'Y'
+		          AND D.USE_YN = 'Y'
+		          AND A.USER_ID = #userId#
+		        GROUP BY SUBSTR(B.MNU_CD, 1, 3)
+		     ORDER BY SUBSTR(B.MNU_CD, 1, 3)
+		       ) A
+		     , GS_MENU B
+		 WHERE 1 = 1
+		   AND A.PAR_MENU = B.MNU_CD
+		 ORDER BY B.ODR
+	</select>
+
+	<select id="menuManageDAO.selectUserAuthMenu" resultClass="egovMap" parameterClass="menuVO">
+		SELECT /** 사용자 권한별 메뉴 조회 menuManageDAO.selectUserAuthMenu */
+		       SUBSTR(B.MNU_CD, 1, 3) AS MENU_GROUP
+		     , C.MNU_CD
+		     , C.MNU_NM
+		     , C.MNU_PATH
+		     , C.MNU_PARAM
+		     , C.H_MNU_CD
+		     , C.MNU_TYPE
+		  FROM AT_USER A
+		     , (SELECT MNU_CD
+                    , AUTH_CD
+                    , TYPE
+                    , USER_ID
+                  FROM
+                    (
+                    SELECT IFNULL(A.MNU_CD, B.MNU_CD) AS MNU_CD
+                         , IFNULL(TYPE, 'MAIN') AS TYPE
+                         , IFNULL (A.AUTH_CD, #authCd#) AS AUTH_CD
+                         , B.USER_ID
+                      FROM (SELECT MNU_CD
+                                   , AUTH_CD
+                                FROM GS_MENU_MAP
+                               WHERE AUTH_CD = #authCd#) A
+                     FULL OUTER JOIN
+                            (SELECT MNU_CD, TYPE, USER_ID
+                               FROM GS_MENU_USER_MAP
+                              WHERE USER_ID = #userId#) B
+                       ON A.MNU_CD = B.MNU_CD
+                    )
+                    WHERE TYPE != 'DEL'
+                ) B
+		     , GS_MENU C
+		     , AT_AUTH D
+		 WHERE 1 = 1
+		   AND A.STATUS != '4'
+		   AND B.MNU_CD = C.MNU_CD
+		   AND B.AUTH_CD = D.AUTH_CD
+		   AND C.MNU_TYPE = 'M'
+		<isEqual property="mnuLvl" compareValue="1">
+		   AND C.H_MNU_CD IS NULL
+		</isEqual>
+		<isEqual property="mnuLvl" compareValue="2">
+		   AND C.H_MNU_CD IS NOT NULL
+		   AND C.MNU_LVL = #mnuLvl#
+		</isEqual>
+		   AND C.USE_YN = 'Y'
+		   AND D.USE_YN = 'Y'
+		   AND A.USER_ID = #userId#
+		   ORDER BY SUBSTR(B.MNU_CD, 1, 3), C.ODR
+	</select>
+</sqlMap>

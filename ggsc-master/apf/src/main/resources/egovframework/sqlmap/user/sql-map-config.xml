@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<sqlMap resource="egovframework/sqlmap/user/main/EgovMain_Main_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/user_Join_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_MAIN_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_JOIN_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_MYPAGE_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_PSYCNS_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_COMFCNS_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_FREEBBS_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_CARELIBRARY_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_COMCODE_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_CNSASK_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_CMSPACE_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_MAILSEND_SQL.xml"/>
+	<sqlMap resource="egovframework/sqlmap/user/mappers/HOMEPAGE_EDUAPP_SQL.xml"/>
+</sqlMapConfig>

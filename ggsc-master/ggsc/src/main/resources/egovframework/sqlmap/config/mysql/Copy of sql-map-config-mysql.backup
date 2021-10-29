@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<sqlMap resource="egovframework/sqlmap/adm/lgn/AdmLogin_SQL_Mysql.xml"/><!-- 로그인 --> 
+	<sqlMap resource="egovframework/sqlmap/adm/mnu/AdmMenu_SQL_Mysql.xml"/><!-- 메뉴 -->
+	<sqlMap resource="egovframework/sqlmap/adm/main/AdmMain_SQL_Mysql.xml"/><!-- 메인 -->
+	
+	<!-- 공통관리 -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/AuthGrpMng_SQL_Mysql.xml"/><!-- 권한그룹 관리  -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/PlbuMng_SQL_Mysql.xml"/><!-- 사업장관리 -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/CodMng_SQL_Mysql.xml"/><!-- 공통코드관리 -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/PrdfMng_SQL_Mysql.xml"/><!-- 제품군관리-->
+	<sqlMap resource="egovframework/sqlmap/adm/com/ItemMng_SQL_Mysql.xml"/><!-- 품목관리-->
+	<sqlMap resource="egovframework/sqlmap/adm/com/StrdMng_SQL_Mysql.xml"/><!-- 규격관리-->
+	<sqlMap resource="egovframework/sqlmap/adm/com/AuthMng_SQL_Mysql.xml"/><!-- 권한 관리  -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/DeptMng_SQL_Mysql.xml"/><!-- 부서 관리  -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/PosiMng_SQL_Mysql.xml"/><!-- 직급 관리  -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/IdMng_SQL_Mysql.xml"/><!-- 계정 관리  -->
+	<sqlMap resource="egovframework/sqlmap/adm/com/SignTrg_SQL_Mysql.xml"/><!-- 서명 대상 관리  -->
+	
+	<sqlMap resource="egovframework/sqlmap/adm/prod/AdmProdMng_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/adm/com/ComCode_SQL_Mysql.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/adm/drpt/Drpt_SQL_Mysql.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/adm/drpt/DrftMng_SQL_Mysql.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/adm/busi/BusiMng_SQL_Mysql.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/adm/drpt/Sign_SQL_Mysql.xml"></sqlMap>
+	<sqlMap resource="egovframework/sqlmap/adm/rels/RelsMng_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/adm/srels/SrelsStat_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/adm/prod/Pday_SQL_Mysql.xml"/>
+</sqlMapConfig>

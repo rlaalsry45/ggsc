@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions> 
+
+
+	
+	
+    <!-- front main 과 login Start -->
+    <!-- main page -->
+	<!-- <definition name="main-layout" template="/WEB-INF/tiles/layouts/main_layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/tilesView/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/tiles/tilesView/footer.jsp" />
+	</definition> -->
+	<definition name="main" template="/WEB-INF/jsp/prj/homepage/layout/main.jsp">
+		<!-- <put-attribute name="headerMenu" value="/WEB-INF/jsp/prj/homepage/layout/headerMenu.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/prj/homepage/layout/footer.jsp" />
+		<put-attribute name="footerScript" value="/WEB-INF/jsp/prj/homepage/layout/footerScript.jsp" /> -->
+	</definition>
+	<!-- 경기도청 사용 page -->
+	<definition name="base" template="/WEB-INF/jsp/prj/homepage/layout/page.jsp">
+		<put-attribute name="header" value="/WEB-INF/jsp/prj/homepage/layout/header.jsp" />
+		<put-attribute name="headerMenu" value="/WEB-INF/jsp/prj/homepage/layout/headerMenu.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/prj/homepage/layout/footer.jsp" />
+		<put-attribute name="footerScript" value="/WEB-INF/jsp/prj/homepage/layout/footerScript.jsp" />
+	</definition>
+	
+	<definition name="*/*/*.page" extends="base">
+         <put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}/{2}/{3}.jsp" />
+    </definition>
+    
+    <definition name="*/*.page" extends="base">
+         <put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="*.page" extends="base">
+         <put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}.jsp" />
+    </definition>
+    
+    <definition name="*/*/*.main" extends="main">
+         <put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}/{2}/{3}.jsp" />
+    </definition>
+    
+    <definition name="*/*.main" extends="main">
+         <put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="*.main" extends="main">
+         <put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}.jsp" />
+    </definition>
+	
+	<!-- <definition name="homepage/*/*" extends="base">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/{1}/{2}.jsp" />
+	</definition> -->
+	
+	<!-- <definition name="main-Poplayout" template="/WEB-INF/tiles/layouts/main_Poplayout.jsp">
+	</definition>
+	
+	
+	<definition name="user/main/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/main/{1}.jsp" />
+	</definition> 
+	
+	<definition name="user/not/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/not/{1}.jsp" />
+	</definition>
+	<definition name="user/about/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/about/{1}.jsp" />
+	</definition>
+	<definition name="user/busi/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/busi/{1}.jsp" />
+	</definition>
+	<definition name="user/reg/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/reg/{1}.jsp" />
+	</definition>
+	<definition name="user/mypage/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/mypage/{1}.jsp" />
+	</definition>
+	<definition name="user/join/*" extends="main-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/join/{1}.jsp" />
+	</definition>
+	
+	
+	<definition name="user/usrjoin/*" extends="main-Poplayout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/usrjoin/{1}.jsp" />
+	</definition>
+	
+	
+	sub page
+	<definition name="sub-layout" template="/WEB-INF/tiles/layouts/sub_layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/layouts/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsp/tilesView/footer.jsp" />
+	</definition>
+	<definition name="user/sub/*" extends="sub-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/user/sub/{1}.jsp" />
+	</definition>	
+	front main 과 login End
+	
+	
+	
+	
+	admin tiles  Start
+	
+	<definition name="admin-layout" template="/WEB-INF/tiles/admin/admin_layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/admin/admin_header.jsp" />
+	</definition>
+	<definition name="admin/usrMng/*" extends="admin-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/admin/usrMng/{1}.jsp" />
+	</definition> 
+	<definition name="admin/admNot/*" extends="admin-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/admin/admNot/{1}.jsp" />
+	</definition> 
+	<definition name="admin/admRd/*" extends="admin-layout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/admin/admRd/{1}.jsp" />
+	</definition> 
+	
+	
+	<definition name="admin-Loginlayout" template="/WEB-INF/tiles/admin/admin_Loginlayout.jsp">
+		<put-attribute name="loginheader" value="/WEB-INF/tiles/admin/admin_header.jsp" />
+	</definition>
+	<definition name="admin/admMain/*" extends="admin-Loginlayout">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/admin/admMain/{1}.jsp" />
+	</definition> 
+	
+	
+	admin tiles End
+	
+	노인상담 homepage Start
+	<definition name="homepage/main/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/main/{1}.jsp" />
+	</definition>
+	<definition name="homepage/join/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/join/{1}.jsp" />
+	</definition>
+	<definition name="homepage/mypage/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/mypage/{1}.jsp" />
+	</definition>
+	<definition name="homepage/psyCns/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/psyCns/{1}.jsp" />
+	</definition>
+	<definition name="homepage/comfCns/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/comfCns/{1}.jsp" />
+	</definition>
+	<definition name="homepage/bbs/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/bbs/{1}.jsp" />
+	</definition>
+	<definition name="homepage/careLibrary/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/careLibrary/{1}.jsp" />
+	</definition>
+	<definition name="homepage/cnsAsk/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/cnsAsk/{1}.jsp" />
+	</definition>
+	<definition name="homepage/centerIntro/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/centerIntro/{1}.jsp" />
+	</definition>
+	<definition name="homepage/comuSpace/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/comuSpace/{1}.jsp" />
+	</definition>
+	<definition name="homepage/businIntro/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/businIntro/{1}.jsp" />
+	</definition> -->
+	
+	<!-- <definition name="homepage/layout/*" extends="page">
+		<put-attribute name="body" value="/WEB-INF/jsp/prj/homepage/layout/{1}.jsp" />
+	</definition> -->
+	<!-- 노인상담 homepage End -->
+	
+</tiles-definitions>

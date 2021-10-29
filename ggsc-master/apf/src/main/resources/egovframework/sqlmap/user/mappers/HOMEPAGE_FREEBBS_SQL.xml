@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.freeBbs.service.impl.HomepageFreeBbsMapper">
+	
+	<!-- 게시판 목록(알려드려요)  -->
+	<select id="getFreeBbsListA" parameterType="bbsVO" resultType="egovMap">
+		SELECT
+			NUM ,
+			TITLE ,
+			WRITER ,
+			DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+		FROM
+			GS_CENTER_NEWS
+	</select>
+	
+	<!-- 게시판 목록(자유게시판) -->
+	<select id="getFreeBbsListB" parameterType="bbsVO" resultType="egovMap">
+		SELECT
+			NUM ,
+			TITLE ,
+			WRITER ,
+			DATE_FORMAT(DB_INS_TM , '%Y-%m-%d') AS dbInsTm
+		FROM
+			GS_FREE_BOARD
+	</select>
+
+	<!-- 게시판 상세보기(알려드려요)  -->
+	<select id="getFreeBbsADtl" parameterType="integer" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_CENTER_NEWS AS A
+		LEFT JOIN GS_CENTER_NEWS_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			A.NUM = #{num}
+	</select>
+	
+	<!-- 게시판 상세보기(자유게시판) -->
+	<select id="getFreeBbsBDtl" parameterType="integer" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_FREE_BOARD AS A
+		LEFT JOIN GS_FREE_BOARD_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			A.NUM = #{num}
+	</select>
+	
+	<!-- 게시판 등록(알려드려요) -->
+	<insert id="insertFreeBbsAReg" parameterType="bbsVO">
+		INSERT INTO GS_CENTER_NEWS
+			(
+				TITLE ,
+				WRITER ,
+				CNTN ,
+				REG_ID ,
+				DB_INS_TM 
+			) VALUES (
+				#{title} ,
+				#{writer} ,
+				#{cntn} ,
+				#{regId} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 게시판 파일업로드(알려드려요) -->
+	<insert id="insertFreeBbsAFileUpload" parameterType="bbsVO">
+		INSERT INTO GS_CENTER_NEWS_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE ,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT MAX(A.NUM) FROM GS_CENTER_NEWS AS A WHERE A.REG_ID = #{regId}) ,
+				#{regId} ,
+				#{writer} ,
+				#{fileNm} ,
+				#{sysFileNm} ,
+				#{filePath} ,
+				#{fileSize} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 게시판 등록(자유게시판) -->
+	<insert id="insertFreeBbsBReg" parameterType="bbsVO">
+		INSERT INTO GS_FREE_BOARD
+			(
+				TITLE ,
+				WRITER ,
+				CNTN ,
+				REG_ID ,
+				DB_INS_TM 
+			) VALUES (
+				#{title} ,
+				#{writer} ,
+				#{cntn} ,
+				#{regId} ,
+				NOW()
+			)
+	</insert>
+	
+	<!-- 게시판 파일업로드(자유게시판) -->
+	<insert id="insertFreeBbsBFileUpload" parameterType="bbsVO">
+		INSERT INTO GS_FREE_BOARD_FILE
+			(
+				FILE_NUM ,
+				REG_ID ,
+				REG_NM ,
+				FILE_NM ,
+				SYS_FILE_NM ,
+				FILE_PATH ,
+				FILE_SIZE ,
+				DB_INS_TM 
+			) VALUES (
+				(SELECT MAX(A.NUM) FROM GS_FREE_BOARD AS A WHERE A.REG_ID = #{regId}) ,
+				#{regId} ,
+				#{writer} ,
+				#{fileNm} ,
+				#{sysFileNm} ,
+				#{filePath} ,
+				#{fileSize} ,
+				NOW()
+			)
+	</insert>
+
+</mapper>

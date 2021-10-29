@@ -1,0 +1,532 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package egovframework.admin.admNot.web;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartRequest;
+import org.springmodules.validation.commons.DefaultBeanValidator;
+
+
+import egovframework.admin.admNot.service.AdmNotService;
+import egovframework.admin.admNot.service.AdmNotDefaultVO;
+import egovframework.admin.admNot.service.AdmNotVO;
+import egovframework.cmm.service.BoardVO;
+
+import egovframework.cmm.util.EditorTmpFileVO;
+import egovframework.cmm.util.DateTimeUtil;
+import egovframework.cmm.service.BoardService;
+import egovframework.cmm.service.FileService;
+import egovframework.cmm.Globals;
+
+import egovframework.admin.usrMng.service.UsrMngDefaultVO;
+
+
+import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import egovframework.user.main.service.LoginVO;
+
+
+
+/**
+ * @Class Name : EgovSampleController.java
+ * @Description : EgovSample Controller Class
+ * @Modification Information
+ * @
+ * @  수정일      수정자              수정내용
+ * @ ---------   ---------   -------------------------------
+ * @ 2009.03.16           최초생성
+ *
+ * @author 개발프레임웍크 실행환경 개발팀
+ * @since 2009. 03.16
+ * @version 1.0
+ * @see
+ *
+ *  Copyright (C) by MOPAS All right reserved.
+ */
+
+@Controller
+public class AdmNotController {
+
+	/** EgovSampleService */
+	@Resource(name = "admNotService")
+	private AdmNotService admNotService;
+	
+	/** */
+	@Resource(name="boardService")
+	private BoardService boardService;
+	
+	@Resource(name = "fileService")
+	private FileService fileService;
+
+	/** EgovPropertyService */
+	@Resource(name = "propertiesService")
+	protected EgovPropertyService propertiesService;
+
+	/** Validator */
+	@Resource(name = "beanValidator")
+	protected DefaultBeanValidator beanValidator;
+
+
+	private static final String FILE_PATH = "D:/project/kga_2/eGovFrameDev-3.2.0-64bit/workspace/upload";
+	private static final String BOARD_FILE_PATH = "/";
+	//private static final String PREFIX_URL = "/upload/";
+
+	
+	/**
+	 * admin 공지사항 목록 조회
+	 */
+	@RequestMapping(value = "/admNotList.do")
+	public String admNotList(@ModelAttribute("searchVO") AdmNotDefaultVO searchVO, ModelMap model, HttpServletRequest req) throws Exception {
+		
+		System.out.println("111111111111111111111111111111111");
+		
+		try{
+			searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+			searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+			/** pageing setting */
+			PaginationInfo paginationInfo = new PaginationInfo();
+			paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+			paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+			paginationInfo.setPageSize(searchVO.getPageSize());
+
+			searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+			searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+			searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+			System.out.println("session id == " + req.getSession().getAttribute("id"));
+			System.out.println("session name == " + req.getSession().getAttribute("name"));
+			
+			
+			//공지사항 목록 조회
+			List<?> admNotList = admNotService.admNotList(searchVO);
+			model.addAttribute("admNotList", admNotList);
+			
+			//공지사항 목록 총수 조회
+			int totCnt = admNotService.admNotListTotCnt(searchVO);
+			paginationInfo.setTotalRecordCount(totCnt);
+			model.addAttribute("paginationInfo", paginationInfo);
+		}catch(Exception e){
+			System.out.println("error==>"+ e.getMessage());
+		}
+		return "admin/admNot/admNotList";
+	}
+	
+	
+	/**
+	 * 컴페인을 조회한다
+	 * @param vo - 로그인후 이동할 URL이 담긴 LoginVO
+	 * @return 로그인 페이지
+	 * @exception Exception
+	 */
+    @RequestMapping(value="/admNot/upload_tmp_file.do")
+	public String upload_tmp_file(MultipartHttpServletRequest request,
+			HttpServletResponse response,
+			ModelMap model)
+			throws Exception {
+    		
+    	
+		try{
+			String currentDate = DateTimeUtil.currentDate();
+			String rootPath = "/";
+			String filePath = rootPath+Globals.boardTmpFileUrl+currentDate;
+			
+			System.out.println("filePath ========================  "+ filePath);
+			
+			
+			File dir = new File(filePath);
+	        if (!dir.isDirectory()) {
+	            dir.mkdirs();
+	        }
+	        List<MultipartFile> mf = request.getFiles("file");
+	        List<EgovMap> urlList = new ArrayList<EgovMap>();
+	        
+	        if(mf!=null){
+		        EditorTmpFileVO vo = new EditorTmpFileVO();
+		        
+		        // max number 구하기
+		        if(request.getParameter("file_num")!=null && Integer.parseInt(request.getParameter("file_num").toString().trim())>0){
+		        	vo.setFile_num(Integer.parseInt(request.getParameter("file_num").toString().trim()));
+		        }else{
+			        int file_num = fileService.getMaxTmpEditorFile(vo);
+			        
+			        System.out.println("file_num ========================  "+ file_num);
+			        vo.setFile_num(file_num);
+		        }
+		        
+		        
+	        	for(int i=0;i<mf.size();i++){
+	    	        String originalfileName = mf.get(i).getOriginalFilename();
+	    	        
+	    	       
+	    	        
+	    	    	int pos = originalfileName.lastIndexOf( "." );
+	    	    	String fileName = originalfileName.substring(0,pos);
+	    	    	String fileExt = originalfileName.substring(pos + 1);
+	    	        String saveFileName = fileName+ "_"+DateTimeUtil.currentDateTime() + "." + fileExt;
+	    	        
+	    	        System.out.println("fileName=============  "+fileName);
+	    	        System.out.println("fileExt=============  "+fileExt);
+	    	        System.out.println("saveFileName=============  "+saveFileName);
+	    	        System.out.println("originalfileName=============  "+originalfileName);
+	    	        
+	    	        
+	    	        // 저장되는 파일 이름
+	    	        String savePath = filePath + "/"+saveFileName; // 저장 될 파일 경로
+	    	        mf.get(i).transferTo(new File(savePath)); // 파일 저장
+
+	    	        int maxIdx = fileService.getMaxTmpEditorFileIdx(vo);
+	    	        vo.setBd_id(maxIdx);
+	    	        vo.setReg_dt(currentDate);
+	    	        vo.setFile_name(saveFileName);
+	    	        vo.setFile_path("/"+Globals.boardTmpFileUrl+currentDate);
+	    	        vo.setUp_yn("N");
+	    	        
+	    	        try{
+		    	        // 저장하기
+		    	        fileService.insertTmpEditorFile(vo);
+	    	        }catch(Exception e){
+	    	        	System.out.println(" 저장하기 에러  ==================== " +  e.getMessage());
+	    	        }
+	    	        
+	    	        
+//	    	        String url = URLEncoder.encode("/"+Globals.boardTmpFileUrl+currentDate+"/"+saveFileName , "UTF-8");
+	    	        String url ="/"+Globals.boardTmpFileUrl+currentDate+"/"+saveFileName;
+	    	        EgovMap map = new EgovMap();
+	    	        map.put("url",url);
+	    	        urlList.add(map);
+	    	        model.addAttribute("file_num",vo.getFile_num());
+	    	        model.addAttribute("url",url);
+	    	        System.out.println("###############"+vo.getFile_num()+"########"+url);
+	        	}
+	        }
+	        model.addAttribute("success","true");
+	        model.addAttribute("urlList",urlList);
+	       
+	        System.out.println("model ===================== "+ model);
+	        
+		}catch(Exception e){
+	        model.addAttribute("success","fail");
+		}
+		return "jsonView";
+		
+	}
+    
+    
+	
+	/**
+	 * 공지사항 상세 정보를 조회한다.
+	 * @param id - 수정할 글 id
+	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+	 * @param model
+	 * @return "egovSampleRegister"
+	 * @exception Exception
+	 */
+	@RequestMapping("/admNot_view.do")
+	public String admNot_view(@RequestParam("selectedId") String id, @ModelAttribute("searchVO") AdmNotDefaultVO searchVO, Model model) throws Exception {
+		
+		AdmNotVO admNotVO = new AdmNotVO();
+		admNotVO.setBd_id(id);
+		System.out.println("1111111111111111111");
+		System.out.println("id ================== " +id);
+		
+		
+		admNotVO = admNotService.selectAdmNotView(admNotVO);
+		System.out.println("22222222222222222222");
+		
+		System.out.println("admNotVO ===============   "+admNotVO);
+		model.addAttribute(admNotVO);
+		return "admin/admNot/admNotView";
+	}
+	
+	
+	/**
+	 * 공지사항 파일 다운로드.
+	 * @param id - 수정할 글 id
+	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+	 * @param model
+	 * @return "egovSampleRegister"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/admNotDownloadFile.do")
+	public void admNotDownloadFile(Map<String, Object> model, HttpServletRequest req, HttpServletResponse res) throws Exception {
+		
+		Map<String, Object> fileInfo = (Map<String, Object>) model.get("downloadFile");
+
+		
+
+		
+		String org_file_nm = (String)req.getParameter("org_file_nm");
+		String sys_file_nm = (String)req.getParameter("sys_file_nm");
+		String file_path = (String)req.getParameter("file_path");
+		int file_size = Integer.parseInt(req.getParameter("file_size"));
+		
+		
+		System.out.println("org_file_nm =============    "+org_file_nm);
+		System.out.println("sys_file_nm =============    "+sys_file_nm);
+		System.out.println("file_path =============    "+file_path);
+		System.out.println("file_size =============    "+file_size);
+		
+		
+		String uploadPath = "D:/project/kga_2/eGovFrameDev-3.2.0-64bit/workspace/upload";  
+ 
+		File uFile = new File(uploadPath, sys_file_nm);
+		//int fSize = (int) uFile.length();
+		int fSize = (int)uFile.length();
+ 
+		System.out.println("uFile  ============    "+uFile);
+		System.out.println("fSize  ============    "+fSize);
+		if (fSize > 0) {
+ 
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(uFile));
+			String mimetype = "application/x-msdownload;charset=utf-8";
+			// String mimetype = servletContext.getMimeType(requestedFile);
+			//String mimetype = "text/html";
+ 			
+			res.setBufferSize(fSize);
+			res.setContentType(mimetype);
+			//res.setHeader("Content-Disposition", "attachment; filename=\"" + org_file_nm + "\"");
+			res.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(org_file_nm, "utf-8") + ";");
+			res.setContentLength(fSize);
+ 
+			FileCopyUtils.copy(in, res.getOutputStream());
+			in.close();
+			res.getOutputStream().flush();
+			res.getOutputStream().close();
+		} else {
+			//setContentType을 프로젝트 환경에 맞추어 변경
+			res.setContentType("application/x-msdownload;charset=utf-8");
+			PrintWriter printwriter = res.getWriter();
+			printwriter.println("<html>");
+			printwriter.println("<br><br><br><h2>Could not get file name:<br>" + org_file_nm + "</h2>");
+			printwriter.println("<br><br><br><center><h3><a href='javascript: history.go(-1)'>Back</a></h3></center>");
+			printwriter.println("<br><br><br>&copy; webAccess");
+			printwriter.println("</html>");
+			printwriter.flush();
+			printwriter.close();
+		}
+		
+	}
+	
+	
+	/**
+	 * 공지사항정보를 수정
+	 * @param id - 수정할 글 id
+	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+	 * @param model
+	 * @return "egovSampleRegister"
+	 * @exception Exception
+	 */
+	@RequestMapping("/admNotUpdate.do")
+	public String admNotUpdate(@ModelAttribute("searchVO") AdmNotDefaultVO searchVO, AdmNotVO admNotVO, Model model, HttpServletRequest req) throws Exception {
+		
+		System.out.println("loginId =============   "+req.getSession().getAttribute("id"));
+		System.out.println("loginName =============   "+req.getSession().getAttribute("name"));
+		
+		
+		admNotVO.setReg_id((String)req.getSession().getAttribute("id"));
+		
+		//공지사항정보를 수정
+		admNotService.admNotUpdate(admNotVO);
+		//status.setComplete();
+		
+		
+		
+		model.addAttribute(admNotVO);
+		
+		System.out.println("update   admNotVO ===============  "+admNotVO);
+		
+		return "admin/admNot/admNotView";
+		//return "redirect:/admNot_view.do";
+	}
+	
+	
+
+	/**
+	 * 공지사항 등록 화면으로 이동
+	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+	 * @param model
+	 * @return "egovSampleRegister"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/admRegMove.do")
+	public String admRegMove(@ModelAttribute("searchVO") UsrMngDefaultVO searchVO, ModelMap model, HttpServletRequest req) throws Exception {
+		
+		
+		
+		return "admin/admNot/admNotReg";
+	}
+
+	/**
+	 * 공지사항 등록하기
+	 * @param sampleVO - 등록할 정보가 담긴 VO
+	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "forward:/egovSampleList.do"
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/admNotReg.do", method=RequestMethod.POST)
+	public String admNotReg(@RequestParam("uploadFile") MultipartFile file, AdmNotVO admNotVO, Model model, SessionStatus status, HttpServletRequest req) throws Exception {
+
+		System.out.println("loginId =============   "+req.getSession().getAttribute("id"));
+		System.out.println("loginName =============   "+req.getSession().getAttribute("name"));
+		System.out.println("title =============   "+ model.addAttribute("bd_title"));
+		
+		//공지사항 정보 등록하기
+		admNotVO.setReg_id((String)req.getSession().getAttribute("id"));
+		
+		String orgfilename = "";
+		String sysfilename = "";
+		Long size;
+		String saveFileName = "";
+		
+		/* 파일업로드 Start */
+		
+			
+			// 파일 정보
+			orgfilename = file.getOriginalFilename();
+			System.out.println("orgfilename =============   "+ orgfilename);
+			if(orgfilename.length() > 0){
+				sysfilename = orgfilename.substring(orgfilename.lastIndexOf("."), orgfilename.length());
+				size = file.getSize();
+				
+				
+				System.out.println("sysfilename =============   "+ sysfilename);
+				System.out.println("size =============   "+ size);
+				
+				// 서버에서 저장 할 시스템 파일 이름
+				saveFileName = genSaveFileName(sysfilename);
+				
+				
+				System.out.println("saveFileName : " + saveFileName);
+				
+				//writeFile(file, saveFileName);
+				//url = PREFIX_URL + saveFileName;
+				boolean result = false;
+	
+				byte[] data = file.getBytes();
+				FileOutputStream fos = new FileOutputStream(FILE_PATH + "/" + saveFileName);
+				fos.write(data);
+				fos.close();
+				
+				admNotVO.setFile_size(file.getSize());
+		        admNotVO.setOrg_file_nm(orgfilename);
+		        admNotVO.setSys_file_nm(saveFileName);
+		        admNotVO.setFile_path(FILE_PATH);
+		        
+		        
+		    	int rstInt = admNotService.insertAdmNot(admNotVO);
+				int rstfile = admNotService.insertAdmNotFile(admNotVO);
+		        
+			}else{
+				
+				int rstInt = admNotService.insertAdmNot(admNotVO);
+				
+			}
+        
+        
+		
+		
+		
+		System.out.println("admNotVO =============   "+admNotVO);
+
+	
+		//status.setComplete();
+		
+		
+		return "forward:/admNotList.do";
+	}
+	
+	
+	
+	
+	
+	
+	
+
+	/**
+	 * 파일 name 추출
+	 * @param extName
+	 * @return
+	 */
+	private String genSaveFileName(String extName) {
+		String fileName = "";
+		
+		Calendar calendar = Calendar.getInstance();
+		fileName += calendar.get(Calendar.YEAR);
+		fileName += calendar.get(Calendar.MONTH);
+		fileName += calendar.get(Calendar.DATE);
+		fileName += calendar.get(Calendar.HOUR);
+		fileName += calendar.get(Calendar.MINUTE);
+		fileName += calendar.get(Calendar.SECOND);
+		fileName += calendar.get(Calendar.MILLISECOND);
+		fileName += extName;
+		
+		return fileName;
+	}
+
+	
+
+	/**
+	 * 글을 삭제한다.
+	 * @param sampleVO - 삭제할 정보가 담긴 VO
+	 * @param searchVO - 목록 조회조건 정보가 담긴 VO
+	 * @param status
+	 * @return "forward:/egovSampleList.do"
+	 * @exception Exception
+	 */
+	@RequestMapping("/admNot/deleteMain.do")
+	public String deleteSample(AdmNotVO admNotVO, @ModelAttribute("searchVO") AdmNotDefaultVO searchVO, SessionStatus status) throws Exception {
+		admNotService.deleteSample(admNotVO);
+		status.setComplete();
+		return "forward:/egovSampleList.do";
+	}
+
+}

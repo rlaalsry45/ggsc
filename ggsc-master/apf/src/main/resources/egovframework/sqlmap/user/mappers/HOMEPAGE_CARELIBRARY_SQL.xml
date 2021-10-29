@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.homepage.crLibrary.service.impl.HomepageCareLibraryMapper">
+
+	<!-- 마음돌봄 자료실  목록 -->
+	<select id="getCrLibraryList" parameterType="crLibraryVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.VIEW_COUNT ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_LIBRARY AS A
+		LEFT JOIN GS_LIBRARY_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if>
+			
+		ORDER BY NUM DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}			
+	</select>
+	
+	<!-- 마음돌봄 자료실 상세보기 -->
+	<select id="getCareLibraryDtl" parameterType="crLibraryVO" resultType="egovMap">
+		SELECT
+			A.NUM ,
+			A.TITLE ,
+			A.WRITER ,
+			A.CNTN ,
+			DATE_FORMAT(A.DB_INS_TM , '%Y-%m-%d') AS dbInsTm ,
+			F.FILE_NM ,
+			F.SYS_FILE_NM ,
+			F.FILE_PATH
+		FROM
+			GS_LIBRARY AS A
+		LEFT JOIN GS_LIBRARY_FILE AS F
+			ON A.NUM = F.FILE_NUM
+		WHERE
+			1=1
+		<if test="prevYn != null">
+	 		<if test="prevYn == 'Y'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM < #{num} ORDER BY A.NUM DESC LIMIT 1
+	 			]]>
+	 		</if>
+	 		<if test="prevYn == 'N'.toString()">
+	 			<![CDATA[
+	 			AND A.NUM > #{num} ORDER BY A.NUM ASC LIMIT 1
+	 			]]>
+	 		</if>
+	 	</if> 
+ 		<if test="prevYn == null">
+ 			AND A.NUM = #{num}
+ 		</if>
+	</select>
+	
+	<!-- 마음돌봄 자료실 총갯수 -->
+	<select id="getCareLibraryTotal" parameterType="crLibraryVO" resultType="Integer">
+		SELECT
+			COUNT(NUM)
+		FROM
+			GS_LIBRARY
+		WHERE
+			1=1
+		<if test="searchKeyword != null">
+	 		<if test="searchCondition == '1'.toString()">
+	 			AND (TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 					OR CNTN LIKE  CONCAT('%', #{searchKeyword}, '%'))
+	 		</if>
+	 		<if test="searchCondition == '2'.toString()">
+	 			AND TITLE LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 		<if test="searchCondition == '3'.toString()">
+	 			AND CNTN LIKE  CONCAT('%', #{searchKeyword}, '%')
+	 		</if>
+	 	</if>
+	</select>
+	
+	<!-- 마음돌봄 조회수 증가 -->
+	<update id="updateCareLibraryViewCount" parameterType="Integer">
+		UPDATE GS_LIBRARY
+			SET
+				VIEW_COUNT = VIEW_COUNT+1
+			WHERE
+				NUM = #{num}
+	</update>
+	
+</mapper>

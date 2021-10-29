@@ -1,0 +1,19 @@
+{
+	"connections" : [
+		{
+			"name" : "oracleTest215", 
+			"classType" : "JDBC",
+			"className":"ORACLE", 
+			"target":"jdbc:oracle:thin:@192.168.0.215:1521:xe", 
+			"user":"cliptest1", 
+			"pw":"clipsoft815"
+		},
+		{
+			"name" : "sap30_test2",
+			"classType": "SAPJCO3",
+			"target" : "sapjco:/client:001/language:en/hostname:192.168.0.179/systemnumber:00/group:/destination:/gatewayhost:",
+			"user" : "BCUSER",
+			"pw" : "clip0815"
+		}
+	]
+}

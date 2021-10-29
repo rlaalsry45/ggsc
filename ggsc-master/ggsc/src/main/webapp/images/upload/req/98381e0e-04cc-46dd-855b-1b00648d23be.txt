@@ -1,0 +1,45 @@
+link_req_gb ,
+link_req_name 의뢰담당자 linkReqName;     
+link_req_nm_tel 의뢰담당자_전화번호 linkReqNmTel;    
+cnsle_helth 내담자_건강상태 cnsleHelth;      
+cnsle_gong_gb 내담자_공적부조 cnsleGongGb;     
+cnsle_psyc_rst 내담자_심리검사_결과 cnslePsycRst;    
+cnsr_op 상담사_의견 cnsrOp;          
+link_req_desc 연계요청사항 linkReqDesc;     
+link_req_org_nm 연계회신_기관명 linkReqOrgNm;    
+link_req_org_tel 연계회신_기관연락처 linkReqOrgTel;   
+link_req_recv_name 연계회신_담당자 linkReqRecvName; 
+link_req_recv_year 연계회신_년도 linkReqRecvYear; 
+link_req_recv_month 연계회신_월 linkReqRecvMonth;
+link_req_recv_day 연계회신_일 linkReqRecvDay;  
+link_req_recv_rst 연계회신_처리결과 linkReqRecvRst;  
+year 년
+month 월
+day 일
+req_name 기관명 reqName;         
+org_name 의뢰자 orgName;         
+doc_sign_path 전자서명_경로 docSignPath;     
+reg_id 등록자ID regId;           
+db_ins_tm 등록일시 dbInsTm;         
+
+// 파일 서버에 저장
+MultipartFile file = vo.getFile();
+EgovMap fMap = AMSComm.fileUpload(file);
+vo.setFileNm((String)fMap.get("fileNm"));
+vo.setSysFileNm((String)fMap.get("sysFileNm"));
+vo.setFilePath((String)fMap.get("filePath"));
+
+나라장터
+linkReqGb
+reqDept2
+cnsleId 0
+cnsleNm 0
+cnsGb 0
+zoneGb 0
+localGb 0
+centerGb 0
+
+Integer.parseInt
+psyc_Rst_Mmseds
+
+

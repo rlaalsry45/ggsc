@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="User">
+
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="userVO" type="ams.adm.user.UserVO"/>
+
+
+
+
+	<select id="userDAO.userList" parameterClass="userVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY USER_NO DESC) AS RNUM,
+					USER_NO, 
+					USER_ID,
+					USER_NM,
+					DEPT_CD,
+					EMP_CD,
+					AUTH_CD
+        	 FROM USER_M
+        	 WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND USER_ID LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="2">
+					AND USER_NM LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="3">
+					AND DEPT_CD LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+				
+        	  ) A
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="userDAO.userListCnt" parameterClass="userVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM USER_M
+		WHERE 1=1
+             <isNotEmpty property="schStr">
+            	<isEqual property="schColm" compareValue="1">
+					AND USER_ID LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="2">
+					AND USER_NM LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+				<isEqual property="schColm" compareValue="3">
+					AND DEPT_CD LIKE CONCAT('%', #schStr#, '%')
+				</isEqual>
+		     </isNotEmpty>
+	</select>
+	
+
+	<select id="userDAO.userDtl" parameterClass="userVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY USER_NO DESC) AS RNUM, 
+					USER_NO,
+					USER_ID,
+					PW,
+					USER_NM,
+					AUTH_CD,
+					DEPT_CD,
+					ACPT_DT,
+					EMP_CD,
+					EMAIL,
+					TEL,
+					MOBILE,
+					BIRTH_DT,
+					GENDER,
+					FLAG,
+					ADDR,
+					ADDR_DTL,
+					ZIP_CD,
+					OUT_DT,
+					USE_YN,
+					REG_ID,
+					DB_UPD_DT,
+					DB_INS_DT
+        	 FROM USER_M
+        	 WHERE USER_NO = #userNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="userDAO.delUser" parameterClass="userVO">
+		DELETE FROM USER_M
+		WHERE USER_NO = #userNo#
+	</delete>
+	
+	<update id="userDAO.updUser" parameterClass="userVO">
+		UPDATE USER_M
+		   SET
+			PW = #pw# ,
+			USER_NM = #userNm# ,
+			AUTH_CD=#authCd#,
+			DEPT_CD=#deptCd#,
+			ACPT_DT=#acptDt#,
+			EMP_CD=#empCd#,
+			EMAIL=#email#,
+			TEL=#tel#,
+			MOBILE=#mobile#,
+			BIRTH_DT=#birthDt#,
+			GENDER=#gender#,
+			FLAG=#flag#,
+			ADDR=#addr#,
+			ADDR_DTL=#addrDtl#,
+			ZIP_CD=#zipCd#,
+			OUT_DT=#outDt#,
+			USE_YN=#useYn#,
+			DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+		WHERE USER_NO = #userNo#
+	</update>
+
+	<insert id="userDAO.insUser" parameterClass="userVO">
+		INSERT INTO USER_M(
+			USER_ID,
+			PW,
+			USER_NM,
+			AUTH_CD,
+			DEPT_CD,
+			ACPT_DT,
+			EMP_CD,
+			EMAIL,
+			TEL,
+			MOBILE,
+			BIRTH_DT,
+			GENDER,
+			FLAG,
+			ADDR,
+			ADDR_DTL,
+			ZIP_CD,
+			OUT_DT,
+			USE_YN,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#userId#,
+			#pw#,
+			#userNm#,
+			#authCd#,
+			#deptCd#,
+			#acptDt#,
+			#empCd#,
+			#email#,
+			#tel#,
+			#mobile#,
+			#birthDt#,
+			#gender#,
+			#flag#,
+			#addr#,
+			#addrDtl#,
+			#zipCd#,
+			#outDt#,
+			#useYn#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d'),
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+</sqlMap>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Mnu">
+
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="mnuVO" type="ams.adm.mnu.MnuVO"/>
+
+
+
+
+	<select id="mnuDAO.mnuList" parameterClass="mnuVO" resultClass="egovMap">
+		SELECT *
+		    FROM (SELECT ROW_NUMBER() OVER(ORDER BY SUBSTR(B.MNU_CD, 1, 3), B.MNU_LVL, B.ODR) AS RNUM
+		               , B.*
+			    FROM (SELECT
+	        		     A.MNU_NM
+	              		 , A.MNU_NO
+				         , A.MNU_CD
+				         , A.H_MNU_CD
+				         , A.CNTN
+				         , A.MNU_PATH
+				         , A.ODR
+				         , A.MNU_LVL
+				         , A.USE_YN
+				         , A.REG_ID
+				         , A.DB_UPD_DT
+				         , A.DB_INS_DT
+	
+				      FROM GS_MENU A
+				      WHERE 1=1
+             		  <isNotEmpty property="schStr">
+						  AND A.MNU_NM LIKE CONCAT('%', #schStr#, '%')
+						  AND A.MNU_LVL = #schColm# 
+		     		  </isNotEmpty>
+	                  ORDER BY SUBSTR(A.MNU_CD, 1, 3), A.ODR
+				      ) B ) C
+		<![CDATA[
+ 		   	WHERE RNUM > #fromIndex# AND RNUM <= #toIndex#
+ 		]]>
+	</select>
+	
+
+	<select id="mnuDAO.mnuListCnt" parameterClass="mnuVO" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM GS_MENU A
+		WHERE 1=1
+		<isNotEmpty property="schStr">
+			AND A.MNU_NM LIKE CONCAT('%', #schStr#, '%')
+			AND A.MNU_LVL = #schColm# 
+		</isNotEmpty>
+	</select>
+	
+
+	<select id="mnuDAO.mnuDtl" parameterClass="mnuVO" resultClass="egovMap">
+		SELECT *
+		FROM(SELECT ROW_NUMBER() OVER(ORDER BY MNU_NO DESC) AS RNUM, 
+					MNU_NO,
+					MNU_CD,
+					H_MNU_CD,
+					MNU_NM,
+					CNTN,
+					MNU_PATH,
+					MNU_LVL,
+					AUTH_TYPE,
+					ODR,
+					USE_YN,
+					REG_ID,
+					DB_UPD_DT,
+					DB_INS_DT
+        	 FROM GS_MENU
+        	 WHERE MNU_NO = #mnuNo#
+				
+        	  ) A
+	</select>
+	
+	<delete id="mnuDAO.delMnu" parameterClass="mnuVO">
+		DELETE FROM GS_MENU
+		WHERE MNU_NO = #mnuNo#
+	</delete>
+	
+	<update id="mnuDAO.updMnu" parameterClass="mnuVO">
+		UPDATE GS_MENU
+		   SET
+			MNU_CD=#mnuCd#,
+			H_MNU_CD=#hMnuCd#,
+			MNU_NM=#mnuNm#,
+			CNTN=#cntn#,
+			MNU_PATH=#mnuPath#,
+			MNU_LVL=#mnuLvl#,
+			AUTH_TYPE=#authType#,
+			ODR=#odr#,
+			USE_YN=#useYn#,
+			DB_UPD_DT=DATE_FORMAT( NOW() , '%Y%m%d')
+		WHERE MNU_NO = #mnuNo#
+	</update>
+
+	<insert id="mnuDAO.insMnu" parameterClass="mnuVO">
+		INSERT INTO USER_M(
+			MNU_CD,
+			H_MNU_CD,
+			MNU_NM,
+			CNTN,
+			MNU_PATH,
+			MNU_LVL,
+			AUTH_TYPE,
+			ODR,
+			USE_YN,
+			REG_ID,
+			DB_UPD_DT,
+			DB_INS_DT
+		) VALUES(
+			#mnuCd#,
+			#hMnuCd#,
+			#mnuNm#,
+			#cntn#,
+			#mnuPath#,
+			#mnuLvl#,
+			#authType#,
+			#odr#,
+			#useYn#,
+			#regId#,
+			DATE_FORMAT( NOW() , '%Y%m%d'),
+			DATE_FORMAT( NOW() , '%Y%m%d')
+		)
+	</insert>
+
+
+
+
+	<select id="mnuDAO.hMnuList" parameterClass="mnuVO" resultClass="egovMap">
+		SELECT 
+           	    	  A.MNU_NO
+                   ,  A.MNU_NM
+                   ,  A.MNU_LVL
+                   ,  A.MNU_CD
+                FROM  GS_MENU A
+                WHERE 1=1
+		  AND   A.MNU_LVL = #mnuLvl#
+		  ORDER BY MNU_NM
+	</select>
+
+</sqlMap>
